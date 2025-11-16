@@ -65,7 +65,7 @@ SM algorithms are commercial cryptographic standards developed by the State Cryp
 
 ### Core Advantages
 
-- **Production Ready**: 214+ unit tests covering all core features and edge cases
+- **Production Ready**: 267+ unit tests covering core features and common use cases
 - **Standards Compliant**: Strictly follows GM/T national standards (GM/T 0003-2012, GM/T 0004-2012, etc.)
 - **Easy Integration**: Detailed [Hutool Integration Guide](./docs/HUTOOL-INTEGRATION.zh-CN.md) for Java backend integration
 - **Developer Experience**: Clear error messages, complete documentation, rich examples
@@ -75,7 +75,7 @@ SM algorithms are commercial cryptographic standards developed by the State Cryp
 ## Features
 
 - **✨ Purity**: Core SM algorithms in pure TypeScript, international algorithms based on @noble/hashes
-- **⚡ High Performance**: Internal data processing uses `Uint8Array` for optimal throughput
+- **⚡ High Performance**: Internal data processing uses `Uint8Array` for better performance
 - **🔧 Modern**: Written in TypeScript with first-class type support, ES Modules first, CommonJS compatible
 - **🌐 Isomorphic**: Works seamlessly in both Node.js and modern browsers
 - **🎨 Flexible**: Multiple output formats (hex, base64) for different scenarios
@@ -249,8 +249,8 @@ Understanding different algorithms helps you choose the right solution:
 |---------|-----|-----|-----|---------|-----|-----|
 | **Type** | Asymmetric | Asymmetric | Hash | Hash | Symmetric | Symmetric |
 | **Key Length** | 256-bit | 2048-4096-bit | - | - | 128-bit | 128/192/256-bit |
-| **Performance** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
-| **Security** | Very High | High | Very High | High | Very High | High |
+| **Performance** | ECC 256-bit | RSA 2048+ bit | Fast | Fast | Fast | Fast |
+| **Security** | 256-bit | 2048+ bit | 256-bit | 256-bit | 128-bit | 128/192/256-bit |
 | **Standard** | GM/T 0003 | PKCS#1 | GM/T 0004 | FIPS 180-4 | GM/T 0002 | FIPS 197 |
 | **Compliance** | ✅ Chinese | ✅ International | ✅ Chinese | ✅ International | ✅ Chinese | ✅ International |
 
