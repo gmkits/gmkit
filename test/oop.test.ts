@@ -2,15 +2,15 @@ import { describe, it, expect } from 'vitest';
 import { SM2, SM3, SM4, ZUC } from '../src/index';
 import { CipherMode, PaddingMode, SM2CipherMode } from '../src/types/constants';
 
-describe('Object-Oriented API', () => {
-  describe('SM2', () => {
-    it('should generate key pair', () => {
+describe('面向对象 API 测试', () => {
+  describe('SM2 椭圆曲线密码', () => {
+    it('应该能够生成密钥对', () => {
       const sm2 = SM2.generateKeyPair();
       expect(sm2.getPublicKey()).toBeTruthy();
       expect(sm2.getPrivateKey()).toBeTruthy();
     });
 
-    it('should create from private key', () => {
+    it('应该能够从私钥创建实例', () => {
       const sm2 = SM2.generateKeyPair();
       const privateKey = sm2.getPrivateKey();
 
@@ -19,7 +19,7 @@ describe('Object-Oriented API', () => {
       expect(sm2FromPrivate.getPublicKey()).toBeTruthy();
     });
 
-    it('should create from public key', () => {
+    it('应该能够从公钥创建实例', () => {
       const sm2 = SM2.generateKeyPair();
       const publicKey = sm2.getPublicKey();
 
@@ -28,7 +28,7 @@ describe('Object-Oriented API', () => {
       expect(() => sm2FromPublic.getPrivateKey()).toThrow();
     });
 
-    it('should encrypt and decrypt', () => {
+    it('应该能够加密和解密', () => {
       const sm2 = SM2.generateKeyPair();
       const plaintext = 'Hello, SM2!';
 
@@ -39,7 +39,7 @@ describe('Object-Oriented API', () => {
       expect(decrypted).toBeTruthy();
     });
 
-    it('should sign and verify', () => {
+    it('应该能够签名和验证', () => {
       const sm2 = SM2.generateKeyPair();
       const data = 'Message to sign';
 
@@ -50,7 +50,7 @@ describe('Object-Oriented API', () => {
       expect(isValid).toBe(true);
     });
 
-    it('should support custom curve parameters', () => {
+    it('应该支持自定义曲线参数', () => {
       const curveParams = {
         p: 'FFFFFFFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000FFFFFFFFFFFFFFFF',
         a: 'FFFFFFFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000FFFFFFFFFFFFFFFC',
@@ -64,7 +64,7 @@ describe('Object-Oriented API', () => {
       expect(sm2.getCurveParams()?.n).toBeTruthy();
     });
 
-    it('should support cipher modes', () => {
+    it('应该支持密文模式', () => {
       const sm2 = SM2.generateKeyPair();
       const plaintext = 'Hello';
 
@@ -75,7 +75,7 @@ describe('Object-Oriented API', () => {
       expect(encrypted2).toBeTruthy();
     });
 
-    it('should perform key exchange', () => {
+    it('应该能够执行密钥交换', () => {
       const sm2A = SM2.generateKeyPair();
       const sm2B = SM2.generateKeyPair();
 
@@ -105,7 +105,7 @@ describe('Object-Oriented API', () => {
       expect(resultA.sharedKey).toMatch(/^[0-9a-f]+$/);
     });
 
-    it('should perform key exchange with custom options', () => {
+    it('应该能够使用自定义选项执行密钥交换', () => {
       const sm2A = SM2.generateKeyPair();
       const sm2B = SM2.generateKeyPair();
       const tempA = SM2.generateKeyPair();
@@ -140,20 +140,20 @@ describe('Object-Oriented API', () => {
     });
   });
 
-  describe('SM3', () => {
-    it('should compute digest (static)', () => {
+  describe('SM3 哈希算法', () => {
+    it('应该能够计算摘要（静态方法）', () => {
       const hash = SM3.digest('Hello, SM3!');
       expect(hash).toMatch(/^[0-9a-f]+$/);
       expect(hash).toHaveLength(64);
     });
 
-    it('should compute HMAC (static)', () => {
+    it('应该能够计算 HMAC（静态方法）', () => {
       const mac = SM3.hmac('secret-key', 'data');
       expect(mac).toMatch(/^[0-9a-f]+$/);
       expect(mac).toHaveLength(64);
     });
 
-    it('should support incremental hashing', () => {
+    it('应该支持增量哈希', () => {
       const sm3 = new SM3();
       sm3.update('Hello, ').update('SM3!');
       const hash = sm3.digest();
@@ -165,7 +165,7 @@ describe('Object-Oriented API', () => {
       expect(hash).toBe(hashDirect);
     });
 
-    it('should support reset', () => {
+    it('应该支持重置', () => {
       const sm3 = new SM3();
       sm3.update('data1');
       sm3.reset();
@@ -185,10 +185,10 @@ describe('Object-Oriented API', () => {
     });
   });
 
-  describe('SM4', () => {
+  describe('SM4 分组密码', () => {
     const key = '0123456789abcdeffedcba9876543210';
 
-    it('should encrypt and decrypt with ECB mode', () => {
+    it('应该能够使用 ECB 模式加密和解密', () => {
       const sm4 = new SM4(key, { mode: CipherMode.ECB, padding: PaddingMode.PKCS7 });
       const plaintext = 'Hello, SM4!';
 
@@ -199,7 +199,7 @@ describe('Object-Oriented API', () => {
       expect(decrypted).toBe(plaintext);
     });
 
-    it('should encrypt and decrypt with CBC mode', () => {
+    it('应该能够使用 CBC 模式加密和解密', () => {
       const iv = 'fedcba98765432100123456789abcdef';
       const sm4 = new SM4(key, { mode: CipherMode.CBC, padding: PaddingMode.PKCS7, iv });
       const plaintext = 'Hello, SM4 CBC!';
@@ -211,7 +211,7 @@ describe('Object-Oriented API', () => {
       expect(decrypted).toBe(plaintext);
     });
 
-    it('should create with ECB factory method', () => {
+    it('应该能够使用 ECB 工厂方法创建', () => {
       const sm4 = SM4.ECB(key);
       const plaintext = 'Hello';
 
@@ -220,7 +220,7 @@ describe('Object-Oriented API', () => {
       expect(decrypted).toBe(plaintext);
     });
 
-    it('should create with CBC factory method', () => {
+    it('应该能够使用 CBC 工厂方法创建', () => {
       const iv = 'fedcba98765432100123456789abcdef';
       const sm4 = SM4.CBC(key, iv);
       const plaintext = 'Hello';
@@ -230,7 +230,7 @@ describe('Object-Oriented API', () => {
       expect(decrypted).toBe(plaintext);
     });
 
-    it('should get and set mode', () => {
+    it('应该能够获取和设置模式', () => {
       const sm4 = new SM4(key);
       expect(sm4.getMode()).toBe(CipherMode.ECB);
 
@@ -238,7 +238,7 @@ describe('Object-Oriented API', () => {
       expect(sm4.getMode()).toBe(CipherMode.CBC);
     });
 
-    it('should get and set padding', () => {
+    it('应该能够获取和设置填充', () => {
       const sm4 = new SM4(key);
       expect(sm4.getPadding()).toBe(PaddingMode.PKCS7);
 
@@ -246,7 +246,7 @@ describe('Object-Oriented API', () => {
       expect(sm4.getPadding()).toBe(PaddingMode.NONE);
     });
 
-    it('should get and set IV', () => {
+    it('应该能够获取和设置 IV', () => {
       const iv = 'fedcba98765432100123456789abcdef';
       const sm4 = new SM4(key);
       expect(sm4.getIV()).toBeUndefined();
@@ -255,7 +255,7 @@ describe('Object-Oriented API', () => {
       expect(sm4.getIV()).toBe(iv);
     });
 
-    it('should handle Uint8Array input', () => {
+    it('应该能够处理 Uint8Array 输入', () => {
       const sm4 = SM4.ECB(key);
       const plaintext = new Uint8Array([0x48, 0x65, 0x6c, 0x6c, 0x6f]);
 
@@ -264,7 +264,7 @@ describe('Object-Oriented API', () => {
       expect(decrypted).toBe('Hello');
     });
 
-    it('should create with CTR factory method', () => {
+    it('应该能够使用 CTR 工厂方法创建', () => {
       const iv = '00000000000000000000000000000000';
       const sm4 = SM4.CTR(key, iv);
       const plaintext = 'Hello, CTR!';
@@ -275,7 +275,7 @@ describe('Object-Oriented API', () => {
       expect(decrypted).toBe(plaintext);
     });
 
-    it('should create with CFB factory method', () => {
+    it('应该能够使用 CFB 工厂方法创建', () => {
       const iv = 'fedcba98765432100123456789abcdef';
       const sm4 = SM4.CFB(key, iv);
       const plaintext = 'Hello, CFB!';
@@ -286,7 +286,7 @@ describe('Object-Oriented API', () => {
       expect(decrypted).toBe(plaintext);
     });
 
-    it('should create with OFB factory method', () => {
+    it('应该能够使用 OFB 工厂方法创建', () => {
       const iv = 'fedcba98765432100123456789abcdef';
       const sm4 = SM4.OFB(key, iv);
       const plaintext = 'Hello, OFB!';
@@ -298,8 +298,8 @@ describe('Object-Oriented API', () => {
     });
   });
 
-  describe('ZUC', () => {
-    it('should encrypt and decrypt data', () => {
+  describe('ZUC 流密码', () => {
+    it('应该能够加密和解密数据', () => {
       const key = '00000000000000000000000000000000';
       const iv = '00000000000000000000000000000000';
       const zuc = new ZUC(key, iv);
@@ -313,7 +313,7 @@ describe('Object-Oriented API', () => {
       expect(decrypted).toBe(plaintext);
     });
 
-    it('should allow IV updates', () => {
+    it('应该允许更新 IV', () => {
       const key = '00112233445566778899aabbccddeeff';
       const iv1 = '00000000000000000000000000000000';
       const iv2 = 'ffffffffffffffffffffffffffffffff';
@@ -329,7 +329,7 @@ describe('Object-Oriented API', () => {
       expect(encrypted1).not.toBe(encrypted2);
     });
 
-    it('should generate keystream', () => {
+    it('应该能够生成密钥流', () => {
       const key = '00000000000000000000000000000000';
       const iv = '00000000000000000000000000000000';
       const zuc = new ZUC(key, iv);
@@ -339,7 +339,7 @@ describe('Object-Oriented API', () => {
       expect(keystream).toMatch(/^[0-9a-f]+$/);
     });
 
-    it('should support ZUC-128 static factory', () => {
+    it('应该支持 ZUC-128 静态工厂方法', () => {
       const key = 'ffffffffffffffffffffffffffffffff';
       const iv = '00000000000000000000000000000000';
       const zuc = ZUC.ZUC128(key, iv);
@@ -350,7 +350,7 @@ describe('Object-Oriented API', () => {
       expect(decrypted).toBe(plaintext);
     });
 
-    it('should support EEA3 static method', () => {
+    it('应该支持 EEA3 静态方法', () => {
       const key = '00000000000000000000000000000000';
       const count = 0x12345678;
       const bearer = 0x15;
@@ -362,7 +362,7 @@ describe('Object-Oriented API', () => {
       expect(keystream).toMatch(/^[0-9a-f]+$/);
     });
 
-    it('should support EIA3 static method', () => {
+    it('应该支持 EIA3 静态方法', () => {
       const key = '00000000000000000000000000000000';
       const count = 0x12345678;
       const bearer = 0x15;
@@ -375,7 +375,7 @@ describe('Object-Oriented API', () => {
       expect(mac).toMatch(/^[0-9a-f]+$/);
     });
 
-    it('should work with Uint8Array inputs', () => {
+    it('应该能够处理 Uint8Array 输入', () => {
       const key = new Uint8Array(16).fill(0);
       const iv = new Uint8Array(16).fill(1);
       const zuc = new ZUC(key, iv);
