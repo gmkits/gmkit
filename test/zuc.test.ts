@@ -8,9 +8,9 @@ import {
   zucGenerateKeystream,
 } from '../src/index';
 
-describe('ZUC Stream Cipher', () => {
-  describe('Basic Encryption and Decryption', () => {
-    it('should encrypt and decrypt data correctly', () => {
+describe('ZUC 流密码测试', () => {
+  describe('基本加密和解密', () => {
+    it('应该能够正确加密和解密数据', () => {
       const key = '00000000000000000000000000000000';
       const iv = '00000000000000000000000000000000';
       const plaintext = 'Hello, ZUC!';
@@ -23,7 +23,7 @@ describe('ZUC Stream Cipher', () => {
       expect(decrypted).toBe(plaintext);
     });
 
-    it('should handle empty plaintext', () => {
+    it('应该能够处理空明文', () => {
       const key = '00000000000000000000000000000000';
       const iv = '00000000000000000000000000000000';
       const plaintext = '';
@@ -35,7 +35,7 @@ describe('ZUC Stream Cipher', () => {
       expect(decrypted).toBe('');
     });
 
-    it('should handle Chinese text', () => {
+    it('应该能够处理中文文本', () => {
       const key = '00112233445566778899aabbccddeeff';
       const iv = 'ffeeddccbbaa99887766554433221100';
       const plaintext = '你好，祖冲之算法！';
@@ -45,7 +45,7 @@ describe('ZUC Stream Cipher', () => {
       expect(decrypted).toBe(plaintext);
     });
 
-    it('should handle long text', () => {
+    it('应该能够处理长文本', () => {
       const key = 'ffffffffffffffffffffffffffffffff';
       const iv = '00000000000000000000000000000000';
       const plaintext = 'The quick brown fox jumps over the lazy dog. '.repeat(10);
@@ -55,7 +55,7 @@ describe('ZUC Stream Cipher', () => {
       expect(decrypted).toBe(plaintext);
     });
 
-    it('should accept Uint8Array key and IV', () => {
+    it('应该接受 Uint8Array 密钥和 IV', () => {
       const key = new Uint8Array(16).fill(0);
       const iv = new Uint8Array(16).fill(1);
       const plaintext = 'Test with Uint8Array';
@@ -65,7 +65,7 @@ describe('ZUC Stream Cipher', () => {
       expect(decrypted).toBe(plaintext);
     });
 
-    it('should accept Uint8Array plaintext', () => {
+    it('应该接受 Uint8Array 明文', () => {
       const key = '12345678901234567890123456789012';
       const iv = '09876543210987654321098765432109';
       const plaintext = new Uint8Array([0x48, 0x65, 0x6c, 0x6c, 0x6f]); // "Hello"
@@ -76,8 +76,8 @@ describe('ZUC Stream Cipher', () => {
     });
   });
 
-  describe('Keystream Generation', () => {
-    it('should generate keystream of specified length', () => {
+  describe('密钥流生成', () => {
+    it('应该生成指定长度的密钥流', () => {
       const key = '00000000000000000000000000000000';
       const iv = '00000000000000000000000000000000';
       const length = 4; // 4 words = 16 bytes = 32 hex chars
@@ -87,7 +87,7 @@ describe('ZUC Stream Cipher', () => {
       expect(keystream).toMatch(/^[0-9a-f]+$/);
     });
 
-    it('should generate different keystreams for different keys', () => {
+    it('不同的密钥应该生成不同的密钥流', () => {
       const key1 = '00000000000000000000000000000000';
       const key2 = 'ffffffffffffffffffffffffffffffff';
       const iv = '00000000000000000000000000000000';
@@ -97,7 +97,7 @@ describe('ZUC Stream Cipher', () => {
       expect(keystream1).not.toBe(keystream2);
     });
 
-    it('should generate different keystreams for different IVs', () => {
+    it('不同的 IV 应该生成不同的密钥流', () => {
       const key = '00000000000000000000000000000000';
       const iv1 = '00000000000000000000000000000000';
       const iv2 = 'ffffffffffffffffffffffffffffffff';
@@ -107,7 +107,7 @@ describe('ZUC Stream Cipher', () => {
       expect(keystream1).not.toBe(keystream2);
     });
 
-    it('should generate consistent keystream for same key and IV', () => {
+    it('相同的密钥和 IV 应该生成一致的密钥流', () => {
       const key = 'abcdef0123456789abcdef0123456789';
       const iv = '123456789abcdef0123456789abcdef0';
 
@@ -117,7 +117,7 @@ describe('ZUC Stream Cipher', () => {
     });
   });
 
-  describe('Test Vectors', () => {
+  describe('测试向量', () => {
     it.skip('should match reference test vector 1', () => {
       // Test vector from ZUC specification
       // Note: Test vector validation needs verification against official test suite
@@ -161,8 +161,8 @@ describe('ZUC Stream Cipher', () => {
     });
   });
 
-  describe('EEA3 - LTE Encryption Algorithm', () => {
-    it('should generate EEA3 keystream', () => {
+  describe('EEA3 - LTE 加密算法', () => {
+    it('应该生成 EEA3 密钥流', () => {
       const key = '00000000000000000000000000000000';
       const count = 0;
       const bearer = 0;
@@ -174,7 +174,7 @@ describe('ZUC Stream Cipher', () => {
       expect(keystream).toMatch(/^[0-9a-f]+$/);
     });
 
-    it('should generate different keystreams for different count values', () => {
+    it('不同的计数值应该生成不同的密钥流', () => {
       const key = '00112233445566778899aabbccddeeff';
       const bearer = 5;
       const direction = 0;
@@ -185,7 +185,7 @@ describe('ZUC Stream Cipher', () => {
       expect(keystream1).not.toBe(keystream2);
     });
 
-    it('should generate different keystreams for different bearer values', () => {
+    it('不同的承载值应该生成不同的密钥流', () => {
       const key = 'ffeeddccbbaa99887766554433221100';
       const count = 100;
       const direction = 1;
@@ -196,7 +196,7 @@ describe('ZUC Stream Cipher', () => {
       expect(keystream1).not.toBe(keystream2);
     });
 
-    it('should generate different keystreams for different directions', () => {
+    it('不同的方向应该生成不同的密钥流', () => {
       const key = 'abcdef0123456789abcdef0123456789';
       const count = 50;
       const bearer = 10;
@@ -208,8 +208,8 @@ describe('ZUC Stream Cipher', () => {
     });
   });
 
-  describe('EIA3 - LTE Integrity Algorithm', () => {
-    it('should generate EIA3 MAC', () => {
+  describe('EIA3 - LTE 完整性算法', () => {
+    it('应该生成 EIA3 MAC', () => {
       const key = '00000000000000000000000000000000';
       const count = 0;
       const bearer = 0;
@@ -221,7 +221,7 @@ describe('ZUC Stream Cipher', () => {
       expect(mac).toMatch(/^[0-9a-f]{8}$/); // 32-bit MAC = 8 hex chars
     });
 
-    it('should generate same MAC for same inputs', () => {
+    it('相同的输入应该生成相同的 MAC', () => {
       const key = '00112233445566778899aabbccddeeff';
       const count = 100;
       const bearer = 5;
@@ -233,7 +233,7 @@ describe('ZUC Stream Cipher', () => {
       expect(mac1).toBe(mac2);
     });
 
-    it('should generate different MACs for different messages', () => {
+    it('不同的消息应该生成不同的 MAC', () => {
       const key = 'ffeeddccbbaa99887766554433221100';
       const count = 200;
       const bearer = 10;
@@ -244,7 +244,7 @@ describe('ZUC Stream Cipher', () => {
       expect(mac1).not.toBe(mac2);
     });
 
-    it('should generate different MACs for different count values', () => {
+    it('不同的计数值应该生成不同的 MAC', () => {
       const key = '123456789abcdef0123456789abcdef0';
       const bearer = 3;
       const direction = 1;
@@ -255,7 +255,7 @@ describe('ZUC Stream Cipher', () => {
       expect(mac1).not.toBe(mac2);
     });
 
-    it('should accept Uint8Array message', () => {
+    it('应该接受 Uint8Array 消息', () => {
       const key = 'abcdef0123456789abcdef0123456789';
       const count = 50;
       const bearer = 7;
@@ -267,8 +267,8 @@ describe('ZUC Stream Cipher', () => {
     });
   });
 
-  describe('Error Handling', () => {
-    it('should throw error for invalid key length', () => {
+  describe('错误处理', () => {
+    it('无效的密钥长度应该抛出错误', () => {
       const key = '0011223344556677'; // Only 8 bytes
       const iv = '00000000000000000000000000000000';
       const plaintext = 'Test';
@@ -276,7 +276,7 @@ describe('ZUC Stream Cipher', () => {
       expect(() => zucEncrypt(key, iv, plaintext)).toThrow('Key must be 16 bytes');
     });
 
-    it('should throw error for invalid IV length', () => {
+    it('无效的 IV 长度应该抛出错误', () => {
       const key = '00112233445566778899aabbccddeeff';
       const iv = '0011223344556677'; // Only 8 bytes
       const plaintext = 'Test';
@@ -285,8 +285,8 @@ describe('ZUC Stream Cipher', () => {
     });
   });
 
-  describe('Stream Cipher Properties', () => {
-    it('should be symmetric (encryption = decryption)', () => {
+  describe('流密码特性', () => {
+    it('应该是对称的（加密 = 解密）', () => {
       const key = '00112233445566778899aabbccddeeff';
       const iv = 'ffeeddccbbaa99887766554433221100';
       const plaintext = 'Stream cipher test';
@@ -302,7 +302,7 @@ describe('ZUC Stream Cipher', () => {
       expect(ciphertext2).toBe(ciphertext);
     });
 
-    it('should produce different ciphertexts for different plaintexts', () => {
+    it('不同的明文应该产生不同的密文', () => {
       const key = 'ffffffffffffffffffffffffffffffff';
       const iv = '00000000000000000000000000000000';
 
@@ -311,7 +311,7 @@ describe('ZUC Stream Cipher', () => {
       expect(ciphertext1).not.toBe(ciphertext2);
     });
 
-    it('should handle binary data correctly', () => {
+    it('应该能够正确处理二进制数据', () => {
       const key = '12345678901234567890123456789012';
       const iv = '09876543210987654321098765432109';
       const binaryData = new Uint8Array(256);
@@ -325,8 +325,8 @@ describe('ZUC Stream Cipher', () => {
     });
   });
 
-  describe('Edge Cases', () => {
-    it('should handle all-zero key and IV', () => {
+  describe('边界情况', () => {
+    it('应该能够处理全零密钥和 IV', () => {
       const key = '00000000000000000000000000000000';
       const iv = '00000000000000000000000000000000';
       const plaintext = 'Edge case test';
@@ -336,7 +336,7 @@ describe('ZUC Stream Cipher', () => {
       expect(decrypted).toBe(plaintext);
     });
 
-    it('should handle all-ones key and IV', () => {
+    it('应该能够处理全一密钥和 IV', () => {
       const key = 'ffffffffffffffffffffffffffffffff';
       const iv = 'ffffffffffffffffffffffffffffffff';
       const plaintext = 'Another edge case';
@@ -346,7 +346,7 @@ describe('ZUC Stream Cipher', () => {
       expect(decrypted).toBe(plaintext);
     });
 
-    it('should handle single byte plaintext', () => {
+    it('应该能够处理单字节明文', () => {
       const key = 'abcdef0123456789abcdef0123456789';
       const iv = '123456789abcdef0123456789abcdef0';
       const plaintext = 'A';
@@ -358,7 +358,7 @@ describe('ZUC Stream Cipher', () => {
       expect(decrypted).toBe(plaintext);
     });
 
-    it('should handle maximum bearer value (31)', () => {
+    it('应该能够处理最大承载值 (31)', () => {
       const key = '00112233445566778899aabbccddeeff';
       const count = 0;
       const bearer = 31; // Maximum 5-bit value
