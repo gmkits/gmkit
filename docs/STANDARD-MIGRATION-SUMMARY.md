@@ -393,7 +393,7 @@ const signature = sign(privateKey, data, { userId });
 
 如有任何问题或建议：
 
-- GitHub Issues: https://github.com/linyuliu/smkit/issues
+- GitHub Issues: https://github.com/CherryRum/smkit/issues
 - NPM: https://www.npmjs.com/package/smkit
 
 ## 附录
@@ -408,7 +408,7 @@ const signature = sign(privateKey, data, { userId });
 
 ### B. 相关链接
 
-- [SMKit 主页](https://github.com/linyuliu/smkit)
+- [SMKit 主页](https://github.com/CherryRum/smkit)
 - [GMT 标准符合性文档](./GMT-0009-COMPLIANCE.md)
 - [性能优化指南](./PERFORMANCE-OPTIMIZATIONS.md)
 

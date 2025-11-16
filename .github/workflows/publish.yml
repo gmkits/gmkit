@@ -114,8 +114,8 @@ jobs:
             ```
 
             ### 变更日志 / Changelog
-            请查看 [CHANGELOG.md](https://github.com/linyuliu/smkit/blob/main/CHANGELOG.md)
-            See [CHANGELOG.md](https://github.com/linyuliu/smkit/blob/main/CHANGELOG.md)
+            请查看 [CHANGELOG.md](https://github.com/CherryRum/smkit/blob/main/CHANGELOG.md)
+            See [CHANGELOG.md](https://github.com/CherryRum/smkit/blob/main/CHANGELOG.md)
 
             ### 构建产物 / Build Artifacts
             - ES Module: `dist/smkit.js`

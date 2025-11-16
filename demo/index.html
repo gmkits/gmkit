@@ -10,19 +10,19 @@
             margin: 0;
             padding: 0;
         }
-        
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
         }
-        
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
         }
-        
+
         h1 {
             color: white;
             text-align: center;
@@ -30,21 +30,21 @@
             font-size: 2.5em;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
         }
-        
+
         .subtitle {
             color: rgba(255,255,255,0.9);
             text-align: center;
             margin-bottom: 40px;
             font-size: 1.1em;
         }
-        
+
         .tabs {
             display: flex;
             gap: 10px;
             margin-bottom: 20px;
             flex-wrap: wrap;
         }
-        
+
         .tab {
             background: rgba(255,255,255,0.2);
             color: white;
@@ -56,18 +56,18 @@
             transition: all 0.3s;
             backdrop-filter: blur(10px);
         }
-        
+
         .tab:hover {
             background: rgba(255,255,255,0.3);
             transform: translateY(-2px);
         }
-        
+
         .tab.active {
             background: white;
             color: #667eea;
             font-weight: bold;
         }
-        
+
         .tab-content {
             display: none;
             background: white;
@@ -75,12 +75,12 @@
             border-radius: 12px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
-        
+
         .tab-content.active {
             display: block;
             animation: fadeIn 0.3s;
         }
-        
+
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -91,18 +91,18 @@
                 transform: translateY(0);
             }
         }
-        
+
         .form-group {
             margin-bottom: 20px;
         }
-        
+
         label {
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
             color: #333;
         }
-        
+
         input[type="text"],
         textarea {
             width: 100%;
@@ -113,18 +113,18 @@
             font-family: 'Courier New', monospace;
             transition: border-color 0.3s;
         }
-        
+
         input[type="text"]:focus,
         textarea:focus {
             outline: none;
             border-color: #667eea;
         }
-        
+
         textarea {
             min-height: 100px;
             resize: vertical;
         }
-        
+
         button {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -136,16 +136,16 @@
             transition: all 0.3s;
             font-weight: 600;
         }
-        
+
         button:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
-        
+
         button:active {
             transform: translateY(0);
         }
-        
+
         .result {
             margin-top: 20px;
             padding: 15px;
@@ -153,12 +153,12 @@
             border-radius: 8px;
             border-left: 4px solid #667eea;
         }
-        
+
         .result h3 {
             margin-bottom: 10px;
             color: #667eea;
         }
-        
+
         .result pre {
             background: white;
             padding: 15px;
@@ -168,13 +168,13 @@
             font-size: 13px;
             line-height: 1.5;
         }
-        
+
         .button-group {
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
         }
-        
+
         .info-box {
             background: #e8f4fd;
             border-left: 4px solid #2196F3;
@@ -182,17 +182,17 @@
             margin-bottom: 20px;
             border-radius: 4px;
         }
-        
+
         .info-box h4 {
             color: #2196F3;
             margin-bottom: 8px;
         }
-        
+
         .info-box p {
             color: #555;
             line-height: 1.6;
         }
-        
+
         .code-snippet {
             background: #2d2d2d;
             color: #f8f8f2;
@@ -201,7 +201,7 @@
             margin: 10px 0;
             overflow-x: auto;
         }
-        
+
         .code-snippet code {
             font-family: 'Courier New', monospace;
             font-size: 13px;
@@ -212,7 +212,7 @@
     <div class="container">
         <h1>🔐 SMKit 演示</h1>
         <p class="subtitle">中国国密算法（SM2、SM3、SM4）在线测试工具</p>
-        
+
         <div class="tabs">
             <button class="tab active" onclick="showTab('sm2')">SM2 加密验签</button>
             <button class="tab" onclick="showTab('sm3')">SM3 哈希</button>
@@ -220,39 +220,39 @@
             <button class="tab" onclick="showTab('tools')">调试工具</button>
             <button class="tab" onclick="showTab('about')">关于</button>
         </div>
-        
+
         <!-- SM2 Tab -->
         <div id="sm2" class="tab-content active">
             <div class="info-box">
                 <h4>SM2 椭圆曲线公钥密码算法</h4>
                 <p>SM2 是中国国家密码管理局发布的椭圆曲线公钥密码算法，基于 256 位椭圆曲线。</p>
             </div>
-            
+
             <div class="button-group">
                 <button onclick="generateSM2KeyPair()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; font-weight: 600; padding: 14px 28px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4); transition: all 0.3s ease;">🔑 生成密钥对</button>
             </div>
-            
+
             <div class="form-group">
                 <label for="sm2-private-key">私钥：</label>
                 <input type="text" id="sm2-private-key" placeholder="点击"生成密钥对"按钮生成" readonly>
             </div>
-            
+
             <div class="form-group">
                 <label for="sm2-public-key">公钥：</label>
                 <input type="text" id="sm2-public-key" placeholder="点击"生成密钥对"按钮生成" readonly>
             </div>
-            
+
             <div class="form-group">
                 <label for="sm2-message">消息：</label>
                 <textarea id="sm2-message" placeholder="输入要签名的消息...">Hello, SM2!</textarea>
             </div>
-            
+
             <div class="form-group">
                 <label for="sm2-user-id">用户ID (User ID)：</label>
                 <input type="text" id="sm2-user-id" placeholder="默认值: 1234567812345678" value="1234567812345678">
                 <p style="color: #666; font-size: 12px; margin-top: 5px;">💡 用于签名和验签时的 Z 值计算，必须保持一致（GM/T 0009-2012 规范默认值）</p>
             </div>
-            
+
             <div class="form-group">
                 <label>
                     <input type="checkbox" id="sm2-skip-z" style="width: auto; margin-right: 5px;">
@@ -263,55 +263,55 @@
                 <button onclick="testSM2Sign()">签名</button>
                 <button onclick="testSM2Verify()">验证签名</button>
             </div>
-            
+
             <div style="margin-top: 30px; padding-top: 30px; border-top: 2px solid #e0e0e0;">
                 <h3 style="margin-bottom: 15px;">SM2 加解密</h3>
-                
+
                 <div class="form-group">
                     <label for="sm2-encrypt-text">明文：</label>
                     <textarea id="sm2-encrypt-text" placeholder="输入要加密的文本...">Hello, SM2 Encryption!</textarea>
                 </div>
-                
+
                 <div class="button-group">
                     <button onclick="testSM2Encrypt()">加密</button>
                     <button onclick="testSM2Decrypt()">解密</button>
                 </div>
-                
+
                 <div id="sm2-encrypt-result"></div>
             </div>
-            
+
             <div id="sm2-result"></div>
         </div>
-        
+
         <!-- SM3 Tab -->
         <div id="sm3" class="tab-content">
             <div class="info-box">
                 <h4>SM3 密码哈希算法</h4>
                 <p>SM3 是中国国家密码管理局发布的密码哈希算法，输出 256 位（32 字节）哈希值。</p>
             </div>
-            
+
             <div class="form-group">
                 <label for="sm3-input">输入文本：</label>
                 <textarea id="sm3-input" placeholder="输入要计算哈希的文本...">Hello, SM3!</textarea>
             </div>
-            
+
             <button onclick="testSM3()">计算 SM3 哈希</button>
-            
+
             <div id="sm3-result"></div>
         </div>
-        
+
         <!-- SM4 Tab -->
         <div id="sm4" class="tab-content">
             <div class="info-box">
                 <h4>SM4 分组密码算法</h4>
                 <p>SM4 是中国国家密码管理局发布的分组密码算法，密钥长度 128 位。支持多种加密模式。</p>
             </div>
-            
+
             <div class="form-group">
                 <label for="sm4-key">密钥 (128比特)：</label>
                 <input type="text" id="sm4-key" value="0123456789abcdeffedcba9876543210" placeholder="请输入 16 字节的密钥（32 位十六进制）">
             </div>
-            
+
             <div class="form-group">
                 <label for="sm4-key-format">密钥数据格式：</label>
                 <select id="sm4-key-format">
@@ -319,12 +319,12 @@
                     <option value="text">文本 (Text)</option>
                 </select>
             </div>
-            
+
             <div class="form-group">
                 <label for="sm4-iv">IV (CBC/CFB/OFB 加密模式下可用)：</label>
                 <input type="text" id="sm4-iv" value="fedcba98765432100123456789abcdef" placeholder="请输入 16 字节的 IV（32 位十六进制）">
             </div>
-            
+
             <div class="form-group">
                 <label for="sm4-iv-format">IV 数据格式：</label>
                 <select id="sm4-iv-format">
@@ -332,7 +332,7 @@
                     <option value="text">文本 (Text)</option>
                 </select>
             </div>
-            
+
             <div class="form-group">
                 <label for="sm4-mode">加密模式：</label>
                 <select id="sm4-mode">
@@ -343,7 +343,7 @@
                     <option value="ofb">OFB (输出反馈模式)</option>
                 </select>
             </div>
-            
+
             <div class="form-group">
                 <label for="sm4-padding">填充模式：</label>
                 <select id="sm4-padding">
@@ -351,7 +351,7 @@
                     <option value="none">None</option>
                 </select>
             </div>
-            
+
             <div class="form-group">
                 <label for="sm4-result-format">加密结果数据格式：</label>
                 <select id="sm4-result-format">
@@ -359,27 +359,27 @@
                     <option value="base64">Base64</option>
                 </select>
             </div>
-            
+
             <div class="form-group">
                 <label for="sm4-plaintext">明文：</label>
                 <textarea id="sm4-plaintext" placeholder="输入要加密的文本...">Hello, SM4!</textarea>
             </div>
-            
+
             <div class="button-group">
                 <button onclick="testSM4Encrypt()">加密</button>
                 <button onclick="testSM4Decrypt()">解密</button>
             </div>
-            
+
             <div id="sm4-result"></div>
         </div>
-        
+
         <!-- Tools Tab -->
         <div id="tools" class="tab-content">
             <div class="info-box">
                 <h4>调试工具</h4>
                 <p>提供各种实用工具用于调试和转换。</p>
             </div>
-            
+
             <!-- 私钥生成公钥 -->
             <h3 style="margin-bottom: 15px;">私钥生成公钥</h3>
             <div class="form-group">
@@ -391,7 +391,7 @@
                 <button onclick="derivePublicKey(true)">生成压缩公钥</button>
             </div>
             <div id="derive-result"></div>
-            
+
             <!-- 公钥格式转换 -->
             <h3 style="margin-top: 30px; margin-bottom: 15px;">公钥格式转换</h3>
             <div class="form-group">
@@ -403,7 +403,7 @@
                 <button onclick="convertPublicKey('decompress')">解压公钥</button>
             </div>
             <div id="convert-result"></div>
-            
+
             <!-- ASN.1 签名转换 -->
             <h3 style="margin-top: 30px; margin-bottom: 15px;">签名格式转换</h3>
             <div class="form-group">
@@ -416,7 +416,7 @@
                 <button onclick="convertSignature('to-xml')">转换为 XML</button>
             </div>
             <div id="signature-result"></div>
-            
+
             <!-- 随机数生成测试 -->
             <h3 style="margin-top: 30px; margin-bottom: 15px;">随机数生成测试</h3>
             <div class="button-group">
@@ -424,14 +424,14 @@
             </div>
             <div id="random-result"></div>
         </div>
-        
+
         <!-- About Tab -->
         <div id="about" class="tab-content">
             <h2>关于 SMKit</h2>
             <p style="line-height: 1.8; margin: 20px 0;">
                 SMKit 是一个纯 TypeScript 实现的中国国密算法库，包含 SM2、SM3、SM4 算法的完整实现。
             </p>
-            
+
             <h3 style="margin-top: 30px; margin-bottom: 15px;">✨ 特性</h3>
             <ul style="line-height: 2; margin-left: 20px;">
                 <li><strong>纯粹性</strong>：零运行时依赖，纯 TypeScript 实现</li>
@@ -439,12 +439,12 @@
                 <li><strong>同构性</strong>：同时支持 Node.js 和浏览器环境</li>
                 <li><strong>高性能</strong>：优化的实现，基于 @noble/curves 准备</li>
             </ul>
-            
+
             <h3 style="margin-top: 30px; margin-bottom: 15px;">📦 安装</h3>
             <div class="code-snippet">
                 <code>npm install smkit</code>
             </div>
-            
+
             <h3 style="margin-top: 30px; margin-bottom: 15px;">💻 使用示例</h3>
             <div class="code-snippet">
                 <code>import { digest, sm4Encrypt, generateKeyPair } from 'smkit';
@@ -458,32 +458,32 @@ const encrypted = sm4Encrypt(key, plaintext);
 // SM2 密钥生成
 const keyPair = generateKeyPair();</code>
             </div>
-            
+
             <h3 style="margin-top: 30px; margin-bottom: 15px;">🔗 链接</h3>
             <ul style="line-height: 2; margin-left: 20px;">
-                <li><a href="https://github.com/linyuliu/smkit" target="_blank" style="color: #667eea;">GitHub 仓库</a></li>
+                <li><a href="https://github.com/CherryRum/smkit" target="_blank" style="color: #667eea;">GitHub 仓库</a></li>
                 <li><a href="https://www.npmjs.com/package/smkit" target="_blank" style="color: #667eea;">NPM 包</a></li>
             </ul>
         </div>
     </div>
-    
+
     <script type="module">
         // 导入 SMKit 库（使用本地构建的版本）
         import * as smkit from '../dist/smkit.js';
-        
+
         // 将 smkit 暴露到全局 window 对象，方便 inline script 使用
         window.smkit = smkit;
-        
+
         // 为了方便使用，创建包装函数
         window.smkitHelpers = {
             digest: (text) => smkit.digest(text),
-            sm4Encrypt: (key, plaintext) => smkit.sm4Encrypt(key, plaintext, { 
-                mode: smkit.CipherMode.ECB, 
-                padding: smkit.PaddingMode.PKCS7 
+            sm4Encrypt: (key, plaintext) => smkit.sm4Encrypt(key, plaintext, {
+                mode: smkit.CipherMode.ECB,
+                padding: smkit.PaddingMode.PKCS7
             }),
-            sm4Decrypt: (key, ciphertext) => smkit.sm4Decrypt(key, ciphertext, { 
-                mode: smkit.CipherMode.ECB, 
-                padding: smkit.PaddingMode.PKCS7 
+            sm4Decrypt: (key, ciphertext) => smkit.sm4Decrypt(key, ciphertext, {
+                mode: smkit.CipherMode.ECB,
+                padding: smkit.PaddingMode.PKCS7
             }),
             generateKeyPair: (compressed) => smkit.generateKeyPair(compressed),
             getPublicKeyFromPrivateKey: (privateKey, compressed) => smkit.getPublicKeyFromPrivateKey(privateKey, compressed),
@@ -499,7 +499,7 @@ const keyPair = generateKeyPair();</code>
             bytesToHex: (bytes) => smkit.bytesToHex(bytes)
         };
     </script>
-    
+
     <script>
         function showTab(tabName) {
             // 隐藏所有标签页
@@ -509,17 +509,17 @@ const keyPair = generateKeyPair();</code>
             document.querySelectorAll('.tab').forEach(tab => {
                 tab.classList.remove('active');
             });
-            
+
             // 显示选中的标签页
             document.getElementById(tabName).classList.add('active');
             event.target.classList.add('active');
         }
-        
+
         function testSM3() {
             try {
                 const input = document.getElementById('sm3-input').value;
                 const hash = window.smkitHelpers.digest(input);
-                
+
                 document.getElementById('sm3-result').innerHTML = `
                     <div class="result">
                         <h3>哈希结果：</h3>
@@ -537,7 +537,7 @@ const keyPair = generateKeyPair();</code>
                 `;
             }
         }
-        
+
         function testSM4Encrypt() {
             try {
                 let key = document.getElementById('sm4-key').value;
@@ -548,28 +548,28 @@ const keyPair = generateKeyPair();</code>
                 let iv = document.getElementById('sm4-iv').value;
                 const ivFormat = document.getElementById('sm4-iv-format').value;
                 const resultFormat = document.getElementById('sm4-result-format').value;
-                
+
                 // 处理密钥格式
                 if (keyFormat === 'text') {
                     key = window.smkitHelpers.bytesToHex(new TextEncoder().encode(key));
                 }
-                
+
                 if (key.length !== 32) {
                     alert('密钥必须是 32 位十六进制字符（16 字节）');
                     return;
                 }
-                
+
                 // 处理 IV 格式
                 if (ivFormat === 'text') {
                     iv = window.smkitHelpers.bytesToHex(new TextEncoder().encode(iv));
                 }
-                
+
                 // 构建选项
-                const options = { 
-                    mode: window.smkit.CipherMode[mode.toUpperCase()], 
+                const options = {
+                    mode: window.smkit.CipherMode[mode.toUpperCase()],
                     padding: window.smkit.PaddingMode[padding.toUpperCase()]
                 };
-                
+
                 if (mode !== 'ecb' && iv) {
                     if (iv.length !== 32) {
                         alert('IV 必须是 32 位十六进制字符（16 字节）');
@@ -577,9 +577,9 @@ const keyPair = generateKeyPair();</code>
                     }
                     options.iv = iv;
                 }
-                
+
                 const ciphertext = window.smkit.sm4Encrypt(key, plaintext, options);
-                
+
                 // 处理输出格式
                 let displayResult = ciphertext;
                 if (resultFormat === 'base64') {
@@ -596,7 +596,7 @@ const keyPair = generateKeyPair();</code>
                     }
                     displayResult = btoa(binary);
                 }
-                
+
                 document.getElementById('sm4-result').innerHTML = `
                     <div class="result">
                         <h3>加密结果：</h3>
@@ -608,7 +608,7 @@ const keyPair = generateKeyPair();</code>
                         <p style="color: #666;">密文长度: ${displayResult.length} 字符</p>
                     </div>
                 `;
-                
+
                 // 保存密文以供解密使用
                 window.currentSM4Ciphertext = ciphertext;
                 window.currentSM4Mode = mode;
@@ -623,39 +623,39 @@ const keyPair = generateKeyPair();</code>
                 `;
             }
         }
-        
+
         function testSM4Decrypt() {
             try {
                 let key = document.getElementById('sm4-key').value;
                 const keyFormat = document.getElementById('sm4-key-format').value;
-                
+
                 if (!window.currentSM4Ciphertext) {
                     alert('请先加密');
                     return;
                 }
-                
+
                 // 处理密钥格式
                 if (keyFormat === 'text') {
                     key = window.smkitHelpers.bytesToHex(new TextEncoder().encode(key));
                 }
-                
+
                 if (key.length !== 32) {
                     alert('密钥必须是 32 位十六进制字符（16 字节）');
                     return;
                 }
-                
+
                 // 构建选项
-                const options = { 
-                    mode: window.smkit.CipherMode[window.currentSM4Mode.toUpperCase()], 
+                const options = {
+                    mode: window.smkit.CipherMode[window.currentSM4Mode.toUpperCase()],
                     padding: window.smkit.PaddingMode[window.currentSM4Padding.toUpperCase()]
                 };
-                
+
                 if (window.currentSM4Mode !== 'ecb' && window.currentSM4IV) {
                     options.iv = window.currentSM4IV;
                 }
-                
+
                 const plaintext = window.smkit.sm4Decrypt(key, window.currentSM4Ciphertext, options);
-                
+
                 document.getElementById('sm4-result').innerHTML = `
                     <div class="result">
                         <h3>解密结果：</h3>
@@ -674,28 +674,28 @@ const keyPair = generateKeyPair();</code>
                 `;
             }
         }
-        
+
         function generateSM2KeyPair() {
             try {
                 // 生成非压缩格式的密钥对
                 const keyPair = window.smkitHelpers.generateKeyPair(false);
-                
+
                 // 填充输入框（使用非压缩公钥）
                 document.getElementById('sm2-private-key').value = keyPair.privateKey;
                 document.getElementById('sm2-public-key').value = keyPair.publicKey;
-                
+
                 // 生成压缩格式的公钥
                 const compressedKey = window.smkitHelpers.compressPublicKey(keyPair.publicKey);
                 const uncompressedKey = keyPair.publicKey;
-                
+
                 // 提取公钥坐标 X 和 Y（去掉04前缀，前64个字符是X，后64个字符是Y）
                 const publicKeyX = uncompressedKey.substring(2, 66);
                 const publicKeyY = uncompressedKey.substring(66, 130);
-                
+
                 document.getElementById('sm2-result').innerHTML = `
                     <div class="result" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-left: 5px solid #667eea; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
                         <h3 style="color: #667eea; font-size: 1.3em; margin-bottom: 15px;">✅ 密钥对生成成功</h3>
-                        
+
                         <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
                             <div style="display: flex; align-items: center; margin-bottom: 10px;">
                                 <span style="font-size: 24px; margin-right: 10px;">🔐</span>
@@ -706,7 +706,7 @@ const keyPair = generateKeyPair();</code>
                                 <code style="word-break: break-all; font-size: 13px; color: #495057;">${keyPair.privateKey}</code>
                             </div>
                         </div>
-                        
+
                         <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
                             <div style="display: flex; align-items: center; margin-bottom: 10px;">
                                 <span style="font-size: 24px; margin-right: 10px;">📐</span>
@@ -718,7 +718,7 @@ const keyPair = generateKeyPair();</code>
                                 <code style="word-break: break-all; font-size: 13px; color: #bf360c;">${publicKeyX}</code>
                             </div>
                         </div>
-                        
+
                         <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
                             <div style="display: flex; align-items: center; margin-bottom: 10px;">
                                 <span style="font-size: 24px; margin-right: 10px;">📐</span>
@@ -730,7 +730,7 @@ const keyPair = generateKeyPair();</code>
                                 <code style="word-break: break-all; font-size: 13px; color: #4a148c;">${publicKeyY}</code>
                             </div>
                         </div>
-                        
+
                         <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
                             <div style="display: flex; align-items: center; margin-bottom: 10px;">
                                 <span style="font-size: 24px; margin-right: 10px;">🔑</span>
@@ -742,7 +742,7 @@ const keyPair = generateKeyPair();</code>
                                 <code style="word-break: break-all; font-size: 13px; color: #1565c0;">${uncompressedKey}</code>
                             </div>
                         </div>
-                        
+
                         <div style="background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
                             <div style="display: flex; align-items: center; margin-bottom: 10px;">
                                 <span style="font-size: 24px; margin-right: 10px;">🗜️</span>
@@ -754,7 +754,7 @@ const keyPair = generateKeyPair();</code>
                                 <code style="word-break: break-all; font-size: 13px; color: #2e7d32;">${compressedKey}</code>
                             </div>
                         </div>
-                        
+
                         <div style="margin-top: 15px; padding: 12px; background: rgba(102, 126, 234, 0.1); border-radius: 6px; border-left: 3px solid #667eea;">
                             <p style="color: #667eea; font-weight: 600; margin: 0;">
                                 <span style="font-size: 18px; margin-right: 8px;">✨</span>
@@ -772,23 +772,23 @@ const keyPair = generateKeyPair();</code>
                 `;
             }
         }
-        
+
         let currentSignature = '';
         let currentCiphertext = '';
         const DEFAULT_USER_ID = '1234567812345678';
-        
+
         function testSM2Encrypt() {
             try {
                 const publicKey = document.getElementById('sm2-public-key').value;
                 const plaintext = document.getElementById('sm2-encrypt-text').value;
-                
+
                 if (!publicKey) {
                     alert('请先生成密钥对');
                     return;
                 }
-                
+
                 currentCiphertext = window.smkitHelpers.sm2Encrypt(publicKey, plaintext);
-                
+
                 document.getElementById('sm2-encrypt-result').innerHTML = `
                     <div class="result">
                         <h3>加密结果：</h3>
@@ -807,23 +807,23 @@ const keyPair = generateKeyPair();</code>
                 `;
             }
         }
-        
+
         function testSM2Decrypt() {
             try {
                 const privateKey = document.getElementById('sm2-private-key').value;
-                
+
                 if (!privateKey) {
                     alert('请先生成密钥对');
                     return;
                 }
-                
+
                 if (!currentCiphertext) {
                     alert('请先加密');
                     return;
                 }
-                
+
                 const plaintext = window.smkitHelpers.sm2Decrypt(privateKey, currentCiphertext);
-                
+
                 document.getElementById('sm2-encrypt-result').innerHTML = `
                     <div class="result">
                         <h3>解密结果：</h3>
@@ -840,19 +840,19 @@ const keyPair = generateKeyPair();</code>
                 `;
             }
         }
-        
+
         function testSM2Sign() {
             try {
                 const privateKey = document.getElementById('sm2-private-key').value;
                 const message = document.getElementById('sm2-message').value;
                 const userId = document.getElementById('sm2-user-id').value.trim() || DEFAULT_USER_ID;
                 const skipZ = document.getElementById('sm2-skip-z').checked;
-                
+
                 if (!privateKey) {
                     alert('请先生成密钥对');
                     return;
                 }
-                
+
                 // 构建签名选项
                 const options = {};
                 if (skipZ) {
@@ -860,9 +860,9 @@ const keyPair = generateKeyPair();</code>
                 } else {
                     options.userId = userId;
                 }
-                
+
                 currentSignature = window.smkitHelpers.sign(privateKey, message, options);
-                
+
                 document.getElementById('sm2-result').innerHTML = `
                     <div class="result">
                         <h3>签名结果：</h3>
@@ -880,24 +880,24 @@ const keyPair = generateKeyPair();</code>
                 `;
             }
         }
-        
+
         function testSM2Verify() {
             try {
                 const publicKey = document.getElementById('sm2-public-key').value;
                 const message = document.getElementById('sm2-message').value;
                 const userId = document.getElementById('sm2-user-id').value.trim() || DEFAULT_USER_ID;
                 const skipZ = document.getElementById('sm2-skip-z').checked;
-                
+
                 if (!publicKey) {
                     alert('请先生成密钥对');
                     return;
                 }
-                
+
                 if (!currentSignature) {
                     alert('请先签名');
                     return;
                 }
-                
+
                 // 构建验证选项
                 const options = {};
                 if (skipZ) {
@@ -905,12 +905,12 @@ const keyPair = generateKeyPair();</code>
                 } else {
                     options.userId = userId;
                 }
-                
+
                 const isValid = window.smkitHelpers.verify(publicKey, message, currentSignature, options);
-                
+
                 const statusColor = isValid ? '#4CAF50' : '#f44336';
                 const statusIcon = isValid ? '✅' : '❌';
-                
+
                 document.getElementById('sm2-result').innerHTML = `
                     <div class="result" style="border-left-color: ${statusColor};">
                         <h3 style="color: ${statusColor};">验证结果：</h3>
@@ -927,21 +927,21 @@ const keyPair = generateKeyPair();</code>
                 `;
             }
         }
-        
+
         // 工具函数
         function derivePublicKey(compressed) {
             try {
                 const privateKey = document.getElementById('tool-private-key').value.trim();
-                
+
                 if (!privateKey) {
                     alert('请输入私钥');
                     return;
                 }
-                
+
                 const publicKey = window.smkitHelpers.getPublicKeyFromPrivateKey(privateKey, compressed);
                 const format = compressed ? '压缩格式' : '非压缩格式';
                 const prefix = publicKey.substring(0, 2);
-                
+
                 document.getElementById('derive-result').innerHTML = `
                     <div class="result">
                         <h3>生成的公钥（${format}）：</h3>
@@ -960,18 +960,18 @@ const keyPair = generateKeyPair();</code>
                 `;
             }
         }
-        
+
         function convertPublicKey(type) {
             try {
                 const publicKey = document.getElementById('tool-public-key').value.trim();
-                
+
                 if (!publicKey) {
                     alert('请输入公钥');
                     return;
                 }
-                
+
                 let result, format;
-                
+
                 if (type === 'compress') {
                     result = window.smkitHelpers.compressPublicKey(publicKey);
                     format = '压缩格式';
@@ -979,9 +979,9 @@ const keyPair = generateKeyPair();</code>
                     result = window.smkitHelpers.decompressPublicKey(publicKey);
                     format = '非压缩格式';
                 }
-                
+
                 const prefix = result.substring(0, 2);
-                
+
                 document.getElementById('convert-result').innerHTML = `
                     <div class="result">
                         <h3>转换结果（${format}）：</h3>
@@ -1000,18 +1000,18 @@ const keyPair = generateKeyPair();</code>
                 `;
             }
         }
-        
+
         function convertSignature(type) {
             try {
                 const signature = document.getElementById('tool-signature').value.trim();
-                
+
                 if (!signature) {
                     alert('请输入签名');
                     return;
                 }
-                
+
                 let resultHtml;
-                
+
                 if (type === 'raw-to-der') {
                     const der = window.smkitHelpers.rawToDer(signature);
                     const derHex = window.smkitHelpers.bytesToHex(der);
@@ -1050,7 +1050,7 @@ const keyPair = generateKeyPair();</code>
                         </div>
                     `;
                 }
-                
+
                 document.getElementById('signature-result').innerHTML = resultHtml;
             } catch (error) {
                 document.getElementById('signature-result').innerHTML = `
@@ -1061,24 +1061,24 @@ const keyPair = generateKeyPair();</code>
                 `;
             }
         }
-        
+
         function testRandomGenerator() {
             try {
                 // 生成多个密钥对来测试随机数生成器
                 const keyPairs = [];
                 const startTime = Date.now();
-                
+
                 for (let i = 0; i < 5; i++) {
                     keyPairs.push(window.smkitHelpers.generateKeyPair());
                 }
-                
+
                 const endTime = Date.now();
                 const duration = endTime - startTime;
-                
+
                 // 检查生成的密钥是否唯一
                 const uniqueKeys = new Set(keyPairs.map(kp => kp.privateKey));
                 const allUnique = uniqueKeys.size === keyPairs.length;
-                
+
                 let resultHtml = `
                     <div class="result">
                         <h3>随机数生成器测试结果：</h3>
@@ -1087,7 +1087,7 @@ const keyPair = generateKeyPair();</code>
                         <p>✓ 唯一性: ${allUnique ? '通过' : '失败'}</p>
                         <p style="margin-top: 15px; font-weight: bold;">生成的密钥对：</p>
                 `;
-                
+
                 keyPairs.forEach((kp, i) => {
                     resultHtml += `
                         <div style="margin-top: 10px; padding: 10px; background: #f5f5f5; border-radius: 4px;">
@@ -1097,12 +1097,12 @@ const keyPair = generateKeyPair();</code>
                         </div>
                     `;
                 });
-                
+
                 resultHtml += `
                         <p style="margin-top: 15px; color: #4CAF50;">✓ 随机数生成器工作正常</p>
                     </div>
                 `;
-                
+
                 document.getElementById('random-result').innerHTML = resultHtml;
             } catch (error) {
                 document.getElementById('random-result').innerHTML = `

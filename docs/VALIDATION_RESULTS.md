@@ -170,9 +170,9 @@ $ yamllint .github/workflows/publish.yml
     "url": "https://github.com/CherryRum/smkit.git"
   },
   "bugs": {
-    "url": "https://github.com/linyuliu/smkit/issues"
+    "url": "https://github.com/CherryRum/smkit/issues"
   },
-  "homepage": "https://github.com/linyuliu/smkit#readme"
+  "homepage": "https://github.com/CherryRum/smkit#readme"
 }
 ```
 

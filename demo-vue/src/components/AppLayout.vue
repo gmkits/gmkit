@@ -1,7 +1,7 @@
-<!-- 
+<!--
   应用主布局组件 - 左右结构
   Application Main Layout Component - Left-Right Structure
-  
+
   左侧：导航菜单，显示所有可用的算法工具
   Right side: Content area for displaying the selected tool interface
 -->
@@ -94,7 +94,7 @@ const goHome = () => {
       <!-- 底部信息 Footer information -->
       <div class="sidebar-footer">
         <p>
-          <a href="https://github.com/linyuliu/smkit" target="_blank" rel="noopener noreferrer">
+          <a href="https://github.com/CherryRum/smkit" target="_blank" rel="noopener noreferrer">
             GitHub
           </a>
         </p>

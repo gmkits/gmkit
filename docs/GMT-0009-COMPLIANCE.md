@@ -437,7 +437,7 @@ SMKit 包含 147 个单元测试，覆盖：
 
 ### 相关链接
 
-- [SMKit GitHub](https://github.com/linyuliu/smkit)
+- [SMKit GitHub](https://github.com/CherryRum/smkit)
 - [SMKit NPM](https://www.npmjs.com/package/smkit)
 - [中国商用密码标准](http://www.gmbz.org.cn/)
 

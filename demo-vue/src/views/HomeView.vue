@@ -162,7 +162,7 @@ const navigateToTool = (route: string) => {
 
     <footer class="footer">
       <p>
-        <a href="https://github.com/linyuliu/smkit" target="_blank">GitHub</a>
+        <a href="https://github.com/CherryRum/smkit" target="_blank">GitHub</a>
         · 基于 Vue 3 + TypeScript 构建
         · Apache 2.0 License
       </p>

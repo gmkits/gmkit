@@ -4,7 +4,7 @@
 
 [![npm version](https://img.shields.io/npm/v/smkit.svg?style=flat-square)](https://www.npmjs.com/package/smkit)
 [![npm downloads](https://img.shields.io/npm/dm/smkit.svg?style=flat-square)](https://www.npmjs.com/package/smkit)
-[![License](https://img.shields.io/npm/l/smkit.svg?style=flat-square)](https://github.com/linyuliu/smkit/blob/main/LICENSE)
+[![License](https://img.shields.io/npm/l/smkit.svg?style=flat-square)](https://github.com/CherryRum/smkit/blob/main/LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg?style=flat-square)](https://www.typescriptlang.org/)
 
 **Pure TypeScript implementation of Chinese national cryptographic algorithms (SM2, SM3, SM4, ZUC) and international standards (SHA-256, SHA-384, SHA-512)**
