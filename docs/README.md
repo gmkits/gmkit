@@ -75,6 +75,6 @@
 
 ## 🔍 更多资源
 
-- [GitHub 仓库](https://github.com/CherryRum/smkit)
+- [GitHub 仓库](https://github.com/CherryRum/gmkit)
 - [NPM 包](https://www.npmjs.com/package/smkit)
 - [在线演示](../demo-vue/README.md)

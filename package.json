@@ -56,12 +56,12 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/CherryRum/smkit.git"
+    "url": "https://github.com/CherryRum/gmkit.git"
   },
   "bugs": {
-    "url": "https://github.com/CherryRum/smkit/issues"
+    "url": "https://github.com/CherryRum/gmkit/issues"
   },
-  "homepage": "https://github.com/CherryRum/smkit#readme",
+  "homepage": "https://github.com/CherryRum/gmkit#readme",
   "engines": {
     "node": ">=18.0.0"
   },

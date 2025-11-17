@@ -1,4 +1,4 @@
-# GMKit
+# gmkit
 
 <div align="center">
 
@@ -17,8 +17,8 @@
 
 ## 📑 Table of Contents
 
-- [What is GMKit?](#what-is-gmkit)
-- [Why GMKit?](#why-gmkit)
+- [What is gmkit?](#what-is-gmkit)
+- [Why gmkit?](#why-gmkit)
 - [Features](#features)
 - [Quick Start](#quick-start)
   - [Installation](#installation)
@@ -32,14 +32,14 @@
 
 ---
 
-## What is GMKit?
+## What is gmkit?
 
-GMKit is a comprehensive cryptographic library that makes it easy to use Chinese national cryptographic algorithms (SM algorithms) in frontend and Node.js environments.
+gmkit is a comprehensive cryptographic library that makes it easy to use Chinese national cryptographic algorithms (SM algorithms) in frontend and Node.js environments.
 
 **What are SM algorithms?**
 SM algorithms are commercial cryptographic standards developed by the State Cryptography Administration of China, including SM2 (asymmetric encryption), SM3 (hash algorithm), SM4 (symmetric encryption), and ZUC (stream cipher). These algorithms are widely used in finance, government affairs, telecommunications, and especially in scenarios that need to comply with Chinese information security regulations.
 
-**What can GMKit do?**
+**What can gmkit do?**
 - 🔐 **Data Encryption**: Encrypt sensitive data using SM2 or SM4
 - ✍️ **Digital Signatures**: Sign and verify data using SM2
 - 🔑 **Key Exchange**: Securely negotiate shared keys between parties
@@ -48,11 +48,11 @@ SM algorithms are commercial cryptographic standards developed by the State Cryp
 
 ---
 
-## Why GMKit?
+## Why gmkit?
 
 ### Comparison with Other SM Libraries
 
-| Feature | GMKit | Other Libraries |
+| Feature | gmkit | Other Libraries |
 |---------|-------|-----------------|
 | **Type Support** | ✅ Complete TypeScript definitions | ⚠️ Some lack types |
 | **Modular** | ✅ Tree-shaking, load on demand | ⚠️ Usually load entire library |
@@ -143,7 +143,7 @@ For projects without build tools
 <!DOCTYPE html>
 <html>
 <head>
-  <title>GMKit Quick Start</title>
+  <title>gmkit Quick Start</title>
 </head>
 <body>
   <script src="https://unpkg.com/gmkit@latest/dist/index.global.js"></script>
@@ -193,7 +193,7 @@ console.log('Signature verification:', isValid ? '✅ Valid' : '❌ Invalid');
 
 ## Online Demo
 
-Want to try GMKit quickly? We provide two interactive demo pages:
+Want to try gmkit quickly? We provide two interactive demo pages:
 
 ### Vue 3 Modern Demo (Recommended)
 
@@ -843,7 +843,7 @@ DEFAULT_USER_ID  // '1234567812345678' - Default user ID for SM2 signature (back
 
 ## Architecture
 
-GMKit follows functional programming principles with all features implemented as independent, pure functions. It also provides object-oriented APIs for better state management and ease of use. This enables:
+gmkit follows functional programming principles with all features implemented as independent, pure functions. It also provides object-oriented APIs for better state management and ease of use. This enables:
 
 - **Tree-shaking**: Only import what you need
 - **Easy testing**: Pure functions with fixed input/output
@@ -888,7 +888,7 @@ Test coverage:
 
 ## Integration with Hutool Backend
 
-If you need to integrate GMKit on the frontend with Hutool (Java) on the backend, we provide a complete integration guide:
+If you need to integrate gmkit on the frontend with Hutool (Java) on the backend, we provide a complete integration guide:
 
 ```bash
 # View integration guide
@@ -933,7 +933,7 @@ Key updates in GMT 0009-2023 compared to GMT 0009-2012:
 
 ## Note
 
-GMKit provides full implementations of SM2, SM3, SM4, and ZUC algorithms, validated by 214+ unit tests. All core features are implemented and production-ready.
+gmkit provides full implementations of SM2, SM3, SM4, and ZUC algorithms, validated by 214+ unit tests. All core features are implemented and production-ready.
 
 ## Documentation
 
@@ -956,7 +956,7 @@ For a complete documentation index, see [docs/README.md](./docs/README.md)
 <details>
 <summary><strong>❓ How to use in TypeScript projects?</strong></summary>
 
-GMKit has native TypeScript support, no additional configuration needed:
+gmkit has native TypeScript support, no additional configuration needed:
 
 ```typescript
 import { digest, sm4Encrypt, type KeyPair } from 'gmkit';

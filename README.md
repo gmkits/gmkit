@@ -1,4 +1,4 @@
-# GMKit
+# gmkit
 
 <div align="center">
 
@@ -17,8 +17,8 @@
 
 ## 📑 目录
 
-- [什么是 GMKit？](#什么是-gmkit)
-- [为什么选择 GMKit？](#为什么选择-gmkit)
+- [什么是 gmkit？](#什么是-gmkit)
+- [为什么选择 gmkit？](#为什么选择-gmkit)
 - [特性](#特性)
 - [快速开始](#快速开始)
   - [安装](#安装)
@@ -32,14 +32,14 @@
 
 ---
 
-## 什么是 GMKit？
+## 什么是 gmkit？
 
-GMKit 是一个功能完整的国密算法工具库，让您在前端和 Node.js 环境中轻松使用中国商用密码算法（国密算法）。
+gmkit 是一个功能完整的国密算法工具库，让您在前端和 Node.js 环境中轻松使用中国商用密码算法（国密算法）。
 
 **国密算法是什么？**
 国密算法是由中国国家密码管理局制定的商用密码标准，包括 SM2（非对称加密）、SM3（哈希算法）、SM4（对称加密）和 ZUC（流密码）等。这些算法在金融、政务、电信等领域被广泛应用，特别是在需要符合中国信息安全法规的场景中。
 
-**GMKit 能做什么？**
+**gmkit 能做什么？**
 - 🔐 **数据加密**: 使用 SM2 或 SM4 加密敏感数据
 - ✍️ **数字签名**: 使用 SM2 对数据进行签名和验证
 - 🔑 **密钥交换**: 安全地在双方之间协商共享密钥
@@ -48,11 +48,11 @@ GMKit 是一个功能完整的国密算法工具库，让您在前端和 Node.js
 
 ---
 
-## 为什么选择 GMKit？
+## 为什么选择 gmkit？
 
 ### 与其他国密库的对比
 
-| 特性 | GMKit                  | 其他库 |
+| 特性 | gmkit                  | 其他库 |
 |------|------------------------|--------|
 | **类型支持** | ✅ 完整的 TypeScript 类型定义  | ⚠️ 部分库缺少类型 |
 | **模块化** | ✅ 支持 Tree-shaking，按需加载 | ⚠️ 通常需要加载整个库 |
@@ -143,7 +143,7 @@ const hash = digest('Hello, SM3!');
 <!DOCTYPE html>
 <html>
 <head>
-  <title>GMKit 快速开始</title>
+  <title>gmkit 快速开始</title>
 </head>
 <body>
   <script src="https://unpkg.com/gmkit@latest/dist/index.global.js"></script>
@@ -193,7 +193,7 @@ console.log('签名验证:', isValid ? '✅ 通过' : '❌ 失败');
 
 ## 在线演示
 
-想快速体验 GMKit？我们提供了两种交互式演示页面：
+想快速体验 gmkit？我们提供了两种交互式演示页面：
 
 ### Vue 3 现代化演示（推荐）
 
@@ -329,7 +329,7 @@ const keystream = zucEncrypt(key, iv, '实时数据流');
 
 ### 输出格式配置
 
-GMKit 支持灵活的输出格式配置，所有加密和哈希函数都支持以下格式：
+gmkit 支持灵活的输出格式配置，所有加密和哈希函数都支持以下格式：
 
 - **hex**（十六进制）：默认格式，易于阅读和调试
 - **base64**：更紧凑的格式，节省约 25% 空间，适合网络传输
@@ -373,7 +373,7 @@ const base64Mac = hmac('secret-key', 'data', { outputFormat: OutputFormat.BASE64
 
 #### SHA 哈希算法（国际标准）
 
-GMKit 还提供高性能的 SHA 系列哈希算法：
+gmkit 还提供高性能的 SHA 系列哈希算法：
 
 ```typescript
 import { sha256, sha384, sha512, hmacSha256, OutputFormat } from 'gmkit';
@@ -996,7 +996,7 @@ DEFAULT_USER_ID  // '1234567812345678' - SM2 签名的默认用户 ID（向后�
 
 ## 架构
 
-GMKit 采用模块化、分层的架构设计，便于扩展和维护：
+gmkit 采用模块化、分层的架构设计，便于扩展和维护：
 
 ```text
 src/
@@ -1054,7 +1054,7 @@ npm test
 
 ## 与 Hutool 后端对接
 
-如果你需要在前端使用 GMKit 与后端 Hutool (Java) 进行国密算法对接，我们提供了完整的集成指南：
+如果你需要在前端使用 gmkit 与后端 Hutool (Java) 进行国密算法对接，我们提供了完整的集成指南：
 
 ```bash
 # 查看对接指南
@@ -1102,7 +1102,7 @@ Apache-2.0
 
 ## 注意
 
-GMKit 已实现完整的 SM2、SM3、SM4 和 ZUC 算法，所有核心功能均已实现并可用于生产环境。通过了完整的单元测试覆盖，包括基础加密功能、边界情况和标准测试向量验证。
+gmkit 已实现完整的 SM2、SM3、SM4 和 ZUC 算法，所有核心功能均已实现并可用于生产环境。通过了完整的单元测试覆盖，包括基础加密功能、边界情况和标准测试向量验证。
 
 ## 文档
 
@@ -1126,7 +1126,7 @@ GMKit 已实现完整的 SM2、SM3、SM4 和 ZUC 算法，所有核心功能均�
 <details>
 <summary><strong>❓ 如何在 TypeScript 项目中使用？</strong></summary>
 
-GMKit 原生支持 TypeScript，无需额外配置：
+gmkit 原生支持 TypeScript，无需额外配置：
 
 ```typescript
 import { digest, sm4Encrypt, type KeyPair } from 'gmkit';
