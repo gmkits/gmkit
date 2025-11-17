@@ -1,6 +1,6 @@
 {
   "name": "gmkitx",
-  "version": "0.9.1-alpha.0",
+  "version": "0.9.1-alpha.1",
   "description": "中国国密算法（SM2, SM3, SM4, ZUC）的纯 TypeScript 实现 / Pure TypeScript implementation of Chinese national cryptographic algorithms (SM2, SM3, SM4, ZUC)",
   "type": "module",
   "main": "./dist/index.cjs",
