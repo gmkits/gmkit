@@ -4,9 +4,9 @@
  * 国际标准算法：SHA-256、SHA-384、SHA-512
  *
  * 支持多种导入方式：
- * 1. 命名空间导入: import * as smkit from 'smkit'; smkit.sm2.encrypt(...)
- * 2. 算法模块导入: import { sm2, sm3, sm4, zuc, sha } from 'smkit';
- * 3. 具名函数导入: import { sm2Encrypt, digest, sm4Encrypt, sha256 } from 'smkit';
+ * 1. 命名空间导入: import * as gmkit from 'gmkit'; gmkit.sm2.encrypt(...)
+ * 2. 算法模块导入: import { sm2, sm3, sm4, zuc, sha } from 'gmkit';
+ * 3. 具名函数导入: import { sm2Encrypt, digest, sm4Encrypt, sha256 } from 'gmkit';
  */
 
 // ============================================================================

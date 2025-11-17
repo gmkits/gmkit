@@ -9,8 +9,8 @@ SMKit is a pure TypeScript implementation of Chinese national cryptographic algo
 
 #### 1. Project Infrastructure
 - **Package Configuration**: Full ESM/CJS dual module support
-  - ESM output: `dist/smkit.js`
-  - CJS output: `dist/smkit.cjs`
+  - ESM output: `dist/gmkit.js`
+  - CJS output: `dist/gmkit.cjs`
   - TypeScript definitions: `dist/index.d.ts`
 - **Build System**: Vite with TypeScript plugin
 - **Testing**: Vitest with 40 passing tests across 4 test suites
@@ -126,10 +126,10 @@ SM2.generateKeyPair();
 ```
 dist/
 ├── index.d.ts      (6.2 KB)  - TypeScript definitions
-├── smkit.js        (11 KB)   - ES Module
-├── smkit.js.map    (35 KB)   - ESM source map
-├── smkit.cjs       (8 KB)    - CommonJS
-└── smkit.cjs.map   (33 KB)   - CJS source map
+├── gmkit.js        (11 KB)   - ES Module
+├── gmkit.js.map    (35 KB)   - ESM source map
+├── gmkit.cjs       (8 KB)    - CommonJS
+└── gmkit.cjs.map   (33 KB)   - CJS source map
 ```
 
 Gzipped sizes:
@@ -185,7 +185,7 @@ npm run build
 ## Repository Structure
 
 ```
-smkit/
+gmkit/
 ├── .github/
 │   └── workflows/
 │       └── ci.yml           # CI/CD configuration

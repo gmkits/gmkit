@@ -14,10 +14,10 @@
     },
     "./package.json": "./package.json"
   },
-  "unpkg": "./dist/index.umd.js",
-  "jsdelivr": "./dist/index.umd.js",
+  "unpkg": "./dist/index.global.js",
+  "jsdelivr": "./dist/index.global.js",
   "browser": {
-    "./dist/index.cjs": "./dist/index.umd.js"
+    "./dist/index.cjs": "./dist/index.global.js"
   },
   "files": [
     "dist",

@@ -10,7 +10,7 @@ This document records the validation test results for all improvements.
 ## 1. 模块格式验证 / Module Format Validation
 
 ### ✅ ES Module (ESM)
-**文件:** `dist/smkit.js` (90.59 KB, gzipped: 27.78 KB)
+**文件:** `dist/gmkit.js` (90.59 KB, gzipped: 27.78 KB)
 
 **测试结果:**
 ```
@@ -27,7 +27,7 @@ import { digest, sm4Encrypt, generateKeyPair } from 'gmkit';
 ```
 
 ### ✅ CommonJS (CJS)
-**文件:** `dist/smkit.cjs` (60.04 KB, gzipped: 21.75 KB)
+**文件:** `dist/gmkit.cjs` (60.04 KB, gzipped: 21.75 KB)
 
 **测试结果:**
 ```
@@ -44,7 +44,7 @@ const { digest, sm4Encrypt, generateKeyPair } = require('gmkit');
 ```
 
 ### ✅ UMD (Universal Module Definition)
-**文件:** `dist/smkit.umd.js` (60.06 KB, gzipped: 21.84 KB)
+**文件:** `dist/gmkit.umd.js` (60.06 KB, gzipped: 21.84 KB)
 
 **测试结果:**
 ```
@@ -58,7 +58,7 @@ const { digest, sm4Encrypt, generateKeyPair } = require('gmkit');
 
 **使用方法:**
 ```html
-<script src="https://unpkg.com/smkit@latest/dist/smkit.umd.js"></script>
+<script src="https://unpkg.com/gmkit@latest/dist/gmkit.umd.js"></script>
 <script>
   const hash = SMKit.digest('Hello, World!');
 </script>
@@ -106,9 +106,9 @@ $ npm run build
 > vite build
 
 ✓ 20 modules transformed
-dist/smkit.js      90.59 kB │ gzip: 27.78 kB
-dist/smkit.cjs     60.04 kB │ gzip: 21.75 kB
-dist/smkit.umd.js  60.06 kB │ gzip: 21.84 kB
+dist/gmkit.js      90.59 kB │ gzip: 27.78 kB
+dist/gmkit.cjs     60.04 kB │ gzip: 21.75 kB
+dist/gmkit.umd.js  60.06 kB │ gzip: 21.84 kB
 ✅ 构建成功 / BUILD SUCCESSFUL
 ```
 
@@ -163,11 +163,11 @@ $ yamllint .github/workflows/publish.yml
 ### ✅ 新增字段 / New Fields
 ```json
 {
-  "unpkg": "./dist/smkit.umd.js",
-  "jsdelivr": "./dist/smkit.umd.js",
+  "unpkg": "./dist/gmkit.umd.js",
+  "jsdelivr": "./dist/gmkit.umd.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/CherryRum/smkit.git"
+    "url": "https://github.com/CherryRum/gmkit.git"
   },
   "bugs": {
     "url": "https://github.com/CherryRum/smkit/issues"
@@ -177,8 +177,8 @@ $ yamllint .github/workflows/publish.yml
 ```
 
 ### ✅ 现有字段保持不变 / Existing Fields Unchanged
-- ✅ `main`: `./dist/smkit.cjs` (CommonJS 入口)
-- ✅ `module`: `./dist/smkit.js` (ES Module 入口)
+- ✅ `main`: `./dist/gmkit.cjs` (CommonJS 入口)
+- ✅ `module`: `./dist/gmkit.js` (ES Module 入口)
 - ✅ `types`: `./dist/index.d.ts` (TypeScript 类型定义)
 - ✅ `exports`: 完整的条件导出配置
 
@@ -204,14 +204,14 @@ After publishing, the package will be automatically available on:
 
 ### unpkg
 ```html
-<script src="https://unpkg.com/smkit@latest/dist/smkit.umd.js"></script>
-<script src="https://unpkg.com/smkit@0.9.1/dist/smkit.umd.js"></script>
+<script src="https://unpkg.com/gmkit@latest/dist/gmkit.umd.js"></script>
+<script src="https://unpkg.com/gmkit@0.9.1/dist/gmkit.umd.js"></script>
 ```
 
 ### jsDelivr
 ```html
-<script src="https://cdn.jsdelivr.net/npm/smkit@latest/dist/smkit.umd.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/smkit@0.9.1/dist/smkit.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gmkit@latest/dist/gmkit.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gmkit@0.9.1/dist/gmkit.umd.js"></script>
 ```
 
 ## 总结 / Summary

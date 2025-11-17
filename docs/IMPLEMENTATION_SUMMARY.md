@@ -28,8 +28,8 @@ formats: ['es', 'cjs', 'umd']  // 原来只有 ['es', 'cjs']
 
 ```json
 {
-  "unpkg": "./dist/smkit.umd.js",
-  "jsdelivr": "./dist/smkit.umd.js",
+  "unpkg": "./dist/index.global.js",
+  "jsdelivr": "./dist/index.global.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/CherryRum/smkit.git"
@@ -44,7 +44,7 @@ Now the build generates three formats:
 
 1. **ES Module** (`dist/smkit.js`) - 用于现代打包工具 / For modern bundlers
 2. **CommonJS** (`dist/smkit.cjs`) - 用于 Node.js / For Node.js
-3. **UMD** (`dist/smkit.umd.js`) - 用于浏览器直接引入 / For direct browser usage
+3. **UMD** (`dist/index.global.js`) - 用于浏览器直接引入 / For direct browser usage
 
 #### 使用示例 / Usage Examples
 
@@ -61,10 +61,10 @@ const { digest, sm4Encrypt, generateKeyPair } = require('gmkit');
 **UMD (浏览器 / Browser)**
 ```html
 <!-- Via unpkg -->
-<script src="https://unpkg.com/smkit@latest/dist/smkit.umd.js"></script>
+<script src="https://unpkg.com/gmkit@latest/dist/index.global.js"></script>
 
 <!-- Via jsDelivr -->
-<script src="https://cdn.jsdelivr.net/npm/smkit@latest/dist/smkit.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gmkit@latest/dist/index.global.js"></script>
 
 <script>
   // 全局变量 SMKit 可用
@@ -224,8 +224,8 @@ Following [Semantic Versioning](https://semver.org/):
 通过 `unpkg` 和 `jsdelivr` 字段，包会自动在以下 CDN 上可用：
 Through `unpkg` and `jsdelivr` fields, the package is automatically available on:
 
-- unpkg: `https://unpkg.com/smkit@latest/dist/smkit.umd.js`
-- jsDelivr: `https://cdn.jsdelivr.net/npm/smkit@latest/dist/smkit.umd.js`
+- unpkg: `https://unpkg.com/gmkit@latest/dist/index.global.js`
+- jsDelivr: `https://cdn.jsdelivr.net/npm/gmkit@latest/dist/index.global.js`
 
 ## 测试验证 / Testing and Validation
 

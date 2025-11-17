@@ -146,7 +146,7 @@ For projects without build tools
   <title>GMKit Quick Start</title>
 </head>
 <body>
-  <script src="https://unpkg.com/gmkit@latest/dist/gmkit.umd.js"></script>
+  <script src="https://unpkg.com/gmkit@latest/dist/index.global.js"></script>
   <script>
     // Access all features through global GMKit object
     const hash = GMKit.digest('Hello, World!');
@@ -984,7 +984,7 @@ export default {
 
 **Or use UMD version directly:**
 ```html
-<script src="https://unpkg.com/gmkit@latest/dist/gmkit.umd.js"></script>
+<script src="https://unpkg.com/gmkit@latest/dist/index.global.js"></script>
 ```
 
 </details>

@@ -331,7 +331,7 @@ function tryNodeCrypto(len: number): Uint8Array | null {
 
 function unsafeFallbackRandom(len: number): Uint8Array {
   console.warn(
-    '[smkit][RNG] WARNING: using unsafe fallback RNG. This is NOT cryptographically secure!'
+    '[gmkit][RNG] WARNING: using unsafe fallback RNG. This is NOT cryptographically secure!'
   );
   const out = new Uint8Array(len);
   let seed = (Date.now() ^ (Math.random() * 0xffffffff)) >>> 0;
@@ -393,7 +393,7 @@ export function getRandomBytes(len: number = 32): Uint8Array {
   if (customRNG) return customRNG(len);
   // Unsafe fallback
   if (rngPolicy === 'strict') {
-    throw new Error('[smkit][RNG] No cryptographically secure random generator available.');
+    throw new Error('[gmkit][RNG] No cryptographically secure random generator available.');
   }
   return unsafeFallbackRandom(len);
 }

@@ -22,10 +22,10 @@ import { digest, sm4Encrypt, generateKeyPair } from 'gmkit';
 
 // 或导入全部
 // Or import everything
-import * as smkit from 'gmkit';
+import * as gmkit from 'gmkit';
 ```
 
-**文件位置 / File Location:** `dist/smkit.js`
+**文件位置 / File Location:** `dist/gmkit.js`
 
 ### 2. CommonJS (CJS)
 Node.js 传统模块格式，兼容旧版 Node.js 和打包工具。
@@ -39,10 +39,10 @@ const { digest, sm4Encrypt, generateKeyPair } = require('gmkit');
 
 // 或导入全部
 // Or import everything
-const smkit = require('gmkit');
+const gmkit = require('gmkit');
 ```
 
-**文件位置 / File Location:** `dist/smkit.cjs`
+**文件位置 / File Location:** `dist/gmkit.cjs`
 
 ### 3. UMD (Universal Module Definition)
 通用模块定义，可以直接在浏览器中通过 `<script>` 标签使用。
@@ -52,7 +52,7 @@ Universal Module Definition, can be used directly in browsers with `<script>` ta
 ```html
 <!-- 通过 CDN 使用（推荐） -->
 <!-- Use via CDN (recommended) -->
-<script src="https://unpkg.com/smkit@latest/dist/smkit.umd.js"></script>
+<script src="https://unpkg.com/smkit@latest/dist/gmkit.umd.js"></script>
 <script>
   // 全局变量 SMKit 现在可用
   // Global variable SMKit is now available
@@ -62,14 +62,14 @@ Universal Module Definition, can be used directly in browsers with `<script>` ta
 
 <!-- 或使用 jsDelivr -->
 <!-- Or use jsDelivr -->
-<script src="https://cdn.jsdelivr.net/npm/smkit@latest/dist/smkit.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/smkit@latest/dist/gmkit.umd.js"></script>
 ```
 
-**文件位置 / File Location:** `dist/smkit.umd.js`
+**文件位置 / File Location:** `dist/gmkit.umd.js`
 
 **CDN 链接 / CDN Links:**
-- unpkg: `https://unpkg.com/smkit@latest/dist/smkit.umd.js`
-- jsDelivr: `https://cdn.jsdelivr.net/npm/smkit@latest/dist/smkit.umd.js`
+- unpkg: `https://unpkg.com/smkit@latest/dist/gmkit.umd.js`
+- jsDelivr: `https://cdn.jsdelivr.net/npm/smkit@latest/dist/gmkit.umd.js`
 
 ## 发布流程 / Publishing Process
 
@@ -197,7 +197,7 @@ After successful publication, verify the package:
 ```bash
 # 检查 NPM 上的最新版本
 # Check latest version on NPM
-npm view smkit version
+npm view gmkit version
 
 # 在新项目中安装测试
 # Install and test in a new project
@@ -205,7 +205,7 @@ npm install gmkit@latest
 
 # 测试不同的导入方式
 # Test different import methods
-node -e "const smkit = require('gmkit'); console.log(smkit.digest('test'));"
+node -e "const gmkit = require('gmkit'); console.log(gmkit.digest('test'));"
 ```
 
 ## 版本管理最佳实践 / Version Management Best Practices
@@ -299,7 +299,7 @@ If there's an issue with a release, you can deprecate the problematic version:
 ```bash
 # 弃用特定版本
 # Deprecate a specific version
-npm deprecate smkit@0.2.0 "This version has critical bugs, please upgrade to 0.2.1"
+npm deprecate gmkit@0.2.0 "This version has critical bugs, please upgrade to 0.2.1"
 
 # 或者发布一个新的修复版本
 # Or publish a new patch version
@@ -323,12 +323,12 @@ npm run build
 # Create local package
 npm pack
 
-# 这会生成 smkit-0.2.0.tgz 文件
-# This generates a smkit-0.2.0.tgz file
+# 这会生成 gmkit-0.2.0.tgz 文件
+# This generates a gmkit-0.2.0.tgz file
 
 # 在另一个项目中测试安装
 # Test installation in another project
-npm install /path/to/smkit-0.2.0.tgz
+npm install /path/to/gmkit-0.2.0.tgz
 ```
 
 ## 持续集成 / Continuous Integration

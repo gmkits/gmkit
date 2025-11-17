@@ -64,17 +64,17 @@ const cipher = sm4Encrypt(key, 'Hello', {
 适合需要在运行时动态选择算法的场景。
 
 ```typescript
-import * as smkit from 'gmkit';
+import * as gmkit from 'gmkit';
 
 // 通过命名空间访问
-const keyPair = smkit.sm2.generateKeyPair();
-const hash = smkit.sm3.digest('Hello');
-const cipher = smkit.sm4.encrypt(key, 'Hello', { mode: 'ecb' });
-const zucCipher = smkit.zuc.encrypt(zucKey, zucIv, 'Hello');
+const keyPair = gmkit.sm2.generateKeyPair();
+const hash = gmkit.sm3.digest('Hello');
+const cipher = gmkit.sm4.encrypt(key, 'Hello', { mode: 'ecb' });
+const zucCipher = gmkit.zuc.encrypt(zucKey, zucIv, 'Hello');
 
 // 也可以访问具名导出
-const hash2 = smkit.digest('Hello');
-const encrypted = smkit.sm2Encrypt(keyPair.publicKey, 'Hello');
+const hash2 = gmkit.digest('Hello');
+const encrypted = gmkit.sm2Encrypt(keyPair.publicKey, 'Hello');
 ```
 
 ## 4. CommonJS 导入
@@ -96,7 +96,7 @@ const hash2 = digest('Hello');
 ## 5. UMD（浏览器直接引入）
 
 ```html
-<script src="https://unpkg.com/smkit@latest/dist/smkit.umd.js"></script>
+<script src="https://unpkg.com/gmkit@latest/dist/index.global.js"></script>
 <script>
   // SMKit 会被注册为全局变量
   

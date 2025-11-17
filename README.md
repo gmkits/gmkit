@@ -146,7 +146,7 @@ const hash = digest('Hello, SM3!');
   <title>GMKit 快速开始</title>
 </head>
 <body>
-  <script src="https://unpkg.com/gmkit@latest/dist/gmkit.umd.js"></script>
+  <script src="https://unpkg.com/gmkit@latest/dist/index.global.js"></script>
   <script>
     // 通过全局对象 GMKit 访问所有功能
     const hash = GMKit.digest('Hello, World!');
@@ -1154,7 +1154,7 @@ export default {
 
 **或直接使用 UMD 版本：**
 ```html
-<script src="https://unpkg.com/gmkit@latest/dist/gmkit.umd.js"></script>
+<script src="https://unpkg.com/gmkit@latest/dist/index.global.js"></script>
 ```
 
 </details>

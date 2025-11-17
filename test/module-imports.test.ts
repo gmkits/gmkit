@@ -130,19 +130,19 @@ describe('模块导入方式测试', () => {
 
   describe('命名空间导入', () => {
     it('应该能够通过命名空间访问所有算法', async () => {
-      const smkit = await import('../src/index');
+      const gmkit = await import('../src/index');
 
       // 验证模块存在
-      expect(smkit.sm2).toBeDefined();
-      expect(smkit.sm3).toBeDefined();
-      expect(smkit.sm4).toBeDefined();
-      expect(smkit.zuc).toBeDefined();
+      expect(gmkit.sm2).toBeDefined();
+      expect(gmkit.sm3).toBeDefined();
+      expect(gmkit.sm4).toBeDefined();
+      expect(gmkit.zuc).toBeDefined();
 
       // 验证可以通过模块使用功能
-      const keyPair = smkit.sm2.generateKeyPair();
+      const keyPair = gmkit.sm2.generateKeyPair();
       expect(keyPair.publicKey).toBeTruthy();
 
-      const hash = smkit.sm3.digest('test');
+      const hash = gmkit.sm3.digest('test');
       expect(hash).toHaveLength(64);
     });
   });
