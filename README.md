@@ -29,10 +29,6 @@
 * 📚 **强类型支持**：完整的 TypeScript 类型定义
 * 🧱 **CDN 友好**：提供 UMD 构建包，支持 `<script>` 标签引入（全局 `GMKit`）
 * 🔒 **遵循标准**：严格对齐 GM/T 系列国密标准文档实现
-
-> 项目名：**gmkit**
-> npm 包名：**gmkitx**
-
 -----
 
 ## 🚀 安装
@@ -48,7 +44,7 @@ pnpm add gmkitx
 yarn add gmkitx
 ```
 
-Node.js 版本要求：**\>= 18**
+**Node.js** 版本要求：**\>= 18**
 
 -----
 
