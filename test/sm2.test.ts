@@ -93,7 +93,7 @@ describe('SM2 国密算法测试', () => {
   });
 
   describe('加解密测试', () => {
-    it('应该能够加密数据', () => {
+    it('应该能够加密数据[简单数据]', () => {
       const keyPair = generateKeyPair();
       const plaintext = 'Hello, SM2!';
       const encrypted = encrypt(keyPair.publicKey, plaintext);
@@ -163,7 +163,7 @@ describe('SM2 国密算法测试', () => {
 
     it('应该支持两种密文模式 - C1C3C2', () => {
       const keyPair = generateKeyPair();
-      const plaintext = 'Hello';
+      const plaintext = 'Hello mumu';
 
       const encrypted = encrypt(keyPair.publicKey, plaintext, SM2CipherMode.C1C3C2);
       expect(encrypted).toBeTruthy();
@@ -173,7 +173,7 @@ describe('SM2 国密算法测试', () => {
 
     it('应该支持两种密文模式 - C1C2C3', () => {
       const keyPair = generateKeyPair();
-      const plaintext = 'Hello';
+      const plaintext = 'Hello mumu';
 
       const encrypted = encrypt(keyPair.publicKey, plaintext, SM2CipherMode.C1C2C3);
       expect(encrypted).toBeTruthy();
