@@ -159,12 +159,8 @@ export default defineUserConfig({
         showInMobile: true,
       },
       
-      // 版权信息
-      copyright: {
-        author: 'yulin.1996@foxmail.com',
-        license: 'Apache-2.0',
-        global: true,
-      },
+      // 版权信息 - 禁用全局模式，避免污染所有页面
+      copyright: false,
       
       // Git 信息
       git: true,
