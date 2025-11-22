@@ -28,7 +28,13 @@ export default defineUserConfig({
     // 导航栏
     navbar: [
       { text: '首页', link: '/' },
-      { text: '快速开始', link: '/guide/getting-started' },
+      { 
+        text: '指南',
+        children: [
+          { text: '快速开始', link: '/guide/getting-started' },
+          { text: '关于国密算法', link: '/guide/about-guomi' },
+        ],
+      },
       {
         text: '算法文档',
         children: [
@@ -37,6 +43,13 @@ export default defineUserConfig({
           { text: 'SM4 - 分组密码算法', link: '/algorithms/SM4' },
           { text: 'ZUC - 祖冲之序列密码', link: '/algorithms/ZUC' },
           { text: 'SHA - 国际标准算法', link: '/algorithms/SHA' },
+        ],
+      },
+      {
+        text: '多语言实现',
+        children: [
+          { text: 'TypeScript / JavaScript', link: '/implementations/typescript/' },
+          { text: 'Java（推荐库）', link: '/implementations/java/' },
         ],
       },
       {
@@ -66,6 +79,16 @@ export default defineUserConfig({
           text: '快速开始',
           children: [
             '/guide/getting-started',
+            '/guide/about-guomi',
+          ],
+        },
+      ],
+      '/implementations/': [
+        {
+          text: '不同语言实现',
+          children: [
+            '/implementations/typescript/',
+            '/implementations/java/',
           ],
         },
       ],
