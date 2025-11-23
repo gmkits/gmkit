@@ -507,7 +507,8 @@ async function testIntegration() {
 
 - [GMKit API 文档](../README.md)
 - [Hutool 官方文档](https://hutool.cn/docs/)
-- [国密算法标准](../docs/STANDARDS.md)
+- [GMT-0009 合规性](../standards/GMT-0009-COMPLIANCE.md)
+- [GMT-0009 快速参考](../standards/GMT-0009-快速参考.md)
 
 ## 技术支持
 

@@ -278,7 +278,7 @@ All changes are **fully backward compatible**:
 
 ## 相关资源 / Related Resources
 
-- [PUBLISHING.md](./PUBLISHING.md) - 完整的发布指南 / Complete publishing guide
+- [PUBLISHING.md](../dev/PUBLISHING.md) - 完整的发布指南 / Complete publishing guide
 - [test-umd.html](./test-umd.html) - UMD 测试页面 / UMD test page
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)
 - [Vite Library Mode](https://vitejs.dev/guide/build.html#library-mode)

@@ -420,8 +420,8 @@ const signature = sign(privateKey, data, { userId });
 ### B. 相关链接
 
 - [GMKit 主页](https://github.com/CherryRum/gmkit)
-- [GMT 标准符合性文档](./GMT-0009-COMPLIANCE.md)
-- [性能优化指南](./PERFORMANCE-OPTIMIZATIONS.md)
+- [GMT 标准符合性文档](../standards/GMT-0009-COMPLIANCE.md)
+- [性能优化指南](../performance/PERFORMANCE-OPTIMIZATIONS.md)
 
 ---
 
