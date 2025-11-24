@@ -1,6 +1,6 @@
 # GMKit Vue 3 演示
 
-这是一个基于 Vue 3 + TypeScript 构建的密码算法工具集 Web 应用。
+这是一个基于 Vue 3 + TypeScript 构建的密码算法工具集 Web 应用，直接从 npm 引用 `gmkitx@^0.9.1`。
 
 ## 功能特点
 

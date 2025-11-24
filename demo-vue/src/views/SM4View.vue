@@ -8,7 +8,7 @@
 -->
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { sm4Encrypt, sm4Decrypt, CipherMode } from 'gmkit'
+import { sm4Encrypt, sm4Decrypt, CipherMode } from 'gmkitx'
 
 // ========== 密钥管理 Key Management ==========
 // SM4密钥（128位，32个十六进制字符）SM4 key (128-bit, 32 hex characters)
