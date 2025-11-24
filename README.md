@@ -116,72 +116,65 @@ const sha512Hash = sha.sha512('Hello World');
 
 ## 📚 API 深度指南
 
-### SM2 (椭圆曲线公钥密码)
-
-支持加密、解密、签名、验签及密钥对生成。默认使用 `C1C3C2` 模式。
+### SM2（椭圆曲线公钥密码）
+- 加/解密、签名/验签、密钥对生成；默认 `C1C3C2`，可切换 `C1C2C3`。
+- Node/浏览器同构，面向对象与函数式并行。
 
 ```ts
 import { SM2, SM2CipherMode } from 'gmkitx';
 
-// 面向对象方式
-const sm2Instance = SM2.fromPrivateKey(privateKey);
+const sm2 = SM2.fromPrivateKey(privateKey);
+const signature = sm2.sign('核心指令');
+const verified = sm2.verify('核心指令', signature);
 
-// 签名与验签
-const signature = sm2Instance.sign('核心指令');
-const isValid = sm2Instance.verify('核心指令', signature);
-
-// 显式指定加密模式 (C1C2C3 或 C1C3C2)
-const cipher = sm2Instance.encrypt('数据', SM2CipherMode.C1C3C2);
+const cipher = sm2.encrypt('数据', SM2CipherMode.C1C3C2);
+const plain = sm2.decrypt(cipher);
 ```
 
-### SM4 (分组密码算法)
-
-支持多种分组模式：`ECB` | `CBC` | `CTR` | `CFB` | `OFB` | `GCM`。
-
-```ts
-import { SM4, CipherMode, PaddingMode } from 'gmkitx';
-
-const key = '0123456789abcdeffedcba9876543210';
-const sm4 = new SM4(key, { 
-  mode: CipherMode.GCM, // 使用 GCM 模式
-  padding: PaddingMode.NONE 
-});
-
-// GCM 模式会返回密文与认证标签(AuthTag)
-const { ciphertext, tag } = sm4.encrypt('敏感信息', { iv: '...' });
-```
-
-### SM3 / SHA (消息摘要)
-
-支持流式更新（Update），适合处理大文件。
+### SM3（消息摘要）
+- 流式更新，Hex/Base64/Uint8Array 输出；与 SHA API 对齐。
 
 ```ts
 import { SM3, OutputFormat } from 'gmkitx';
 
 const sm3 = new SM3();
+sm3.update('part-1');
+sm3.update('part-2');
 
-sm3.update('第一部分数据');
-sm3.update('第二部分数据');
-
-// 输出 Base64 格式
-const result = sm3.digest({ format: OutputFormat.BASE64 });
+const hex = sm3.digest(); // 默认 Hex
+const base64 = sm3.digest({ format: OutputFormat.BASE64 });
 ```
 
-### ZUC (祖冲之序列密码)
+### SM4（分组密码）
+- 支持 `ECB` | `CBC` | `CTR` | `CFB` | `OFB` | `GCM`，PKCS7/NoPadding 可选。
 
-包含机密性算法（128-EEA3）与完整性算法（128-EIA3）。
+```ts
+import { SM4, CipherMode, PaddingMode } from 'gmkitx';
+
+const key = '0123456789abcdeffedcba9876543210';
+const sm4 = new SM4(key, { mode: CipherMode.GCM, padding: PaddingMode.NONE });
+
+const { ciphertext, tag } = sm4.encrypt('敏感信息', { iv: '00112233445566778899aabbccddeeff' });
+const decrypted = sm4.decrypt({ ciphertext, tag, iv: '00112233445566778899aabbccddeeff' });
+```
+
+### ZUC（祖冲之序列密码）
+- 覆盖 128-EEA3（机密性）与 128-EIA3（完整性）；流式密钥流可复用。
 
 ```ts
 import { zucEncrypt, zucKeystream } from 'gmkitx';
 
-const key = '...';
-const iv = '...';
-
-// 加密
 const cipher = zucEncrypt(key, iv, 'Hello ZUC');
+const keystream = zucKeystream(key, iv, 32); // 32 bytes keystream
+```
 
-// 生成密钥流 (Keystream)
-const stream = zucKeystream(key, iv, length);
+### SHA（国际标准摘要）
+- SHA1/224/256/384/512 系列，API 与 SM3 一致，便于混合使用。
+
+```ts
+import { sha } from 'gmkitx';
+
+const hash = sha.sha256('Hello World');
 ```
 
 -----
