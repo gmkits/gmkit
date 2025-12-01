@@ -1,6 +1,12 @@
 import { defineUserConfig } from 'vuepress';
 import { hopeTheme } from 'vuepress-theme-hope';
-import { webpackBundler } from '@vuepress/bundler-webpack';
+import { viteBundler } from '@vuepress/bundler-vite';
+
+import { compression, defineAlgorithm } from 'vite-plugin-compression2';
+import { constants } from 'zlib';
+
+// ❗ 新插件：取代 mdEnhancePlugin
+import { markdownExtPlugin } from '@vuepress/plugin-markdown-ext';
 
 export default defineUserConfig({
   lang: 'zh-CN',
@@ -8,24 +14,63 @@ export default defineUserConfig({
   description: '国密算法与国际标准的全场景 TypeScript 解决方案',
   base: '/gmkit/',
 
-  bundler: webpackBundler({
-    scss: {},
-    sass: {},
+  bundler: viteBundler({
+    viteOptions: {
+      plugins: [
+        compression({
+          include: /\.(js|mjs|css|html|json|svg|map)$/i,
+          threshold: 1024,
+          skipIfLargerOrEqual: true,
+          deleteOriginalAssets: false,
+          algorithms: [
+            defineAlgorithm('gzip', { level: 9 }),
+
+            defineAlgorithm('brotliCompress', {
+              params: {
+                [constants.BROTLI_PARAM_QUALITY]: 11,
+              },
+            }),
+
+            defineAlgorithm('zstandard', { level: 19 }),
+          ],
+        }),
+      ],
+    },
   }),
 
+  // ===================================================================
+  // 正确方式：使用 markdown-ext，而不是 mdEnhancePlugin
+  // ===================================================================
+  plugins: [
+    markdownExtPlugin({
+      // 对应旧 mdEnhance 的功能
+      attrs: true,          // 属性语法
+      mark: true,           // ==高亮==
+      figure: true,         // 图片+标题 Figure
+      footnote: true,       // 脚注
+      sub: true,            // 下标
+      sup: true,            // 上标
+      imgLazyload: true,    // 图片懒加载
+      imgSize: true,        // 图片尺寸语法
+      tasklist: true,       // 任务列表
+      tabs: true,           // 标签页
+      codetabs: true,       // 代码标签页
+      stylize: true,        // ::: tip ::: 等增强
+      component: true,      // 组件 Markdown 语法
+      chartjs: false,       // 如果用不到不要开
+    }),
+  ],
+
+  // ===================================================================
+  // hopeTheme 保持原样（确保 theme.plugins 里不要再写 mdEnhance）
+  // ===================================================================
   theme: hopeTheme({
     hostname: 'https://cherryrum.github.io/gmkit',
 
-    // 仓库配置
     repo: 'CherryRum/gmkit',
-    repoLabel: 'GitHub',
-    repoDisplay: true,
-
-    // 文档目录配置
     docsDir: 'docs',
     docsBranch: 'main',
 
-    // 导航栏
     navbar: [
       { text: '首页', link: '/' },
       {
@@ -41,7 +86,7 @@ export default defineUserConfig({
           { text: 'SM2 - 椭圆曲线公钥密码', link: '/algorithms/SM2' },
           { text: 'SM3 - 密码杂凑算法', link: '/algorithms/SM3' },
           { text: 'SM4 - 分组密码算法', link: '/algorithms/SM4' },
-          { text: 'ZUC - 祖冲之序列密码', link: '/algorithms/ZUC' },
+          { text: 'ZUC - 序列密码算法', link: '/algorithms/ZUC' },
           { text: 'SHA - 国际标准算法', link: '/algorithms/SHA' },
         ],
       },
@@ -70,26 +115,28 @@ export default defineUserConfig({
           { text: '性能优化', link: '/performance/PERFORMANCE-OPTIMIZATIONS' },
         ],
       },
+      {
+        text: '技术总结',
+        children: [
+          { text: '项目总结', link: '/summaries/PROJECT_SUMMARY' },
+          { text: '实现总结', link: '/summaries/IMPLEMENTATION_SUMMARY' },
+          { text: '迁移总结', link: '/summaries/STANDARD-MIGRATION-SUMMARY' },
+          { text: '安全总结', link: '/summaries/SECURITY-SUMMARY' },
+        ],
+      },
     ],
 
-    // 侧边栏
     sidebar: {
       '/guide/': [
         {
           text: '快速开始',
-          children: [
-            '/guide/getting-started',
-            '/guide/about-guomi',
-          ],
+          children: ['/guide/getting-started', '/guide/about-guomi'],
         },
       ],
       '/implementations/': [
         {
           text: '不同语言实现',
-          children: [
-            '/implementations/typescript/',
-            '/implementations/java/',
-          ],
+          children: ['/implementations/typescript/', '/implementations/java/'],
         },
       ],
       '/algorithms/': [
@@ -104,9 +151,7 @@ export default defineUserConfig({
         },
         {
           text: '国际标准算法',
-          children: [
-            '/algorithms/SHA',
-          ],
+          children: ['/algorithms/SHA'],
         },
       ],
       '/dev/': [
@@ -124,19 +169,13 @@ export default defineUserConfig({
       '/standards/': [
         {
           text: '标准与合规',
-          children: [
-            '/standards/GMT-0009-COMPLIANCE',
-            '/standards/GMT-0009-快速参考',
-          ],
+          children: ['/standards/GMT-0009-COMPLIANCE', '/standards/GMT-0009-快速参考'],
         },
       ],
       '/performance/': [
         {
           text: '性能',
-          children: [
-            '/performance/PERFORMANCE',
-            '/performance/PERFORMANCE-OPTIMIZATIONS',
-          ],
+          children: ['/performance/PERFORMANCE', '/performance/PERFORMANCE-OPTIMIZATIONS'],
         },
       ],
       '/summaries/': [
@@ -152,66 +191,16 @@ export default defineUserConfig({
       ],
     },
 
-    // 插件配置
     plugins: {
-      // 代码复制
-      copyCode: {
-        showInMobile: true,
-      },
-
-      // 版权信息 - 禁用全局模式，避免污染所有页面
-      copyright: false,
-
-      // Git 信息
+      copyCode: { showInMobile: true },
       git: true,
-
-      // 阅读时间
-      readingTime: {
-        wordPerMinute: 200,
-      },
+      readingTime: { wordPerMinute: 200 },
+      copyright: false,
     },
 
-    // Markdown 配置 (使用新的 API)
-    markdown: {
-      codeTabs: true,
-      tasklist: true,
-      mermaid: true,
-      math: {
-        type: 'katex',
-      },
-      demo: true,
-      mark: true,
-      align: true,
-      attrs: true,
-      sub: true,
-      sup: true,
-      footnote: true,
-      figure: true,
-      imgLazyload: true,
-      imgMark: true,
-      imgSize: true,
-      tabs: true,
-      hint: true,
-    },
-
-    // 页脚
     footer: 'Apache-2.0 Licensed | Copyright © 2025-present mumu',
     displayFooter: true,
-
-    // 加密配置
-    encrypt: {
-      config: {},
-    },
-
-    // 作者信息
-    author: {
-      name: 'mumu',
-      email: 'yulin.1996@foxmail.com',
-    },
-
-    // 页面元信息
-    metaLocales: {
-      editLink: '在 GitHub 上编辑此页',
-    },
+    author: { name: 'mumu', email: 'yulin.1996@foxmail.com' },
+    metaLocales: { editLink: '在 GitHub 上编辑此页' },
   }),
 });
