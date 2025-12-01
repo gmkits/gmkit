@@ -1,0 +1,86 @@
+name: Deploy VuePress Site
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'docs/**'
+      - '.github/workflows/deploy-docs.yml'
+
+  pull_request:
+    paths:
+      - 'docs/**'
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install zstd
+        run: sudo apt-get update && sudo apt-get install -y zstd
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build VuePress
+        run: npm run docs:build
+
+      - name: Compress static assets (zstd + gzip)
+        run: |
+          cd docs/.vuepress/dist
+
+          echo ">>> gzip 压缩..."
+          find . -type f \
+            \( -name "*.js" -o -name "*.css" -o -name "*.html" -o -name "*.json" -o -name "*.svg" -o -name "*.xml" \) \
+            ! -name "*.gz" ! -name "*.zst" \
+            -exec gzip -k -9 {} \;
+
+          echo ">>> zstd 压缩..."
+          find . -type f \
+            \( -name "*.js" -o -name "*.css" -o -name "*.html" -o -name "*.json" -o -name "*.svg" -o -name "*.xml" \) \
+            ! -name "*.gz" ! -name "*.zst" \
+            -exec zstd -q -19 -f --output={}.zst {} \;
+
+          echo ">>> 压缩完成。"
+
+      # ------------------------------------------------------------
+      # 使用 rsync --delete：最佳实践（不会中间断造成空站）
+      # ------------------------------------------------------------
+
+      - name: Deploy to HK (Main Origin)
+        if: github.event_name == 'push'
+        uses: burnett01/rsync-deployments@v5.2
+        with:
+          switches: -az --delete
+          path: docs/.vuepress/dist/
+          remote_path: /opt/gmkit-site/www/
+          remote_user: root
+          remote_host: ${{ secrets.HK_HOST }}
+          remote_key: ${{ secrets.HK_KEY }}
+
+      - name: Deploy to CN (Mirror Origin)
+        if: github.event_name == 'push'
+        uses: burnett01/rsync-deployments@v5.2
+        with:
+          switches: -az --delete
+          path: docs/.vuepress/dist/
+          remote_path: /opt/gmkit-site/www/
+          remote_user: root
+          remote_host: ${{ secrets.CN_HOST }}
+          remote_key: ${{ secrets.CN_KEY }}
+
+      - name: Purge EdgeOne CDN Cache
+        if: github.event_name == 'push'
+        run: |
+          echo "Purging cache..."
+          curl -X POST "https://api.edgeone.com/purge?zone=${{ secrets.EDGE_ZONE }}" \
+            -H "Authorization: Bearer ${{ secrets.EDGE_TOKEN }}" \
+            --fail || echo "Purge failed or API not supported"
