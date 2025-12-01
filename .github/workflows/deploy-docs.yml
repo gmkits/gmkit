@@ -44,10 +44,10 @@ jobs:
         with:
           switches: -az --delete
           path: docs/.vuepress/dist/
-          remote_path: /opt/gmkit-site/www/
-          remote_user: root
+          remote_path: /home/gmkit-site/www/
+          remote_user: ${{ secrets.USER }}
           remote_host: ${{ secrets.HK_HOST }}
-          remote_key: ${{ secrets.HK_KEY }}
+          remote_password: ${{ secrets.HK_PASS }}
 
       - name: Deploy to CN (Mirror Origin)
         if: github.event_name == 'push'
@@ -55,10 +55,10 @@ jobs:
         with:
           switches: -az --delete
           path: docs/.vuepress/dist/
-          remote_path: /opt/gmkit-site/www/
-          remote_user: root
+          remote_path: /home/gmkit-site/www/
+          remote_user: ${{ secrets.USER }}
           remote_host: ${{ secrets.CN_HOST }}
-          remote_key: ${{ secrets.CN_KEY }}
+          remote_password: ${{ secrets.CN_PASS }}
 
 #      - name: Purge EdgeOne CDN Cache
 #        if: github.event_name == 'push'
