@@ -1,9 +1,6 @@
 import { defineUserConfig } from 'vuepress';
 import { hopeTheme } from 'vuepress-theme-hope';
 import { viteBundler } from '@vuepress/bundler-vite';
-import { markdownExtPlugin } from '@vuepress/plugin-markdown-ext';
-import { markdownTabPlugin } from '@vuepress/plugin-markdown-tab';
-
 import { compression, defineAlgorithm } from 'vite-plugin-compression2';
 import { constants } from 'zlib';
 
@@ -38,21 +35,7 @@ export default defineUserConfig({
   // ===================================================================
   // 正确方式：使用 markdown-ext，而不是 mdEnhancePlugin
   // ===================================================================
-  plugins: [
-    markdownExtPlugin({
-      gfm: true,
-      breaks: true,
-      linkify: true,
-      footnote: true,
-      tasklist: true,
-      component: true,
-      vPre: true,
-    }),
-    markdownTabPlugin({
-      codeTabs: true,
-      tabs: true,
-    }),
-  ],
+  plugins: [],
 
   // ===================================================================
   // hopeTheme 保持原样（确保 theme.plugins 里不要再写 mdEnhance）
@@ -189,6 +172,18 @@ export default defineUserConfig({
       git: true,
       readingTime: { wordPerMinute: 200 },
       copyright: false,
+    },
+
+    markdown: {
+      gfm: true,
+      breaks: true,
+      linkify: true,
+      footnote: true,
+      tasklist: true,
+      component: true,
+      vPre: true,
+      codeTabs: true,
+      tabs: true,
     },
 
     footer: 'Apache-2.0 Licensed | Copyright © 2025-present mumu',
