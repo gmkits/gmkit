@@ -60,10 +60,29 @@ jobs:
           remote_host: ${{ secrets.CN_HOST }}
           remote_key:  ${{ secrets.SSH_KEY }}
 
-#      - name: Purge EdgeOne CDN Cache
-#        if: github.event_name == 'push'
-#        run: |
-#          echo "Purging cache..."
-#          curl -X POST "https://api.edgeone.com/purge?zone=${{ secrets.EDGE_ZONE }}" \
-#            -H "Authorization: Bearer ${{ secrets.EDGE_TOKEN }}" \
-#            --fail || echo "Purge failed or API not supported"
+      # ------------------------------------------------------------
+      # EdgeOne CDN 缓存刷新 (支持国内站和国际站)
+      # ------------------------------------------------------------
+      - name: Purge EdgeOne CDN Cache (Domestic - CN)
+        if: github.event_name == 'push'
+        uses: 2061360308/edgeone-purge-action@main
+        with:
+          secret_id: ${{ secrets.TENCENT_SECRET_ID }}
+          secret_key: ${{ secrets.TENCENT_SECRET_KEY }}
+          zone_id: ${{ secrets.EDGEONE_ZONE_ID_CN }}
+          purge_type: 'purge_url'
+          targets: |
+            https://gmkit.cn/
+          flush_type: 'purge_all'
+
+      - name: Purge EdgeOne CDN Cache (International - Global)
+        if: github.event_name == 'push'
+        uses: 2061360308/edgeone-purge-action@main
+        with:
+          secret_id: ${{ secrets.TENCENT_SECRET_ID }}
+          secret_key: ${{ secrets.TENCENT_SECRET_KEY }}
+          zone_id: ${{ secrets.EDGEONE_ZONE_ID_GLOBAL }}
+          purge_type: 'purge_url'
+          targets: |
+            https://gmkit.com/
+          flush_type: 'purge_all'
