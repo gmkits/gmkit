@@ -62,34 +62,25 @@ jobs:
 
       # ------------------------------------------------------------
       # EdgeOne CDN 缓存刷新 (支持国内站和国际站)
-      # 使用 Tencent Cloud CLI 以支持不同区域的端点
+      # 使用自定义 Python 脚本支持不同的 API 端点
+      # 国内站: teo.tencentcloudapi.com
+      # 国际站: teo.intl.tencentcloudapi.com
       # ------------------------------------------------------------
-      - name: Setup Tencent Cloud CLI
-        if: github.event_name == 'push'
-        run: |
-          pip install --upgrade pip
-          pip install tccli==3.0.1007.1
-
-      - name: Configure Tencent Cloud CLI
-        if: github.event_name == 'push'
-        run: |
-          tccli configure set secretId ${{ secrets.TENCENT_SECRET_ID }}
-          tccli configure set secretKey ${{ secrets.TENCENT_SECRET_KEY }}
-
       - name: Purge EdgeOne CDN Cache (Domestic - CN)
         if: github.event_name == 'push'
         run: |
-          tccli teo CreatePurgeTask \
-            --ZoneId ${{ secrets.EDGEONE_ZONE_ID_CN }} \
-            --Type purge_host \
-            --Targets '["gmkit.cn"]' \
-            --region ap-guangzhou
+          python3 .github/scripts/purge_edgeone.py \
+            "${{ secrets.TENCENT_SECRET_ID }}" \
+            "${{ secrets.TENCENT_SECRET_KEY }}" \
+            "${{ secrets.EDGEONE_ZONE_ID_CN }}" \
+            "gmkit.cn"
 
       - name: Purge EdgeOne CDN Cache (International - Global)
         if: github.event_name == 'push'
         run: |
-          tccli teo CreatePurgeTask \
-            --ZoneId ${{ secrets.EDGEONE_ZONE_ID_GLOBAL }} \
-            --Type purge_host \
-            --Targets '["gmkit.com"]' \
-            --endpoint teo.ap-singapore.tencentcloudapi.com
+          python3 .github/scripts/purge_edgeone.py \
+            "${{ secrets.TENCENT_SECRET_ID }}" \
+            "${{ secrets.TENCENT_SECRET_KEY }}" \
+            "${{ secrets.EDGEONE_ZONE_ID_GLOBAL }}" \
+            "gmkit.com" \
+            --international
