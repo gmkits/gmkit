@@ -68,14 +68,13 @@ jobs:
         if: github.event_name == 'push'
         run: |
           pip install --upgrade pip
-          pip install tccli
+          pip install tccli==3.0.1007.1
 
       - name: Configure Tencent Cloud CLI
         if: github.event_name == 'push'
         run: |
           tccli configure set secretId ${{ secrets.TENCENT_SECRET_ID }}
           tccli configure set secretKey ${{ secrets.TENCENT_SECRET_KEY }}
-          tccli configure set region ap-guangzhou
 
       - name: Purge EdgeOne CDN Cache (Domestic - CN)
         if: github.event_name == 'push'
