@@ -62,23 +62,35 @@ jobs:
 
       # ------------------------------------------------------------
       # EdgeOne CDN 缓存刷新 (支持国内站和国际站)
+      # 使用 Tencent Cloud CLI 以支持不同区域的端点
       # ------------------------------------------------------------
+      - name: Setup Tencent Cloud CLI
+        if: github.event_name == 'push'
+        run: |
+          pip install --upgrade pip
+          pip install tccli
+
+      - name: Configure Tencent Cloud CLI
+        if: github.event_name == 'push'
+        run: |
+          tccli configure set secretId ${{ secrets.TENCENT_SECRET_ID }}
+          tccli configure set secretKey ${{ secrets.TENCENT_SECRET_KEY }}
+          tccli configure set region ap-guangzhou
+
       - name: Purge EdgeOne CDN Cache (Domestic - CN)
         if: github.event_name == 'push'
-        uses: 2061360308/edgeone-purge-action@653511b3b364b535f63d7b6adc972046413c2054
-        with:
-          secret_id: ${{ secrets.TENCENT_SECRET_ID }}
-          secret_key: ${{ secrets.TENCENT_SECRET_KEY }}
-          zone_id: ${{ secrets.EDGEONE_ZONE_ID_CN }}
-          type: 'purge_host'
-          hostnames: 'gmkit.cn'
+        run: |
+          tccli teo CreatePurgeTask \
+            --ZoneId ${{ secrets.EDGEONE_ZONE_ID_CN }} \
+            --Type purge_host \
+            --Targets '["gmkit.cn"]' \
+            --region ap-guangzhou
 
       - name: Purge EdgeOne CDN Cache (International - Global)
         if: github.event_name == 'push'
-        uses: 2061360308/edgeone-purge-action@653511b3b364b535f63d7b6adc972046413c2054
-        with:
-          secret_id: ${{ secrets.TENCENT_SECRET_ID }}
-          secret_key: ${{ secrets.TENCENT_SECRET_KEY }}
-          zone_id: ${{ secrets.EDGEONE_ZONE_ID_GLOBAL }}
-          type: 'purge_host'
-          hostnames: 'gmkit.com'
+        run: |
+          tccli teo CreatePurgeTask \
+            --ZoneId ${{ secrets.EDGEONE_ZONE_ID_GLOBAL }} \
+            --Type purge_host \
+            --Targets '["gmkit.com"]' \
+            --endpoint teo.ap-singapore.tencentcloudapi.com

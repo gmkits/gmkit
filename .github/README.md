@@ -36,17 +36,22 @@
 
 ### 技术说明
 
-- 使用 `2061360308/edgeone-purge-action@653511b3b364b535f63d7b6adc972046413c2054` 进行 EdgeOne 缓存刷新
+- 使用腾讯云官方 CLI (`tccli`) 进行 EdgeOne 缓存刷新
+- 国内站使用 `ap-guangzhou` 区域端点
+- 国际站使用 `ap-singapore` 区域端点（通过 `--endpoint` 参数指定）
 - 使用 `purge_host` 类型进行主机级别的完整缓存刷新
 - 分别为国内站和国际站配置不同的 Zone ID 和域名，实现双站点缓存刷新
 - 参考文档：https://cloud.tencent.com/document/product/1552/80703
 
 ### 参数说明
 
-- `type`: 刷新类型，使用 `purge_host` 进行主机级别刷新
-- `hostnames`: 需要刷新的域名
-  - 国内站：`gmkit.cn`
-  - 国际站：`gmkit.com`
+- `Type`: 刷新类型，使用 `purge_host` 进行主机级别刷新
+- `Targets`: 需要刷新的域名列表（JSON 数组格式）
+  - 国内站：`["gmkit.cn"]`
+  - 国际站：`["gmkit.com"]`
+- `region`: API 区域
+  - 国内站：`ap-guangzhou`
+  - 国际站：通过 `--endpoint` 指定 `teo.ap-singapore.tencentcloudapi.com`
 
 ### 故障排查
 
