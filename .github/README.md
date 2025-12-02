@@ -36,10 +36,17 @@
 
 ### 技术说明
 
-- 使用 `2061360308/edgeone-purge-action@main` 进行 EdgeOne 缓存刷新
-- 支持 `purge_url` 和 `purge_all` 两种刷新模式
-- 分别为国内站和国际站配置不同的 Zone ID，实现双站点缓存刷新
+- 使用 `2061360308/edgeone-purge-action@653511b3b364b535f63d7b6adc972046413c2054` 进行 EdgeOne 缓存刷新
+- 使用 `purge_host` 类型进行主机级别的完整缓存刷新
+- 分别为国内站和国际站配置不同的 Zone ID 和域名，实现双站点缓存刷新
 - 参考文档：https://cloud.tencent.com/document/product/1552/80703
+
+### 参数说明
+
+- `type`: 刷新类型，使用 `purge_host` 进行主机级别刷新
+- `hostnames`: 需要刷新的域名
+  - 国内站：`gmkit.cn`
+  - 国际站：`gmkit.com`
 
 ### 故障排查
 

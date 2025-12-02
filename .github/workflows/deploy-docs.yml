@@ -65,24 +65,20 @@ jobs:
       # ------------------------------------------------------------
       - name: Purge EdgeOne CDN Cache (Domestic - CN)
         if: github.event_name == 'push'
-        uses: 2061360308/edgeone-purge-action@main
+        uses: 2061360308/edgeone-purge-action@653511b3b364b535f63d7b6adc972046413c2054
         with:
           secret_id: ${{ secrets.TENCENT_SECRET_ID }}
           secret_key: ${{ secrets.TENCENT_SECRET_KEY }}
           zone_id: ${{ secrets.EDGEONE_ZONE_ID_CN }}
-          purge_type: 'purge_url'
-          targets: |
-            https://gmkit.cn/
-          flush_type: 'purge_all'
+          type: 'purge_host'
+          hostnames: 'gmkit.cn'
 
       - name: Purge EdgeOne CDN Cache (International - Global)
         if: github.event_name == 'push'
-        uses: 2061360308/edgeone-purge-action@main
+        uses: 2061360308/edgeone-purge-action@653511b3b364b535f63d7b6adc972046413c2054
         with:
           secret_id: ${{ secrets.TENCENT_SECRET_ID }}
           secret_key: ${{ secrets.TENCENT_SECRET_KEY }}
           zone_id: ${{ secrets.EDGEONE_ZONE_ID_GLOBAL }}
-          purge_type: 'purge_url'
-          targets: |
-            https://gmkit.com/
-          flush_type: 'purge_all'
+          type: 'purge_host'
+          hostnames: 'gmkit.com'
