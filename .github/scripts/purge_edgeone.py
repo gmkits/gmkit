@@ -15,6 +15,7 @@ Reference: https://cloud.tencent.com/document/product/213/30654
 import hashlib
 import hmac
 import json
+import os
 import sys
 import time
 from datetime import datetime
@@ -23,6 +24,61 @@ if sys.version_info[0] <= 2:
     from httplib import HTTPSConnection
 else:
     from http.client import HTTPSConnection
+
+
+def check_rate_limit(zone_id, site_type):
+    """
+    Check if enough time has passed since last purge (rate limiting)
+    检查距离上次刷新是否超过1小时（速率限制）
+    
+    Args:
+        zone_id: EdgeOne Zone ID
+        site_type: Site type (cn or intl)
+    
+    Returns:
+        True if can proceed, False if rate limited
+    """
+    # Create a lock file path based on zone_id and site_type
+    # 基于 zone_id 和 site_type 创建锁文件路径
+    lock_file = "/tmp/.edgeone_purge_%s_%s.lock" % (zone_id, site_type)
+    
+    if os.path.exists(lock_file):
+        try:
+            with open(lock_file, 'r') as f:
+                last_purge_time = float(f.read().strip())
+            
+            current_time = time.time()
+            time_elapsed = current_time - last_purge_time
+            time_remaining = 3600 - time_elapsed  # 3600 seconds = 1 hour
+            
+            if time_elapsed < 3600:
+                print("⚠️  Rate limit: Last purge was %.1f minutes ago" % (time_elapsed / 60))
+                print("   Please wait %.1f more minutes before next purge" % (time_remaining / 60))
+                return False
+        except (ValueError, IOError):
+            # If file is corrupted or can't be read, allow the purge
+            # 如果文件损坏或无法读取，允许刷新
+            pass
+    
+    return True
+
+
+def update_rate_limit(zone_id, site_type):
+    """
+    Update the rate limit lock file with current timestamp
+    更新速率限制锁文件的时间戳
+    
+    Args:
+        zone_id: EdgeOne Zone ID
+        site_type: Site type (cn or intl)
+    """
+    lock_file = "/tmp/.edgeone_purge_%s_%s.lock" % (zone_id, site_type)
+    
+    try:
+        with open(lock_file, 'w') as f:
+            f.write(str(time.time()))
+    except IOError as e:
+        print("⚠️  Warning: Could not update rate limit file: %s" % str(e), file=sys.stderr)
 
 
 def sign(key, msg):
@@ -68,6 +124,11 @@ def purge_edgeone_cache(secret_id, secret_key, zone_id, targets, purge_type="pur
         "Type": purge_type,
         "Targets": targets
     })
+    
+    # Print request payload for debugging (打印请求载荷用于调试)
+    print("\n📤 Request Payload:")
+    print("   %s" % payload)
+    print("")
     
     # Get timestamp and date (获取时间戳和日期)
     timestamp = int(time.time())
@@ -126,6 +187,11 @@ def purge_edgeone_cache(secret_id, secret_key, zone_id, targets, purge_type="pur
         response = conn.getresponse()
         response_data = response.read().decode("utf-8")
         result = json.loads(response_data)
+        
+        # Print response for debugging (打印响应用于调试)
+        print("\n📥 Response JSON:")
+        print("   %s" % json.dumps(result, indent=2, ensure_ascii=False))
+        print("")
         
         if "Response" in result:
             if "Error" in result["Response"]:
@@ -201,6 +267,11 @@ def main():
     print("   Targets: %s" % ", ".join(targets))
     print("   Site Type: %s" % site_type)
     
+    # Check rate limit (检查速率限制)
+    if not check_rate_limit(zone_id, site_type):
+        print("\n❌ Purge skipped due to rate limit (minimum 1 hour between purges)")
+        sys.exit(1)
+    
     success = purge_edgeone_cache(
         secret_id=secret_id,
         secret_key=secret_key,
@@ -209,6 +280,10 @@ def main():
         purge_type="purge_host",
         site_type=site_type
     )
+    
+    if success:
+        # Update rate limit file after successful purge (成功刷新后更新速率限制文件)
+        update_rate_limit(zone_id, site_type)
     
     sys.exit(0 if success else 1)
 
