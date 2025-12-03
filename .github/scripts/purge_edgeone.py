@@ -109,6 +109,8 @@ def purge_edgeone_cache(secret_id, secret_key, zone_id, targets, purge_type="pur
                     "Signature=" + signature)
     
     # ************* Step 5: Construct and send request (步骤 5：构造并发起请求) *************
+    # Note: X-TC-Region header is not required for EdgeOne API
+    # 注意：EdgeOne API 不需要 X-TC-Region 头
     headers = {
         "Authorization": authorization,
         "Content-Type": ct,
