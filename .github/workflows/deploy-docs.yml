@@ -75,8 +75,8 @@ jobs:
           MIN_INTERVAL_HOURS: 1
         run: |
           python3 .github/scripts/purge_edgeone.py \
-            "${{ secrets.TENCENT_SECRET_ID }}" \
-            "${{ secrets.TENCENT_SECRET_KEY }}" \
+            "${{ secrets.TENCENT_SECRET_ID_CN }}" \
+            "${{ secrets.TENCENT_SECRET_KEY_CN }}" \
             "${{ secrets.EDGEONE_ZONE_ID_CN }}" \
             "gmkit.cn" \
             --site-type=cn
@@ -88,8 +88,8 @@ jobs:
           MIN_INTERVAL_HOURS: 1
         run: |
           python3 .github/scripts/purge_edgeone.py \
-            "${{ secrets.TENCENT_SECRET_ID }}" \
-            "${{ secrets.TENCENT_SECRET_KEY }}" \
+            "${{ secrets.TENCENT_SECRET_ID_GLOBAL }}" \
+            "${{ secrets.TENCENT_SECRET_KEY_GLOBAL }}" \
             "${{ secrets.EDGEONE_ZONE_ID_GLOBAL }}" \
             "gmkit.com" \
             --site-type=intl
