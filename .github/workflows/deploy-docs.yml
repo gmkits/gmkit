@@ -78,7 +78,7 @@ jobs:
             "${{ secrets.TENCENT_SECRET_ID_CN }}" \
             "${{ secrets.TENCENT_SECRET_KEY_CN }}" \
             "${{ secrets.EDGEONE_ZONE_ID_CN }}" \
-            "gmkit.cn" \
+            "gmkit.oldletter.cn" \
             --site-type=cn
 
       - name: Purge EdgeOne CDN Cache (International - Global)
@@ -91,5 +91,5 @@ jobs:
             "${{ secrets.TENCENT_SECRET_ID_GLOBAL }}" \
             "${{ secrets.TENCENT_SECRET_KEY_GLOBAL }}" \
             "${{ secrets.EDGEONE_ZONE_ID_GLOBAL }}" \
-            "gmkit.com" \
+            "gmkit.cn,www.gmkit.cn" \
             --site-type=intl
