@@ -40,12 +40,10 @@
 - 脚本基于腾讯云官方 API v3 签名算法实现
 - 国内站配置：
   - API 端点：`teo.tencentcloudapi.com`
-  - 区域：`ap-guangzhou`
 - 国际站配置：
   - API 端点：`teo.intl.tencentcloudapi.com`
-  - 区域：`ap-hongkong`
 - 使用 `purge_host` 类型进行主机级别的完整缓存刷新
-- 支持逗号分隔的多个目标域名
+- 支持逗号分隔的多个目标域名（例如：`gmkit.cn,www.gmkit.cn`）
 - 分别为国内站和国际站配置不同的 Zone ID 和域名，实现双站点缓存刷新
 - 参考文档：https://cloud.tencent.com/document/product/1552/80703
 
@@ -55,8 +53,8 @@
 - `secret_key`: 腾讯云 API 密钥 Key
 - `zone_id`: EdgeOne 站点 ID
 - `targets`: 刷新目标列表（支持逗号分隔多个域名）
-  - 国内站：`gmkit.cn` 或 `gmkit.cn,www.gmkit.cn`
-  - 国际站：`gmkit.com` 或 `gmkit.com,www.gmkit.com`
+  - 单个域名示例：`gmkit.cn`
+  - 多个域名示例：`gmkit.cn,www.gmkit.cn,api.gmkit.cn`
 - `--site-type`: 站点类型
   - `cn`: 国内站（默认）
   - `intl`: 国际站

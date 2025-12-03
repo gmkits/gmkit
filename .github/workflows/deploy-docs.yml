@@ -63,8 +63,9 @@ jobs:
       # ------------------------------------------------------------
       # EdgeOne CDN 缓存刷新 (支持国内站和国际站)
       # 使用自定义 Python 脚本支持不同的 API 端点
-      # 国内站: teo.tencentcloudapi.com (region: ap-guangzhou)
-      # 国际站: teo.intl.tencentcloudapi.com (region: ap-hongkong)
+      # 国内站: teo.tencentcloudapi.com
+      # 国际站: teo.intl.tencentcloudapi.com
+      # 支持多个域名刷新（逗号分隔）
       # ------------------------------------------------------------
       - name: Purge EdgeOne CDN Cache (Domestic - CN)
         if: github.event_name == 'push'
