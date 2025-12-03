@@ -52,11 +52,9 @@ def purge_edgeone_cache(secret_id, secret_key, zone_id, targets, purge_type="pur
     if site_type == "intl":
         # International site configuration (国际站配置)
         host = "teo.intl.tencentcloudapi.com"
-        region = "ap-hongkong"
     else:
         # Domestic site configuration (国内站配置)
         host = "teo.tencentcloudapi.com"
-        region = "ap-guangzhou"
     
     # Common API parameters (通用 API 参数)
     service = "teo"
@@ -117,8 +115,7 @@ def purge_edgeone_cache(secret_id, secret_key, zone_id, targets, purge_type="pur
         "Host": host,
         "X-TC-Action": action,
         "X-TC-Timestamp": str(timestamp),
-        "X-TC-Version": version,
-        "X-TC-Region": region
+        "X-TC-Version": version
     }
     
     try:
