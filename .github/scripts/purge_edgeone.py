@@ -18,6 +18,8 @@ import json
 import os
 import sys
 import time
+import urllib.request
+import urllib.error
 from datetime import datetime
 
 if sys.version_info[0] <= 2:
@@ -26,59 +28,80 @@ else:
     from http.client import HTTPSConnection
 
 
-def check_rate_limit(zone_id, site_type):
+def check_rate_limit_github():
     """
-    Check if enough time has passed since last purge (rate limiting)
-    检查距离上次刷新是否超过1小时（速率限制）
-    
-    Args:
-        zone_id: EdgeOne Zone ID
-        site_type: Site type (cn or intl)
+    Check if enough time has passed since last successful workflow run using GitHub API
+    使用 GitHub API 检查距离上次成功的工作流运行是否超过配置的间隔时间
     
     Returns:
         True if can proceed, False if rate limited
     """
-    # Create a lock file path based on zone_id and site_type
-    # 基于 zone_id 和 site_type 创建锁文件路径
-    lock_file = "/tmp/.edgeone_purge_%s_%s.lock" % (zone_id, site_type)
+    github_token = os.getenv("GITHUB_TOKEN")
+    min_interval_hours = float(os.getenv("MIN_INTERVAL_HOURS", "1"))
+    github_repository = os.getenv("GITHUB_REPOSITORY")  # e.g., "owner/repo"
+    github_workflow = os.getenv("GITHUB_WORKFLOW")  # e.g., "Deploy VuePress Site"
+    github_run_id = os.getenv("GITHUB_RUN_ID")  # Current run ID to exclude
     
-    if os.path.exists(lock_file):
-        try:
-            with open(lock_file, 'r') as f:
-                last_purge_time = float(f.read().strip())
-            
-            current_time = time.time()
-            time_elapsed = current_time - last_purge_time
-            time_remaining = 3600 - time_elapsed  # 3600 seconds = 1 hour
-            
-            if time_elapsed < 3600:
-                print("⚠️  Rate limit: Last purge was %.1f minutes ago" % (time_elapsed / 60))
-                print("   Please wait %.1f more minutes before next purge" % (time_remaining / 60))
-                return False
-        except (ValueError, IOError):
-            # If file is corrupted or can't be read, allow the purge
-            # 如果文件损坏或无法读取，允许刷新
-            pass
-    
-    return True
-
-
-def update_rate_limit(zone_id, site_type):
-    """
-    Update the rate limit lock file with current timestamp
-    更新速率限制锁文件的时间戳
-    
-    Args:
-        zone_id: EdgeOne Zone ID
-        site_type: Site type (cn or intl)
-    """
-    lock_file = "/tmp/.edgeone_purge_%s_%s.lock" % (zone_id, site_type)
+    if not github_token or not github_repository:
+        print("⚠️  Warning: GitHub API credentials not available, skipping rate limit check")
+        return True
     
     try:
-        with open(lock_file, 'w') as f:
-            f.write(str(time.time()))
-    except IOError as e:
-        print("⚠️  Warning: Could not update rate limit file: %s" % str(e), file=sys.stderr)
+        # Query GitHub API for recent workflow runs
+        # 查询 GitHub API 获取最近的工作流运行记录
+        api_url = "https://api.github.com/repos/%s/actions/runs?status=completed&per_page=10" % github_repository
+        
+        req = urllib.request.Request(api_url)
+        req.add_header("Authorization", "Bearer %s" % github_token)
+        req.add_header("Accept", "application/vnd.github+json")
+        req.add_header("X-GitHub-Api-Version", "2022-11-28")
+        
+        with urllib.request.urlopen(req) as response:
+            data = json.loads(response.read().decode("utf-8"))
+            
+            for run in data.get("workflow_runs", []):
+                # Skip current run and non-matching workflows
+                # 跳过当前运行和不匹配的工作流
+                if str(run["id"]) == github_run_id:
+                    continue
+                if github_workflow and run["name"] != github_workflow:
+                    continue
+                if run["conclusion"] != "success":
+                    continue
+                
+                # Check the completion time of last successful run
+                # 检查上次成功运行的完成时间
+                completed_at = run.get("updated_at") or run.get("created_at")
+                if completed_at:
+                    # Parse ISO 8601 timestamp
+                    # 解析 ISO 8601 时间戳
+                    completed_time = datetime.strptime(completed_at.replace("Z", "+00:00").split("+")[0], "%Y-%m-%dT%H:%M:%S")
+                    current_time = datetime.utcnow()
+                    time_elapsed = (current_time - completed_time).total_seconds()
+                    min_interval_seconds = min_interval_hours * 3600
+                    
+                    if time_elapsed < min_interval_seconds:
+                        time_remaining = min_interval_seconds - time_elapsed
+                        print("⚠️  Rate limit: Last successful run was %.1f minutes ago" % (time_elapsed / 60))
+                        print("   Minimum interval: %.1f hour(s)" % min_interval_hours)
+                        print("   Please wait %.1f more minutes before next purge" % (time_remaining / 60))
+                        print("   (Last run: %s)" % completed_at)
+                        return False
+                
+                # Only check the most recent successful run
+                # 只检查最近一次成功的运行
+                break
+        
+        return True
+        
+    except urllib.error.HTTPError as e:
+        error_body = e.read().decode("utf-8")
+        print("⚠️  Warning: Could not check GitHub API for rate limiting: HTTP %d" % e.code, file=sys.stderr)
+        print("   %s" % error_body, file=sys.stderr)
+        return True  # Allow purge if API check fails
+    except Exception as e:
+        print("⚠️  Warning: Could not check GitHub API for rate limiting: %s" % str(e), file=sys.stderr)
+        return True  # Allow purge if API check fails
 
 
 def sign(key, msg):
@@ -267,10 +290,11 @@ def main():
     print("   Targets: %s" % ", ".join(targets))
     print("   Site Type: %s" % site_type)
     
-    # Check rate limit (检查速率限制)
-    if not check_rate_limit(zone_id, site_type):
-        print("\n❌ Purge skipped due to rate limit (minimum 1 hour between purges)")
-        sys.exit(1)
+    # Check rate limit using GitHub API (检查速率限制，使用 GitHub API)
+    if not check_rate_limit_github():
+        print("\n❌ Purge skipped due to rate limit")
+        print("   Tip: You can adjust MIN_INTERVAL_HOURS environment variable in workflow")
+        sys.exit(0)  # Exit with success to not fail the workflow
     
     success = purge_edgeone_cache(
         secret_id=secret_id,
@@ -280,10 +304,6 @@ def main():
         purge_type="purge_host",
         site_type=site_type
     )
-    
-    if success:
-        # Update rate limit file after successful purge (成功刷新后更新速率限制文件)
-        update_rate_limit(zone_id, site_type)
     
     sys.exit(0 if success else 1)
 

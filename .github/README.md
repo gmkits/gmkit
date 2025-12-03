@@ -45,6 +45,9 @@
 - 使用 `purge_host` 类型进行主机级别的完整缓存刷新
 - 支持逗号分隔的多个目标域名（例如：`gmkit.cn,www.gmkit.cn`）
 - 分别为国内站和国际站配置不同的 Zone ID 和域名，实现双站点缓存刷新
+- **速率限制**：通过 GitHub Actions API 检查上次成功运行时间，避免频繁刷新
+  - 默认最小间隔：1小时（可通过 `MIN_INTERVAL_HOURS` 环境变量配置）
+  - 使用 GitHub API 而非本地文件，适配 CI/CD 环境
 - 参考文档：https://cloud.tencent.com/document/product/1552/80703
 
 ### 参数说明
@@ -58,6 +61,12 @@
 - `--site-type`: 站点类型
   - `cn`: 国内站（默认）
   - `intl`: 国际站
+
+### 环境变量
+
+- `GITHUB_TOKEN`: GitHub API 访问令牌（workflow 自动提供）
+- `MIN_INTERVAL_HOURS`: 最小刷新间隔（小时），默认为 1
+  - 可在 workflow 中设置不同的值，例如 `MIN_INTERVAL_HOURS: 2`
 
 ### 故障排查
 

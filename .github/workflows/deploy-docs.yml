@@ -66,9 +66,13 @@ jobs:
       # 国内站: teo.tencentcloudapi.com
       # 国际站: teo.intl.tencentcloudapi.com
       # 支持多个域名刷新（逗号分隔）
+      # 速率限制：通过 GitHub API 检查上次成功运行时间
       # ------------------------------------------------------------
       - name: Purge EdgeOne CDN Cache (Domestic - CN)
         if: github.event_name == 'push'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MIN_INTERVAL_HOURS: 1
         run: |
           python3 .github/scripts/purge_edgeone.py \
             "${{ secrets.TENCENT_SECRET_ID }}" \
@@ -79,6 +83,9 @@ jobs:
 
       - name: Purge EdgeOne CDN Cache (International - Global)
         if: github.event_name == 'push'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MIN_INTERVAL_HOURS: 1
         run: |
           python3 .github/scripts/purge_edgeone.py \
             "${{ secrets.TENCENT_SECRET_ID }}" \
