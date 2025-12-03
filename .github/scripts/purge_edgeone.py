@@ -51,16 +51,12 @@ def purge_edgeone_cache(secret_id, secret_key, zone_id, targets, purge_type="pur
     # 根据站点类型配置变量
     if site_type == "intl":
         # International site configuration (国际站配置)
-        host_intl = "teo.intl.tencentcloudapi.com"
-        host = host_intl
-        region_intl = "ap-hongkong"
-        region = region_intl
+        host = "teo.intl.tencentcloudapi.com"
+        region = "ap-hongkong"
     else:
         # Domestic site configuration (国内站配置)
-        host_cn = "teo.tencentcloudapi.com"
-        host = host_cn
-        region_cn = "ap-guangzhou"
-        region = region_cn
+        host = "teo.tencentcloudapi.com"
+        region = "ap-guangzhou"
     
     # Common API parameters (通用 API 参数)
     service = "teo"
@@ -153,6 +149,9 @@ def purge_edgeone_cache(secret_id, secret_key, zone_id, targets, purge_type="pur
     except Exception as err:
         print("❌ Error: %s" % str(err), file=sys.stderr)
         return False
+    finally:
+        if 'conn' in locals():
+            conn.close()
 
 
 def main():
@@ -184,6 +183,11 @@ def main():
     for arg in sys.argv[5:]:
         if arg.startswith("--site-type="):
             site_type = arg.split("=")[1]
+    
+    # Validate site type (验证站点类型)
+    if site_type not in ["cn", "intl"]:
+        print("❌ Error: Invalid site type '%s'. Must be 'cn' or 'intl'" % site_type, file=sys.stderr)
+        sys.exit(1)
     
     # Parse targets - support comma-separated list (解析目标 - 支持逗号分隔列表)
     targets = [t.strip() for t in targets_str.split(",") if t.strip()]
