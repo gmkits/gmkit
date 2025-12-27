@@ -104,7 +104,7 @@ const sha512Hash = sha.sha512('Hello World');
 通过 UMD 构建包，在 HTML 中直接使用全局变量 `GMKit`。
 
 ```html
-<script src="[https://unpkg.com/gmkitx@latest/dist/index.global.js](https://unpkg.com/gmkitx@latest/dist/index.global.js)"></script>
+<script src="https://unpkg.com/gmkitx@latest/dist/index.global.js"></script>
 <script>
   const { digest, sm4Encrypt } = GMKit;
   

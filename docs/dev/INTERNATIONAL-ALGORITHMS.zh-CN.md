@@ -1,7 +1,7 @@
 ---
 title: 国际标准算法使用指南
 icon: globe
-order: 4
+order: 7
 author: mumu
 date: 2025-11-23
 category:
