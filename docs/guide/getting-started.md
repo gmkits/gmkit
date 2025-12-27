@@ -16,7 +16,7 @@ tag:
 
 欢迎使用 **GMKitX**！本指南将帮助您快速上手国密算法与国际标准的 TypeScript 实现。
 
-## 📦 安装
+##  安装
 
 ### 环境要求
 
@@ -47,7 +47,7 @@ yarn add gmkitx
 
 :::
 
-## 🚀 第一个例子
+##  第一个例子
 
 让我们从最简单的 SM3 哈希算法开始：
 
@@ -59,7 +59,7 @@ console.log(hash);
 // 输出 16 进制哈希值
 ```
 
-## 📖 导入方式
+##  导入方式
 
 根据场景选择即可：按需导入（最优 Tree-shaking）、类实例化（面向对象），或浏览器直引。
 
@@ -100,7 +100,7 @@ const hash = sm3Instance.digest(); // 默认 Hex
 </script>
 ```
 
-## 🎯 常见使用场景
+##  常见使用场景
 
 ### 场景 1：数据哈希（SM3）
 
@@ -182,14 +182,14 @@ const isValid = sm2Verify(publicKey, message, signature);
 console.log('签名验证:', isValid); // true
 ```
 
-## 🔗 下一步
+##  下一步
 
 - 查看 [SM2 完整文档](/algorithms/SM2) 了解椭圆曲线公钥密码
 - 查看 [SM3 完整文档](/algorithms/SM3) 了解密码杂凑算法
 - 查看 [SM4 完整文档](/algorithms/SM4) 了解分组密码算法
 - 查看 [开发指南](/dev/ARCHITECTURE.zh-CN) 了解架构设计
 
-## 💡 提示
+##  提示
 
 ::: tip 性能优化
 - 对于大文件哈希，使用流式 API（`SM3` 类的 `update` 方法）

@@ -5,10 +5,10 @@ title: GMKitX
 heroImage: /logo.svg
 heroText: GMKitX
 actions:
-  - text: 快速开始 💡
+  - text: 快速开始
     link: /guide/getting-started
     type: primary
-  - text: 算法文档 📚
+  - text: 算法文档
     link: /algorithms/SM2
     type: secondary
 
@@ -22,21 +22,21 @@ features:
   - title: 标准对齐
     icon: check
     details: 对齐 GM/T 标准，兼容 OpenSSL 等主流实现的密文格式
-  - title: 高性能
+  - title: 性能优化
     icon: rocket
-    details: 纯 TypeScript、零额外依赖，适合生产环境性能优化
+    details: 纯 TypeScript、零额外依赖，适合生产环境
 
 copyright: false
 footer: Apache-2.0 Licensed | Copyright © 2025-present mumu
 ---
 
-## ✨ 核心特性
+## 核心特性
 
-`gmkitx` 是一套纯 **TypeScript** 实现的密码学工具集。它不仅实现了 **SM2 / SM3 / SM4 / ZUC** 等国密标准，还集成了 **SHA** 系列国际算法。
+`gmkitx` 是一套纯 **TypeScript** 实现的密码学工具集。它实现了 **SM2 / SM3 / SM4 / ZUC** 等国密标准，同时集成了 **SHA** 系列国际算法。
 
-设计的初衷很简单：提供一套**同构**（Isomorphic）的代码库，让开发者在**服务端**和 **现代浏览器** 前端，都能使用完全一致的 API 进行加密、解密、签名与哈希运算。
+设计目标是提供一套**同构**（Isomorphic）的代码库，让开发者在**服务端**和**现代浏览器**前端，都能使用完全一致的 API 进行加密、解密、签名与哈希运算。
 
-## 🚀 快速安装
+## 快速安装
 
 :::code-tabs#shell
 
@@ -60,7 +60,7 @@ yarn add gmkitx
 
 :::
 
-## ⚡ 快速示例
+## 快速示例
 
 ### 函数式编程（推荐）
 
@@ -113,7 +113,7 @@ const verified = sm2.verify(publicKey, 'Message', sig);
 const sha512Hash = sha.sha512('Hello World');
 ```
 
-## 📚 支持的算法
+## 支持的算法
 
 ### 国密算法
 
@@ -126,12 +126,12 @@ const sha512Hash = sha.sha512('Hello World');
 
 - **SHA** - SHA-1, SHA-224, SHA-256, SHA-384, SHA-512 系列哈希算法
 
-## 🌟 开始探索
+## 开始探索
 
 - [快速开始指南](/guide/getting-started) - 了解如何使用 GMKitX
-- [关于国密算法](/guide/about-guomi) - **信创化、特殊领域应用与性能差异详解** 🔥
+- [关于国密算法](/guide/about-guomi) - 信创化、特殊领域应用与性能差异详解
 - [SM2 算法文档](/algorithms/SM2) - 椭圆曲线公钥密码
 - [SM3 算法文档](/algorithms/SM3) - 密码杂凑算法
 - [SM4 算法文档](/algorithms/SM4) - 分组密码算法
-- [Java 实现推荐](/implementations/java/) - Java 版本的国密算法库
+- [语言集成指南](/dev/JAVA-INTEGRATION.zh-CN) - Java、Go、Rust、Python 对接方案
 - [性能测试](/performance/PERFORMANCE) - 查看性能基准测试结果
