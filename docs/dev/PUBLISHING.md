@@ -1,7 +1,7 @@
 ---
 title: 发布流程指南
 icon: upload
-order: 5
+order: 9
 author: mumu
 date: 2025-11-23
 category:

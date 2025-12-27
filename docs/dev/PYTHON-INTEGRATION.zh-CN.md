@@ -1,7 +1,7 @@
 ---
 title: Python 对接指南
 icon: code
-order: 6
+order: 7
 author: mumu
 date: 2025-12-27
 category:

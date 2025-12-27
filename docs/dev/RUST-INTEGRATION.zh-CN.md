@@ -1,7 +1,7 @@
 ---
 title: Rust 对接指南
 icon: code
-order: 5
+order: 6
 author: mumu
 date: 2025-12-27
 category:
