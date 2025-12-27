@@ -135,7 +135,7 @@ String decrypted = SmUtil.sm4(key.getBytes()).decryptStr(encrypted);
 - [Gitee](https://gitee.com/dromara/hutool)
 - [文档](https://doc.hutool.cn/)
 
-**GMKitX 对接指南：** [Hutool 集成](/dev/HUTOOL-INTEGRATION.zh-CN)
+**GMKitX 对接指南：** [Java 对接指南](/dev/JAVA-INTEGRATION.zh-CN)
 
 ---
 
@@ -257,7 +257,7 @@ const hexCipher = sm2Encrypt(publicKey, data, {
 });
 ```
 
-**详细对接指南：** [Hutool 集成文档](/dev/HUTOOL-INTEGRATION.zh-CN)
+**详细对接指南：** [Java 对接指南](/dev/JAVA-INTEGRATION.zh-CN)
 
 ---
 
@@ -358,6 +358,6 @@ GMKitX 团队正在考虑提供官方的 Java 实现，将具备以下特性：
 ## 🔗 相关资源
 
 - [GMKitX TypeScript 版本](/)
-- [Hutool 集成指南](/dev/HUTOOL-INTEGRATION.zh-CN)
-- [前后端对接最佳实践](/dev/HUTOOL-INTEGRATION.zh-CN)
+- [Java 对接指南](/dev/JAVA-INTEGRATION.zh-CN)
+- [前后端对接最佳实践](/dev/JAVA-INTEGRATION.zh-CN)
 - [性能对比测试](/performance/PERFORMANCE)
