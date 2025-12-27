@@ -13,9 +13,72 @@ tag:
   - 对接其他语言
 ---
 
-# Java 对接指南（Hutool / Bouncy Castle）
+# Java 对接指南
 
-本页聚焦 Java 端与 gmkitx 的互通，分别给出 Hutool 与 Bouncy Castle（BC）两类示例。其它 Java 库可按相同参数与编码约定替换。
+本页聚焦 Java 端与 gmkitx 的互通，提供三种集成方案：
+
+1. **Hutool + Bouncy Castle** - 推荐方案，需要引入 BC 依赖
+2. **直接使用 Bouncy Castle** - 底层实现，更灵活
+3. **gmkit-java** - 原生 Java 实现（敬请期待）
+
+## 依赖配置
+
+### 方案一：Hutool（推荐）
+
+::: tip 注意
+Hutool 的国密算法实现依赖 Bouncy Castle 库，必须同时引入 BC 依赖。
+:::
+
+```xml
+<!-- Maven -->
+<dependency>
+    <groupId>cn.hutool</groupId>
+    <artifactId>hutool-crypto</artifactId>
+    <version>5.8.23</version>
+</dependency>
+<dependency>
+    <groupId>org.bouncycastle</groupId>
+    <artifactId>bcprov-jdk15on</artifactId>
+    <version>1.70</version>
+</dependency>
+```
+
+```gradle
+// Gradle
+implementation 'cn.hutool:hutool-crypto:5.8.23'
+implementation 'org.bouncycastle:bcprov-jdk15on:1.70'
+```
+
+### 方案二：Bouncy Castle
+
+```xml
+<!-- Maven -->
+<dependency>
+    <groupId>org.bouncycastle</groupId>
+    <artifactId>bcprov-jdk15on</artifactId>
+    <version>1.70</version>
+</dependency>
+```
+
+```gradle
+// Gradle
+implementation 'org.bouncycastle:bcprov-jdk15on:1.70'
+```
+
+### 方案三：gmkit-java
+
+::: info 开发中
+gmkit-java 是纯 Java 实现的国密算法库，不依赖第三方库。敬请期待！
+:::
+
+```xml
+<!-- 即将发布 -->
+<dependency>
+    <groupId>com.cherryrum</groupId>
+    <artifactId>gmkit-java</artifactId>
+    <version>1.0.0</version>
+</dependency>
+```
 
 ## 数据要点
 

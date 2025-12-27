@@ -8,16 +8,16 @@
 [![License](https://img.shields.io/badge/license-Apache--2.0-green?style=flat-square)](./LICENSE)
 [![TypeScript](https://img.shields.io/badge/written%20in-TypeScript-blue?style=flat-square)](https://www.typescriptlang.org/)
 
-[特性概览](#-核心特性) • [安装指南](#-安装与环境) • [快速上手](#-快速上手) • [API 参考](#-api-深度指南)
+[特性概览](#核心特性) • [安装指南](#安装与环境) • [快速上手](#快速上手) • [API 参考](#api-深度指南)
 
 
 ---
 
-`gmkitx` 是一套纯 **TypeScript** 实现的密码学工具集。它不仅严格复现了 **SM2 / SM3 / SM4 / ZUC** 等国密标准，还集成了 **SHA** 系列国际算法。
-设计的初衷很简单：提供一套**同构**（Isomorphic）的代码库，让开发者在**服务端**和 **现代浏览器** 前端，都能使用完全一致的 API 进行加密、解密、签名与哈希运算。
+`gmkitx` 是一套纯 **TypeScript** 实现的密码学工具集。它严格遵循 **SM2 / SM3 / SM4 / ZUC** 等国密标准，同时集成了 **SHA** 系列国际算法。
+设计目标是提供一套**同构**（Isomorphic）的代码库，让开发者在**服务端**和**现代浏览器**前端，都能使用完全一致的 API 进行加密、解密、签名与哈希运算。
 </div>
 
-## ✨ 核心特性
+## 核心特性
 
 我们推崇**极简**与**灵活**并存的工程理念：
 
@@ -29,7 +29,7 @@
 
 ---
 
-## 🚀 安装与环境
+## 安装与环境
 
 **环境要求**：Node.js **>= 18** 或任意支持 ES6+ 的现代浏览器。
 
@@ -46,7 +46,7 @@ yarn add gmkitx
 
 -----
 
-## ⚡ 快速上手
+## 快速上手
 
 ### 风格一：函数式编程（推荐）
 
@@ -114,7 +114,7 @@ const sha512Hash = sha.sha512('Hello World');
 
 -----
 
-## 📚 API 深度指南
+## API 深度指南
 
 ### SM2（椭圆曲线公钥密码）
 - 加/解密、签名/验签、密钥对生成；默认 `C1C3C2`，可切换 `C1C2C3`。
@@ -179,7 +179,7 @@ const hash = sha.sha256('Hello World');
 
 -----
 
-## 🛠️ 工具箱 (Utils)
+## 工具箱 (Utils)
 
 `gmkitx` 暴露了底层的数据处理函数，方便处理编码转换与 ASN.1 结构。
 

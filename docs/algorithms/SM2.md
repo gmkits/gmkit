@@ -16,7 +16,7 @@ tag:
 
 # SM2 椭圆曲线公钥密码算法
 
-## 📖 概述
+## 概述
 
 SM2 是中国国家密码管理局于 2010 年 12 月 17 日发布的椭圆曲线公钥密码算法，基于 256 位椭圆曲线。SM2 算法包含数字签名、密钥交换和公钥加密等功能，可以替代 RSA、DSA、ECDSA、DH 等国际算法。
 
@@ -27,12 +27,24 @@ SM2 是中国国家密码管理局于 2010 年 12 月 17 日发布的椭圆曲�
 
 ### 主要特性
 
-- ✅ **高安全性**: 基于 256 位椭圆曲线，安全强度高于 RSA-2048
-- ✅ **高性能**: 运算速度快，适合移动设备和嵌入式系统
-- ✅ **多功能**: 支持加密、签名、密钥交换
-- ✅ **标准化**: 符合国家标准，与主流实现兼容
+- **高安全性**: 基于 256 位椭圆曲线，安全强度相当于 RSA-3072
+- **运算效率**: 相比 RSA，密钥更短、签名验签更快
+- **多功能**: 支持加密、签名、密钥交换三大功能
+- **标准化**: 符合国家标准，与主流实现兼容
 
-## 🚀 快速开始
+### 性能与安全权衡
+
+SM2 作为椭圆曲线密码算法，相比 RSA 有以下特点：
+- **密钥长度**: SM2 256 位可提供与 RSA 3072 位相当的安全强度
+- **运算速度**: 签名和验签速度通常优于 RSA，但具体性能取决于实现和硬件支持
+- **加密效率**: 适合加密小数据量（如会话密钥），大数据建议使用对称加密
+- **安全代价**: 所有非对称加密操作都比对称加密慢得多，这是保障安全的必要成本
+
+::: tip 使用建议
+在实际应用中，通常使用 SM2 加密对称密钥，再用对称算法（如 SM4）加密大量数据，这样既保证了安全性，又兼顾了性能。
+:::
+
+## 快速开始
 
 ### 密钥对生成
 
@@ -75,7 +87,7 @@ const compressed = compressPublicKey(publicKey);
 const uncompressed = decompressPublicKey(compressed);
 ```
 
-## 🔐 加密与解密
+## 加密与解密
 
 SM2 支持非对称加密，使用公钥加密、私钥解密。
 
@@ -141,7 +153,7 @@ const base64Cipher = sm2Encrypt(publicKey, plaintext, {
 });
 ```
 
-## ✍️ 数字签名
+## 数字签名
 
 SM2 支持数字签名和验签功能，确保数据完整性和来源可信。
 
@@ -203,7 +215,7 @@ const rawSig = sm2Sign(privateKey, message, {
 });
 ```
 
-## 🔄 密钥交换
+## 密钥交换
 
 SM2 支持 ECDH 密钥交换协议，用于在不安全信道上协商共享密钥。
 
@@ -230,7 +242,7 @@ const bobSharedKey = sm2KeyExchange(
 console.log(aliceSharedKey === bobSharedKey); // true
 ```
 
-## 🎯 面向对象 API
+## 面向对象 API
 
 除了函数式 API，gmkitx 还提供了面向对象的 API：
 
@@ -256,7 +268,7 @@ const isValid = sm2.verify('Message', signature);
 const publicKey = sm2.getPublicKey();
 ```
 
-## 📋 完整 API 参考
+## 完整 API 参考
 
 ### 密钥管理
 
@@ -287,7 +299,7 @@ const publicKey = sm2.getPublicKey();
 |------|------|--------|
 | `sm2KeyExchange(privateKey, publicKey)` | SM2 密钥交换 | `string` |
 
-## 🔧 高级用法
+## 高级用法
 
 ### 自定义曲线参数
 
@@ -323,7 +335,7 @@ const results = messages.map((msg, i) =>
 );
 ```
 
-## ⚠️ 注意事项
+## 注意事项
 
 1. **私钥安全**: 私钥必须妥善保管，泄露将导致安全风险
 2. **密钥长度**: SM2 私钥固定为 256 位（64 位十六进制）
@@ -334,7 +346,7 @@ const results = messages.map((msg, i) =>
 5. **密文模式**: 加密和解密时的密文模式必须匹配
 6. **编码格式**: 确保输入输出编码格式一致（hex/base64）
 
-## 🔍 常见问题
+## 常见问题
 
 ### Q: SM2 和 RSA 有什么区别？
 
@@ -356,13 +368,13 @@ A: 压缩公钥可以节省存储空间和传输带宽（从 65 字节减少到 
 
 A: 是的，gmkitx 完全支持现代浏览器环境，不需要任何 polyfill。
 
-## 📚 相关资源
+## 相关资源
 
 - [SM2 标准文档](http://www.gmbz.org.cn/main/viewfile/2018011001400692565.html)
 - [GM/T 0009-2023 使用规范](http://www.gmbz.org.cn/)
 - [椭圆曲线密码学基础](https://en.wikipedia.org/wiki/Elliptic-curve_cryptography)
 
-## 🔗 相关算法
+## 相关算法
 
 - [SM3 - 密码杂凑算法](./SM3.md)
 - [SM4 - 分组密码算法](./SM4.md)
