@@ -91,9 +91,68 @@ gmkit-java 是纯 Java 实现的国密算法库，不依赖第三方库。敬请
 | SM4 填充   | PKCS7/PKCS5，或 NONE/ZERO | 流模式不填充                         |
 | 传输编码     | UTF-8 + 小写 hex          |                                |
 
+## 模式与填充详解
+
+### SM2 密文模式
+
+SM2 加密后的密文由三部分组成：
+- **C1**：椭圆曲线点（65字节，非压缩格式）
+- **C2**：密文数据（与明文等长）
+- **C3**：摘要值（32字节，SM3哈希）
+
+两种排列模式：
+- **C1C3C2**：gmkitx 默认模式，国密标准推荐格式
+- **C1C2C3**：部分旧版实现使用，需显式指定
+
+::: warning 重要
+对接时必须确保双方使用相同的密文模式，否则无法正确解密！
+:::
+
+### SM4 填充模式
+
+SM4 是分组密码，块大小为 16 字节。当明文长度不是 16 的倍数时需要填充：
+
+- **PKCS7/PKCS5**：标准填充，自动添加 1-16 字节填充数据，每个字节值为填充长度
+  - 示例：明文 11 字节，填充 5 个 0x05
+- **ZERO**：补零填充，填充 0x00 直到块大小
+  - 注意：解密后需手动去除尾部零
+- **NONE**：无填充，仅用于 CTR/OFB/CFB 等流模式，或明文已对齐 16 字节
+
+::: tip 推荐
+ECB/CBC 模式推荐使用 PKCS7 填充，可自动处理任意长度明文。
+:::
+
 ## SM2 对接
 
 ::: code-tabs#sm2
+
+@tab gmkitx
+```typescript
+import { sm2Encrypt, sm2Decrypt, sign, verify, SM2CipherMode } from 'gmkitx';
+
+// 使用测试向量中的密钥
+const publicKey = '04a09455a450af78e7bc6b2f8c7f1e0e...'; // 完整的04开头公钥
+const privateKey = '228049e009de869baf9aba74f8f8c52e...'; // 64位十六进制私钥
+
+// 加密 - C1C3C2 模式（默认）
+const plaintext = 'Hello, SM2!';
+const ciphertext = sm2Encrypt(publicKey, plaintext, SM2CipherMode.C1C3C2);
+console.log('密文:', ciphertext);
+
+// 解密
+const decrypted = sm2Decrypt(privateKey, ciphertext, SM2CipherMode.C1C3C2);
+console.log('明文:', decrypted); // 'Hello, SM2!'
+
+// 签名
+const message = 'Important message';
+const signature = sign(privateKey, message);
+console.log('签名:', signature);
+
+// 验签
+const isValid = verify(publicKey, message, signature);
+console.log('验签结果:', isValid); // true
+```
+
 @tab Hutool
 ```java
 import cn.hutool.core.util.HexUtil;
@@ -189,7 +248,8 @@ public class SM2BCInterop {
         var plain = decrypt.processBlock(cipher, 0, cipher.length);
         assert new String(plain, StandardCharsets.UTF_8).equals(c.input()) : c.id();
       } else if ("sign".equals(c.op())) {
-        // BC SM2 signer示例可根据需要扩展；此处以验签流程为主，仍建议用 Hutool 快速签名。
+        // BC SM2 签名示例可根据需要扩展
+        // 此处以加密解密流程为主，完整的签名验签实现建议使用 Hutool
       }
     }
   }
@@ -200,6 +260,29 @@ public class SM2BCInterop {
 ## SM3 对接
 
 ::: code-tabs#sm3
+
+@tab gmkitx
+```typescript
+import { digest, hmac } from 'gmkitx';
+
+// 计算 SM3 摘要
+const hash = digest('Hello, SM3!');
+console.log('SM3摘要:', hash);
+// 输出: 32字节（64位十六进制）哈希值
+
+// HMAC-SM3
+const mac = hmac('secret-key', 'message');
+console.log('HMAC-SM3:', mac);
+
+// 增量哈希
+import { SM3 } from 'gmkitx';
+const sm3 = new SM3();
+sm3.update('Hello, ');
+sm3.update('World!');
+const result = sm3.digest();
+console.log('增量哈希:', result);
+```
+
 @tab Hutool
 ```java
 import cn.hutool.crypto.SmUtil;
@@ -248,6 +331,50 @@ public class SM3BCInterop {
 ## SM4 对接
 
 ::: code-tabs#sm4
+
+@tab gmkitx
+```typescript
+import { sm4Encrypt, sm4Decrypt, CipherMode, PaddingMode } from 'gmkitx';
+
+const key = '0123456789abcdeffedcba9876543210'; // 32位十六进制（16字节）
+const iv = 'fedcba98765432100123456789abcdef';   // CBC模式需要IV
+const plaintext = 'Hello, SM4!';
+
+// ECB 模式 + PKCS7 填充
+const cipherECB = sm4Encrypt(key, plaintext, {
+  mode: CipherMode.ECB,
+  padding: PaddingMode.PKCS7
+});
+console.log('ECB密文:', cipherECB);
+
+const plainECB = sm4Decrypt(key, cipherECB, {
+  mode: CipherMode.ECB,
+  padding: PaddingMode.PKCS7
+});
+console.log('ECB明文:', plainECB);
+
+// CBC 模式 + PKCS7 填充
+const cipherCBC = sm4Encrypt(key, plaintext, {
+  mode: CipherMode.CBC,
+  padding: PaddingMode.PKCS7,
+  iv
+});
+console.log('CBC密文:', cipherCBC);
+
+const plainCBC = sm4Decrypt(key, cipherCBC, {
+  mode: CipherMode.CBC,
+  padding: PaddingMode.PKCS7,
+  iv
+});
+console.log('CBC明文:', plainCBC);
+
+// 面向对象 API
+import { SM4 } from 'gmkitx';
+const sm4ecb = SM4.ECB(key);
+const encrypted = sm4ecb.encrypt('Hello, SM4 OOP!');
+const decrypted = sm4ecb.decrypt(encrypted);
+```
+
 @tab Hutool
 ```java
 import cn.hutool.core.util.HexUtil;
@@ -344,6 +471,7 @@ public class SM4BCInterop {
 
 ## 扩展指引
 
-- 本页仅 Java；其他语言请创建独立指南，沿用 `test/vectors/interop.json`。
+- 本页展示 Java 与 gmkitx 的对接方案；其他语言对接请参考对应的语言指南。
+- 所有语言对接均使用统一的测试向量 `test/vectors/interop.json`，确保跨语言互操作性。
 - 如需切换 Java 库，保持密钥/IV/模式/编码约定不变，替换代码即可。
-- 拓展 CTR/OFB/CFB/GCM 或固定随机源的 SM2 用例时，先确认计数器/AAD/随机策略一致，再写入向量并在备注标明。 
+- 扩展 CTR/OFB/CFB/GCM 或固定随机源的 SM2 用例时，先确认计数器/AAD/随机策略一致，再写入测试向量并在备注中标明。 

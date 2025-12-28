@@ -59,11 +59,86 @@ gmssl = "^3.2.1"
 | SM4 填充   | PKCS7 或 NoPadding       | 根据模式选择                 |
 | 传输编码     | UTF-8 + 小写 hex          | 保持编码一致                 |
 
+## 模式与填充详解
+
+### SM2 密文模式
+
+SM2 加密后的密文由三部分组成：
+- **C1**：椭圆曲线点（65字节，非压缩格式）
+- **C2**：密文数据（与明文等长）
+- **C3**：摘要值（32字节，SM3哈希）
+
+两种排列模式：
+- **C1C3C2**：gmkitx 默认模式，国密标准推荐格式
+- **C1C2C3**：部分旧版实现使用，需显式指定
+
+::: warning 重要
+对接时必须确保双方使用相同的密文模式，否则无法正确解密！
+:::
+
+### SM4 填充模式
+
+SM4 是分组密码，块大小为 16 字节。当明文长度不是 16 的倍数时需要填充：
+
+- **PKCS7**：标准填充，自动添加 1-16 字节填充数据
+  - 示例：明文 11 字节，填充 5 个 0x05
+- **NoPadding**：无填充，要求明文已对齐 16 字节，或用于流模式
+  - 注意：需要手动处理填充和去填充
+
+::: tip 推荐
+ECB/CBC 模式推荐使用 PKCS7 填充，可自动处理任意长度明文。
+:::
+
 ## SM2 对接示例
 
-### 密钥生成
+::: code-tabs#sm2
 
+@tab gmkitx
+```typescript
+import { 
+  generateKeyPair, 
+  sm2Encrypt, 
+  sm2Decrypt, 
+  sign, 
+  verify,
+  SM2CipherMode 
+} from 'gmkitx';
+
+// 生成密钥对
+const keyPair = generateKeyPair();
+console.log('公钥:', keyPair.publicKey);
+console.log('私钥:', keyPair.privateKey);
+
+// 加密
+const plaintext = 'Hello, SM2!';
+const ciphertext = sm2Encrypt(
+  keyPair.publicKey, 
+  plaintext, 
+  SM2CipherMode.C1C3C2
+);
+console.log('密文:', ciphertext);
+
+// 解密
+const decrypted = sm2Decrypt(
+  keyPair.privateKey, 
+  ciphertext, 
+  SM2CipherMode.C1C3C2
+);
+console.log('明文:', decrypted);
+
+// 签名
+const message = 'Important message';
+const signature = sign(keyPair.privateKey, message);
+console.log('签名:', signature);
+
+// 验签
+const isValid = verify(keyPair.publicKey, message, signature);
+console.log('验签结果:', isValid);
+```
+
+@tab Python (gmssl)
 ```python
+# 密钥生成和加密解密示例
 from gmssl import sm2
 import secrets
 
@@ -138,9 +213,33 @@ def sm2_sign_verify():
 
 sm2_sign_verify()
 ```
+:::
 
 ## SM3 对接示例
 
+::: code-tabs#sm3
+
+@tab gmkitx
+```typescript
+import { digest, hmac, SM3 } from 'gmkitx';
+
+// 计算 SM3 摘要
+const hash = digest('Hello, SM3!');
+console.log('SM3摘要:', hash);
+
+// HMAC-SM3
+const mac = hmac('secret-key', 'message');
+console.log('HMAC-SM3:', mac);
+
+// 增量哈希
+const sm3 = new SM3();
+sm3.update('Hello, ');
+sm3.update('World!');
+const result = sm3.digest();
+console.log('增量哈希:', result);
+```
+
+@tab Python (gmssl)
 ```python
 from gmssl import sm3
 
@@ -154,12 +253,52 @@ def sm3_hash():
 
 sm3_hash()
 ```
+:::
 
 ## SM4 对接示例
 
-### ECB 模式
+::: code-tabs#sm4
 
+@tab gmkitx
+```typescript
+import { sm4Encrypt, sm4Decrypt, CipherMode, PaddingMode, SM4 } from 'gmkitx';
+
+const key = '0123456789abcdeffedcba9876543210';
+const iv = 'fedcba98765432100123456789abcdef';
+const plaintext = 'Hello, SM4!';
+
+// ECB 模式
+const cipherECB = sm4Encrypt(key, plaintext, {
+  mode: CipherMode.ECB,
+  padding: PaddingMode.PKCS7
+});
+console.log('ECB密文:', cipherECB);
+
+const plainECB = sm4Decrypt(key, cipherECB, {
+  mode: CipherMode.ECB,
+  padding: PaddingMode.PKCS7
+});
+console.log('ECB明文:', plainECB);
+
+// CBC 模式
+const cipherCBC = sm4Encrypt(key, plaintext, {
+  mode: CipherMode.CBC,
+  padding: PaddingMode.PKCS7,
+  iv
+});
+console.log('CBC密文:', cipherCBC);
+
+const plainCBC = sm4Decrypt(key, cipherCBC, {
+  mode: CipherMode.CBC,
+  padding: PaddingMode.PKCS7,
+  iv
+});
+console.log('CBC明文:', plainCBC);
+```
+
+@tab Python (gmssl)
 ```python
+# ECB 模式示例
 from gmssl import sm4
 
 def sm4_ecb():
@@ -213,6 +352,7 @@ def sm4_cbc():
 
 sm4_cbc()
 ```
+:::
 
 ## 互操作性测试
 
