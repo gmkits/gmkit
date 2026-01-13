@@ -132,6 +132,7 @@ console.log('验签结果:', isValid);
 package main
 
 import (
+    "crypto/rand"
     "encoding/hex"
     "fmt"
     "github.com/ZZMarquis/gm/sm2"
@@ -139,16 +140,14 @@ import (
 
 func main() {
     // 生成密钥对
-    privateKey, err := sm2.GenerateKey(nil)
+    privateKey, publicKey, err := sm2.GenerateKey(rand.Reader)
     if err != nil {
         panic(err)
     }
-    
-    publicKey := &privateKey.PublicKey
-    
+
     // 加密（C1C3C2模式）
     plaintext := []byte("Hello, SM2!")
-    ciphertext, err := publicKey.EncryptAsn1(plaintext, nil)
+    ciphertext, err := sm2.Encrypt(publicKey, plaintext, sm2.C1C3C2)
     if err != nil {
         panic(err)
     }
@@ -156,7 +155,7 @@ func main() {
     fmt.Printf("密文: %s\n", hex.EncodeToString(ciphertext))
     
     // 解密
-    decrypted, err := privateKey.DecryptAsn1(ciphertext)
+    decrypted, err := sm2.Decrypt(privateKey, ciphertext, sm2.C1C3C2)
     if err != nil {
         panic(err)
     }
@@ -191,6 +190,7 @@ console.log('验签结果:', isValid);
 package main
 
 import (
+    "crypto/rand"
     "encoding/hex"
     "fmt"
     "github.com/ZZMarquis/gm/sm2"
@@ -198,16 +198,14 @@ import (
 
 func main() {
     // 生成密钥对
-    privateKey, err := sm2.GenerateKey(nil)
+    privateKey, publicKey, err := sm2.GenerateKey(rand.Reader)
     if err != nil {
         panic(err)
     }
-    
-    publicKey := &privateKey.PublicKey
     message := []byte("Important message")
     
     // 签名
-    signature, err := privateKey.Sign(nil, message, nil)
+    signature, err := sm2.Sign(privateKey, nil, message)
     if err != nil {
         panic(err)
     }
@@ -215,7 +213,8 @@ func main() {
     fmt.Printf("签名: %s\n", hex.EncodeToString(signature))
     
     // 验签
-    ok := publicKey.Verify(message, signature)
+    // userId 传 nil 时使用默认 1234567812345678
+    ok := sm2.Verify(publicKey, nil, message, signature)
     fmt.Printf("验签结果: %v\n", ok)
 }
 ```
@@ -316,6 +315,7 @@ import (
     "encoding/hex"
     "fmt"
     "github.com/ZZMarquis/gm/sm4"
+    "github.com/ZZMarquis/gm/util"
 )
 
 func main() {
@@ -323,8 +323,9 @@ func main() {
     key, _ := hex.DecodeString("0123456789abcdeffedcba9876543210")
     plaintext := []byte("Hello, SM4!")
     
-    // ECB 加密
-    ciphertext, err := sm4.Sm4Ecb(key, plaintext, true)
+    // ECB 加密（手动 PKCS5/PKCS7 填充）
+    padded := util.PKCS5Padding(plaintext, sm4.BlockSize)
+    ciphertext, err := sm4.ECBEncrypt(key, padded)
     if err != nil {
         panic(err)
     }
@@ -332,11 +333,11 @@ func main() {
     fmt.Printf("密文: %s\n", hex.EncodeToString(ciphertext))
     
     // ECB 解密
-    decrypted, err := sm4.Sm4Ecb(key, ciphertext, false)
+    decryptedPadded, err := sm4.ECBDecrypt(key, ciphertext)
     if err != nil {
         panic(err)
     }
-    
+    decrypted := util.PKCS5UnPadding(decryptedPadded)
     fmt.Printf("明文: %s\n", string(decrypted))
 }
 ```
@@ -350,6 +351,7 @@ import (
     "encoding/hex"
     "fmt"
     "github.com/ZZMarquis/gm/sm4"
+    "github.com/ZZMarquis/gm/util"
 )
 
 func main() {
@@ -357,8 +359,9 @@ func main() {
     iv, _ := hex.DecodeString("fedcba98765432100123456789abcdef")
     plaintext := []byte("Hello, SM4 CBC!")
     
-    // CBC 加密
-    ciphertext, err := sm4.Sm4Cbc(key, iv, plaintext, true)
+    // CBC 加密（手动 PKCS5/PKCS7 填充）
+    padded := util.PKCS5Padding(plaintext, sm4.BlockSize)
+    ciphertext, err := sm4.CBCEncrypt(key, iv, padded)
     if err != nil {
         panic(err)
     }
@@ -366,11 +369,11 @@ func main() {
     fmt.Printf("密文: %s\n", hex.EncodeToString(ciphertext))
     
     // CBC 解密
-    decrypted, err := sm4.Sm4Cbc(key, iv, ciphertext, false)
+    decryptedPadded, err := sm4.CBCDecrypt(key, iv, ciphertext)
     if err != nil {
         panic(err)
     }
-    
+    decrypted := util.PKCS5UnPadding(decryptedPadded)
     fmt.Printf("明文: %s\n", string(decrypted))
 }
 ```
@@ -387,10 +390,11 @@ import (
     "encoding/hex"
     "encoding/json"
     "fmt"
-    "io/ioutil"
+    "os"
     "github.com/ZZMarquis/gm/sm2"
     "github.com/ZZMarquis/gm/sm3"
     "github.com/ZZMarquis/gm/sm4"
+    "github.com/ZZMarquis/gm/util"
 )
 
 type TestVector struct {
@@ -399,21 +403,37 @@ type TestVector struct {
     Op       string            `json:"op"`
     Mode     string            `json:"mode"`
     Input    string            `json:"input"`
-    Expected map[string]string `json:"expected"`
+    Padding  string            `json:"padding"`
+    KeyHex   string            `json:"keyHex"`
+    IvHex    string            `json:"ivHex"`
+    PublicKeyHex  string       `json:"publicKeyHex"`
+    PrivateKeyHex string       `json:"privateKeyHex"`
+    Expected map[string]any    `json:"expected"`
+}
+
+type Defaults struct {
+    Sm4KeyHex     string `json:"sm4KeyHex"`
+    Sm4IvHex      string `json:"sm4IvHex"`
+    Sm2PublicKeyHex  string `json:"sm2PublicKeyHex"`
+    Sm2PrivateKeyHex string `json:"sm2PrivateKeyHex"`
+}
+
+type TestVectors struct {
+    Defaults Defaults    `json:"defaults"`
+    Cases    []TestVector `json:"cases"`
 }
 
 func main() {
     // 读取测试向量文件
-    data, err := ioutil.ReadFile("test/vectors/interop.json")
+    data, err := os.ReadFile("test/vectors/interop.json")
     if err != nil {
         panic(err)
     }
     
-    var vectors struct {
-        Cases []TestVector `json:"cases"`
+    var vectors TestVectors
+    if err := json.Unmarshal(data, &vectors); err != nil {
+        panic(err)
     }
-    
-    json.Unmarshal(data, &vectors)
     
     // 运行测试
     for _, tc := range vectors.Cases {
@@ -421,18 +441,19 @@ func main() {
         case "SM3":
             testSM3(tc)
         case "SM4":
-            testSM4(tc)
+            testSM4(tc, vectors.Defaults)
         case "SM2":
-            testSM2(tc)
+            testSM2(tc, vectors.Defaults)
         }
     }
 }
 
 func testSM3(tc TestVector) {
+    // SM3 摘要对照 expected.hex
     hash := sm3.Sm3Sum([]byte(tc.Input))
-    expected := tc.Expected["hex"]
     actual := hex.EncodeToString(hash)
-    
+    expected, _ := tc.Expected["hex"].(string)
+
     if actual == expected {
         fmt.Printf("✓ %s passed\n", tc.ID)
     } else {
@@ -440,12 +461,118 @@ func testSM3(tc TestVector) {
     }
 }
 
-func testSM4(tc TestVector) {
-    // 实现 SM4 测试逻辑
+func testSM4(tc TestVector, defaults Defaults) {
+    keyHex := tc.KeyHex
+    if keyHex == "" {
+        keyHex = defaults.Sm4KeyHex
+    }
+    key, _ := hex.DecodeString(keyHex)
+
+    ivHex := tc.IvHex
+    if ivHex == "" {
+        ivHex = defaults.Sm4IvHex
+    }
+    iv, _ := hex.DecodeString(ivHex)
+
+    // PKCS5Padding 等价 PKCS7（块大小 16）
+    data := []byte(tc.Input)
+    if tc.Padding == "PKCS7" {
+        data = util.PKCS5Padding(data, sm4.BlockSize)
+    }
+
+    var cipher []byte
+    var err error
+    if tc.Mode == "ECB" {
+        cipher, err = sm4.ECBEncrypt(key, data)
+    } else if tc.Mode == "CBC" {
+        cipher, err = sm4.CBCEncrypt(key, iv, data)
+    } else {
+        fmt.Printf("! %s skipped (mode %s)\n", tc.ID, tc.Mode)
+        return
+    }
+    if err != nil {
+        panic(err)
+    }
+
+    if expectedHex, ok := tc.Expected["cipherHex"].(string); ok {
+        if hex.EncodeToString(cipher) != expectedHex {
+            fmt.Printf("✗ %s failed\n", tc.ID)
+            return
+        }
+    }
+
+    var plainPadded []byte
+    if tc.Mode == "ECB" {
+        plainPadded, err = sm4.ECBDecrypt(key, cipher)
+    } else {
+        plainPadded, err = sm4.CBCDecrypt(key, iv, cipher)
+    }
+    if err != nil {
+        panic(err)
+    }
+    if tc.Padding == "PKCS7" {
+        plainPadded = util.PKCS5UnPadding(plainPadded)
+    }
+
+    if string(plainPadded) == tc.Input {
+        fmt.Printf("✓ %s passed\n", tc.ID)
+    } else {
+        fmt.Printf("✗ %s failed\n", tc.ID)
+    }
 }
 
-func testSM2(tc TestVector) {
-    // 实现 SM2 测试逻辑
+func testSM2(tc TestVector, defaults Defaults) {
+    priHex := tc.PrivateKeyHex
+    if priHex == "" {
+        priHex = defaults.Sm2PrivateKeyHex
+    }
+    pubHex := tc.PublicKeyHex
+    if pubHex == "" {
+        pubHex = defaults.Sm2PublicKeyHex
+    }
+
+    priBytes, _ := hex.DecodeString(priHex)
+    priv, _ := sm2.RawBytesToPrivateKey(priBytes)
+
+    pubBytes, _ := hex.DecodeString(pubHex)
+    if len(pubBytes) == 65 && pubBytes[0] == 0x04 {
+        pubBytes = pubBytes[1:]
+    }
+    pub, _ := sm2.RawBytesToPublicKey(pubBytes)
+
+    if tc.Op == "encrypt" {
+        mode := sm2.C1C3C2
+        if tc.Mode == "C1C2C3" {
+            mode = sm2.C1C2C3
+        }
+        cipher, err := sm2.Encrypt(pub, []byte(tc.Input), mode)
+        if err != nil {
+            panic(err)
+        }
+        plain, err := sm2.Decrypt(priv, cipher, mode)
+        if err != nil {
+            panic(err)
+        }
+        if string(plain) == tc.Input {
+            fmt.Printf("✓ %s passed\n", tc.ID)
+        } else {
+            fmt.Printf("✗ %s failed\n", tc.ID)
+        }
+        return
+    }
+
+    if tc.Op == "sign" {
+        sig, err := sm2.Sign(priv, nil, []byte(tc.Input))
+        if err != nil {
+            panic(err)
+        }
+        ok := sm2.Verify(pub, nil, []byte(tc.Input), sig)
+        if ok {
+            fmt.Printf("✓ %s passed\n", tc.ID)
+        } else {
+            fmt.Printf("✗ %s failed\n", tc.ID)
+        }
+    }
 }
 ```
 

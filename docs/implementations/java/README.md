@@ -33,14 +33,14 @@ tag:
 <!-- Maven -->
 <dependency>
     <groupId>org.bouncycastle</groupId>
-    <artifactId>bcprov-jdk15on</artifactId>
+    <artifactId>bcprov-jdk15to18</artifactId>
     <version>1.70</version>
 </dependency>
 ```
 
 ```gradle
 // Gradle
-implementation 'org.bouncycastle:bcprov-jdk15on:1.70'
+implementation 'org.bouncycastle:bcprov-jdk15to18:1.70'
 ```
 
 #### 示例代码
@@ -95,11 +95,17 @@ import org.bouncycastle.crypto.engines.SM4Engine;
     <artifactId>hutool-crypto</artifactId>
     <version>5.8.23</version>
 </dependency>
+<dependency>
+    <groupId>org.bouncycastle</groupId>
+    <artifactId>bcprov-jdk15to18</artifactId>
+    <version>1.70</version>
+</dependency>
 ```
 
 ```gradle
 // Gradle
 implementation 'cn.hutool:hutool-crypto:5.8.23'
+implementation 'org.bouncycastle:bcprov-jdk15to18:1.70'
 ```
 
 #### 示例代码
@@ -132,14 +138,61 @@ String decrypted = SmUtil.sm4(key.getBytes()).decryptStr(encrypted);
 
 **链接：**
 - [官网](https://hutool.cn/)
-- [Gitee](https://gitee.com/dromara/hutool)
+- [GitHub](https://github.com/chinabugotech/hutool)
 - [文档](https://doc.hutool.cn/)
 
 **GMKitX 对接指南：** [Java 对接指南](/dev/JAVA-INTEGRATION.zh-CN)
 
 ---
 
-### 3. 其他选择
+### 3. Tencent Kona SM Suite（JCA 标准）
+
+**Tencent Kona SM Suite** 是腾讯推出的 JCA 提供者套件，提供纯 Java 的 SM2/SM3/SM4 实现。
+
+#### 安装
+
+```xml
+<dependency>
+    <groupId>com.tencent.kona</groupId>
+    <artifactId>kona-crypto</artifactId>
+    <version>1.0.19</version>
+</dependency>
+<dependency>
+    <groupId>com.tencent.kona</groupId>
+    <artifactId>kona-provider</artifactId>
+    <version>1.0.19</version>
+</dependency>
+```
+
+```gradle
+implementation 'com.tencent.kona:kona-crypto:1.0.19'
+implementation 'com.tencent.kona:kona-provider:1.0.19'
+```
+
+#### 示例代码
+
+```java
+import com.tencent.kona.crypto.KonaCryptoProvider;
+import java.security.MessageDigest;
+import java.security.Security;
+
+// 注册 KonaCrypto Provider
+Security.addProvider(new KonaCryptoProvider());
+
+// 使用 JCA 接口调用 SM3
+MessageDigest md = MessageDigest.getInstance("SM3", "KonaCrypto");
+byte[] hash = md.digest("Hello Kona".getBytes("UTF-8"));
+```
+
+**链接：**
+- [GitHub](https://github.com/Tencent/TencentKonaSMSuite)
+- [Maven Central](https://central.sonatype.com/search?q=com.tencent.kona)
+
+**GMKitX 对接指南：** [Java 对接指南](/dev/JAVA-INTEGRATION.zh-CN)
+
+---
+
+### 4. 其他选择
 
 #### gmhelper
 

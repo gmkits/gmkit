@@ -138,27 +138,17 @@ console.log('验签结果:', isValid);
 
 @tab Python (gmssl)
 ```python
-# 密钥生成和加密解密示例
+# 使用互操作向量中的固定密钥，便于跨语言复现
 from gmssl import sm2
-import secrets
 
-def generate_keypair():
-    """生成 SM2 密钥对"""
-    # 生成32字节私钥
-    private_key = secrets.token_hex(32)
-    
-    # 使用私钥创建 SM2 对象
-    sm2_crypt = sm2.CryptSM2(
-        private_key=private_key,
-        public_key=''  # 从私钥自动推导
-    )
-    
-    public_key = sm2_crypt.public_key
-    
-    return public_key, private_key
+public_key = (
+    "045647ebf2adcaf54f8102bea9a7ca8905794a3f2f29622593269bb55d72e0a140"
+    "dc81f3dce73bb609f8a056640db0e04c08e0bd8be79140702bbdb0206e95b7ac"
+)
+private_key = "228049e009de869baf9aba74f8f8c52e09cde1b52cafb0df7ab154ba4593743e"
 
-# 使用示例
-public_key, private_key = generate_keypair()
+# mode=1 表示 C1C3C2，与 gmkitx 默认一致
+sm2_crypt = sm2.CryptSM2(private_key=private_key, public_key=public_key, mode=1)
 print(f"公钥: {public_key}")
 print(f"私钥: {private_key}")
 ```
@@ -170,15 +160,17 @@ from gmssl import sm2
 
 def sm2_encrypt_decrypt():
     """SM2 加密和解密示例"""
-    # 初始化 SM2
-    sm2_crypt = sm2.CryptSM2(
-        private_key='228049e009de869baf9aba74f8f8c52e09cde1b52cafb0df7ab154ba4593743e',
-        public_key='04a09455a450af78e7bc6b2f8c7f1e0e0ae698ec4d8bb58b3c4c8e0c6de0c38f39e3a8f3e7f3c5f8e7c3f8e7f3c5f8e7c3f8e7f3c5f8e7c3f8e7f3c5f'
+    public_key = (
+        "045647ebf2adcaf54f8102bea9a7ca8905794a3f2f29622593269bb55d72e0a140"
+        "dc81f3dce73bb609f8a056640db0e04c08e0bd8be79140702bbdb0206e95b7ac"
     )
+    private_key = "228049e009de869baf9aba74f8f8c52e09cde1b52cafb0df7ab154ba4593743e"
+    # mode=1 表示 C1C3C2
+    sm2_crypt = sm2.CryptSM2(private_key=private_key, public_key=public_key, mode=1)
     
     # 加密
-    plaintext = "Hello, SM2!"
-    ciphertext = sm2_crypt.encrypt(plaintext.encode('utf-8'))
+    plaintext = "Hello, SM2!".encode("utf-8")
+    ciphertext = sm2_crypt.encrypt(plaintext)
     print(f"密文: {ciphertext.hex()}")
     
     # 解密
@@ -192,23 +184,24 @@ sm2_encrypt_decrypt()
 
 ```python
 from gmssl import sm2
-import hashlib
 
 def sm2_sign_verify():
     """SM2 签名和验签示例"""
-    # 初始化 SM2
-    sm2_crypt = sm2.CryptSM2(
-        private_key='228049e009de869baf9aba74f8f8c52e09cde1b52cafb0df7ab154ba4593743e',
-        public_key='04a09455a450af78e7bc6b2f8c7f1e0e0ae698ec4d8bb58b3c4c8e0c6de0c38f39e3a8f3e7f3c5f8e7c3f8e7f3c5f8e7c3f8e7f3c5f8e7c3f8e7f3c5f'
+    public_key = (
+        "045647ebf2adcaf54f8102bea9a7ca8905794a3f2f29622593269bb55d72e0a140"
+        "dc81f3dce73bb609f8a056640db0e04c08e0bd8be79140702bbdb0206e95b7ac"
     )
+    private_key = "228049e009de869baf9aba74f8f8c52e09cde1b52cafb0df7ab154ba4593743e"
+    sm2_crypt = sm2.CryptSM2(private_key=private_key, public_key=public_key, mode=1)
     
     # 签名
-    message = "Important message"
-    signature = sm2_crypt.sign(message.encode('utf-8'), random_hex='')
-    print(f"签名: {signature.hex()}")
+    message = "Important message".encode("utf-8")
+    # sign_with_sm3 内部使用默认 userId=1234567812345678
+    signature = sm2_crypt.sign_with_sm3(message)
+    print(f"签名: {signature}")
     
     # 验签
-    is_valid = sm2_crypt.verify(signature, message.encode('utf-8'))
+    is_valid = sm2_crypt.verify_with_sm3(signature, message)
     print(f"验签结果: {is_valid}")
 
 sm2_sign_verify()
@@ -241,14 +234,14 @@ console.log('增量哈希:', result);
 
 @tab Python (gmssl)
 ```python
-from gmssl import sm3
+from gmssl import sm3, func
 
 def sm3_hash():
     """SM3 哈希示例"""
     data = "Hello, SM3!"
     
     # 计算 SM3 摘要
-    hash_value = sm3.sm3_hash(data.encode('utf-8'))
+    hash_value = sm3.sm3_hash(func.bytes_to_list(data.encode('utf-8')))
     print(f"SM3摘要: {hash_value}")
 
 sm3_hash()
@@ -298,7 +291,6 @@ console.log('CBC明文:', plainCBC);
 
 @tab Python (gmssl)
 ```python
-# ECB 模式示例
 from gmssl import sm4
 
 def sm4_ecb():
@@ -307,20 +299,18 @@ def sm4_ecb():
     key = bytes.fromhex('0123456789abcdeffedcba9876543210')
     plaintext = b'Hello, SM4!'
     
-    # 创建 SM4 对象
-    sm4_crypt = sm4.CryptSM4()
+    # 创建 SM4 对象（PKCS7 填充）
+    sm4_crypt = sm4.CryptSM4(padding_mode=sm4.PKCS7)
     sm4_crypt.set_key(key, sm4.SM4_ENCRYPT)
     
     # ECB 加密
-    # 注意：需要手动填充到16字节的倍数
-    padded = plaintext + b'\x00' * (16 - len(plaintext) % 16)
-    ciphertext = sm4_crypt.crypt_ecb(padded)
+    ciphertext = sm4_crypt.crypt_ecb(plaintext)
     print(f"密文: {ciphertext.hex()}")
     
     # ECB 解密
     sm4_crypt.set_key(key, sm4.SM4_DECRYPT)
     decrypted = sm4_crypt.crypt_ecb(ciphertext)
-    print(f"明文: {decrypted.rstrip(b'\\x00').decode('utf-8')}")
+    print(f"明文: {decrypted.decode('utf-8')}")
 
 sm4_ecb()
 ```
@@ -336,19 +326,18 @@ def sm4_cbc():
     iv = bytes.fromhex('fedcba98765432100123456789abcdef')
     plaintext = b'Hello, SM4 CBC!'
     
-    # 创建 SM4 对象
-    sm4_crypt = sm4.CryptSM4()
+    # 创建 SM4 对象（PKCS7 填充）
+    sm4_crypt = sm4.CryptSM4(padding_mode=sm4.PKCS7)
     sm4_crypt.set_key(key, sm4.SM4_ENCRYPT)
     
     # CBC 加密
-    padded = plaintext + b'\x00' * (16 - len(plaintext) % 16)
-    ciphertext = sm4_crypt.crypt_cbc(iv, padded)
+    ciphertext = sm4_crypt.crypt_cbc(iv, plaintext)
     print(f"密文: {ciphertext.hex()}")
     
     # CBC 解密
     sm4_crypt.set_key(key, sm4.SM4_DECRYPT)
     decrypted = sm4_crypt.crypt_cbc(iv, ciphertext)
-    print(f"明文: {decrypted.rstrip(b'\\x00').decode('utf-8')}")
+    print(f"明文: {decrypted.decode('utf-8')}")
 
 sm4_cbc()
 ```
@@ -358,7 +347,7 @@ sm4_cbc()
 
 ```python
 import json
-from gmssl import sm2, sm3, sm4
+from gmssl import sm2, sm3, sm4, func
 
 class InteropTest:
     """互操作性测试类"""
@@ -382,10 +371,10 @@ class InteropTest:
     
     def test_sm3(self, case):
         """测试 SM3"""
-        input_data = case['input'].encode('utf-8')
-        expected = case['expected']['hex']
-        
-        actual = sm3.sm3_hash(input_data)
+        input_data = case["input"].encode("utf-8")
+        expected = case["expected"]["hex"]
+
+        actual = sm3.sm3_hash(func.bytes_to_list(input_data))
         
         if actual == expected:
             print(f"✓ {case['id']} passed")
@@ -394,13 +383,70 @@ class InteropTest:
     
     def test_sm4(self, case):
         """测试 SM4"""
-        # 实现 SM4 测试逻辑
-        pass
+        key_hex = case.get("keyHex") or self.defaults["sm4KeyHex"]
+        iv_hex = case.get("ivHex") or self.defaults.get("sm4IvHex")
+        mode = case.get("mode")
+        padding = case.get("padding")
+
+        key = bytes.fromhex(key_hex)
+        iv = bytes.fromhex(iv_hex) if mode == "CBC" else None
+        input_data = case["input"].encode("utf-8")
+
+        padding_mode = sm4.PKCS7 if padding == "PKCS7" else sm4.NoPadding
+        sm4_crypt = sm4.CryptSM4(padding_mode=padding_mode)
+        sm4_crypt.set_key(key, sm4.SM4_ENCRYPT)
+
+        if mode == "ECB":
+            cipher = sm4_crypt.crypt_ecb(input_data)
+        elif mode == "CBC":
+            cipher = sm4_crypt.crypt_cbc(iv, input_data)
+        else:
+            print(f"! {case['id']} skipped (mode {mode})")
+            return
+
+        expected = case.get("expected", {})
+        if "cipherHex" in expected and cipher.hex() != expected["cipherHex"]:
+            print(f"✗ {case['id']} failed")
+            return
+
+        sm4_crypt.set_key(key, sm4.SM4_DECRYPT)
+        if mode == "ECB":
+            plain = sm4_crypt.crypt_ecb(cipher)
+        else:
+            plain = sm4_crypt.crypt_cbc(iv, cipher)
+
+        if plain.decode("utf-8") == case["input"]:
+            print(f"✓ {case['id']} passed")
+        else:
+            print(f"✗ {case['id']} failed")
     
     def test_sm2(self, case):
         """测试 SM2"""
-        # 实现 SM2 测试逻辑
-        pass
+        public_key = case.get("publicKeyHex") or self.defaults["sm2PublicKeyHex"]
+        private_key = case.get("privateKeyHex") or self.defaults["sm2PrivateKeyHex"]
+        mode = case.get("mode")
+
+        sm2_crypt = sm2.CryptSM2(
+            private_key=private_key,
+            public_key=public_key,
+            mode=1 if mode == "C1C3C2" else 0
+        )
+
+        if case["op"] == "encrypt":
+            cipher = sm2_crypt.encrypt(case["input"].encode("utf-8"))
+            plain = sm2_crypt.decrypt(cipher).decode("utf-8")
+            if plain == case["input"]:
+                print(f"✓ {case['id']} passed")
+            else:
+                print(f"✗ {case['id']} failed")
+        elif case["op"] == "sign":
+            message = case["input"].encode("utf-8")
+            signature = sm2_crypt.sign_with_sm3(message)
+            ok = sm2_crypt.verify_with_sm3(signature, message)
+            if ok:
+                print(f"✓ {case['id']} passed")
+            else:
+                print(f"✗ {case['id']} failed")
 
 # 运行测试
 test = InteropTest('test/vectors/interop.json')
@@ -420,7 +466,8 @@ def sm2_context(private_key, public_key):
     """SM2 上下文管理器"""
     sm2_crypt = sm2.CryptSM2(
         private_key=private_key,
-        public_key=public_key
+        public_key=public_key,
+        mode=1
     )
     try:
         yield sm2_crypt
@@ -439,12 +486,13 @@ with sm2_context(private_key, public_key) as sm2_crypt:
 ```python
 from gmssl import sm3
 from concurrent.futures import ThreadPoolExecutor
+from gmssl import func
 
 def batch_hash(messages):
     """批量计算 SM3 哈希"""
     with ThreadPoolExecutor() as executor:
         results = executor.map(
-            lambda msg: sm3.sm3_hash(msg.encode('utf-8')),
+            lambda msg: sm3.sm3_hash(func.bytes_to_list(msg.encode("utf-8"))),
             messages
         )
     return list(results)
@@ -478,7 +526,7 @@ def encrypt_message(
     Returns:
         密文字节
     """
-    sm2_crypt = sm2.CryptSM2(private_key='', public_key=public_key)
+    sm2_crypt = sm2.CryptSM2(private_key='', public_key=public_key, mode=1)
     return sm2_crypt.encrypt(plaintext.encode(encoding))
 
 def decrypt_message(
@@ -501,7 +549,8 @@ def decrypt_message(
     """
     sm2_crypt = sm2.CryptSM2(
         private_key=private_key,
-        public_key=public_key
+        public_key=public_key,
+        mode=1
     )
     return sm2_crypt.decrypt(ciphertext).decode(encoding)
 ```
@@ -563,7 +612,7 @@ def safe_encrypt(
 ) -> Optional[bytes]:
     """安全的加密函数"""
     try:
-        sm2_crypt = sm2.CryptSM2(private_key='', public_key=public_key)
+        sm2_crypt = sm2.CryptSM2(private_key='', public_key=public_key, mode=1)
         return sm2_crypt.encrypt(plaintext.encode('utf-8'))
     except Exception as e:
         print(f"加密失败: {e}")
@@ -581,14 +630,14 @@ class TestSM3(unittest.TestCase):
     
     def test_empty_string(self):
         """测试空字符串"""
-        result = sm3.sm3_hash(b'')
+        result = sm3.sm3_hash(func.bytes_to_list(b""))
         self.assertIsNotNone(result)
     
     def test_known_vector(self):
         """测试已知向量"""
-        data = b'abc'
+        data = b"abc"
         expected = '66c7f0f462eeedd9d1f2d46bdc10e4e24167c4875cf2f7a2297da02b8f4ba8e0'
-        result = sm3.sm3_hash(data)
+        result = sm3.sm3_hash(func.bytes_to_list(data))
         self.assertEqual(result, expected)
 
 if __name__ == '__main__':

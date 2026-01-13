@@ -155,13 +155,14 @@ fn main() {
     
     // 加密
     let plaintext = b"Hello, SM2!";
-    let encrypt_ctx = EncryptCtx::new(128, pk.clone());
+    // libsm 默认输出 C1C2C3 顺序
+    let encrypt_ctx = EncryptCtx::new(plaintext.len(), pk.clone());
     let ciphertext = encrypt_ctx.encrypt(plaintext).unwrap();
     
     println!("密文: {}", hex::encode(&ciphertext));
     
     // 解密
-    let decrypt_ctx = DecryptCtx::new(128, sk);
+    let decrypt_ctx = DecryptCtx::new(plaintext.len(), sk);
     let decrypted = decrypt_ctx.decrypt(&ciphertext).unwrap();
     
     println!("明文: {}", String::from_utf8(decrypted).unwrap());
@@ -276,23 +277,44 @@ console.log('CBC明文:', plainCBC);
 
 @tab Rust (libsm)
 ```rust
-// ECB 模式示例
-use libsm::sm4::cipher_mode::Sm4CipherMode;
+use libsm::sm4::cipher::Sm4Cipher;
 use hex;
+
+fn pkcs7_pad(data: &[u8]) -> Vec<u8> {
+    let pad = 16 - (data.len() % 16);
+    let mut out = data.to_vec();
+    out.extend(std::iter::repeat(pad as u8).take(pad));
+    out
+}
+
+fn pkcs7_unpad(data: &[u8]) -> Vec<u8> {
+    let pad = *data.last().unwrap() as usize;
+    data[..data.len() - pad].to_vec()
+}
 
 fn main() {
     // 密钥（16字节）
     let key = hex::decode("0123456789abcdeffedcba9876543210").unwrap();
     let plaintext = b"Hello, SM4!";
     
-    // ECB 加密
-    let cipher = Sm4CipherMode::new(&key, cipher_mode::CipherMode::Ecb).unwrap();
-    let ciphertext = cipher.encrypt(plaintext).unwrap();
+    // ECB 加密（手动 PKCS7 填充）
+    let cipher = Sm4Cipher::new(&key).unwrap();
+    let padded = pkcs7_pad(plaintext);
+    let mut ciphertext = Vec::new();
+    for block in padded.chunks(16) {
+        let enc = cipher.encrypt(block).unwrap();
+        ciphertext.extend_from_slice(&enc);
+    }
     
     println!("密文: {}", hex::encode(&ciphertext));
     
     // ECB 解密
-    let decrypted = cipher.decrypt(&ciphertext).unwrap();
+    let mut plain_padded = Vec::new();
+    for block in ciphertext.chunks(16) {
+        let dec = cipher.decrypt(block).unwrap();
+        plain_padded.extend_from_slice(&dec);
+    }
+    let decrypted = pkcs7_unpad(&plain_padded);
     
     println!("明文: {}", String::from_utf8(decrypted).unwrap());
 }
@@ -301,7 +323,7 @@ fn main() {
 ### CBC 模式
 
 ```rust
-use libsm::sm4::cipher_mode::Sm4CipherMode;
+use libsm::sm4::cipher_mode::{CipherMode, Sm4CipherMode};
 use hex;
 
 fn main() {
@@ -309,16 +331,14 @@ fn main() {
     let iv = hex::decode("fedcba98765432100123456789abcdef").unwrap();
     let plaintext = b"Hello, SM4 CBC!";
     
-    // CBC 加密
-    let cipher = Sm4CipherMode::new(&key, cipher_mode::CipherMode::Cbc)
-        .unwrap()
-        .with_iv(&iv);
-    let ciphertext = cipher.encrypt(plaintext).unwrap();
+    // CBC 模式内部自动使用 PKCS7 填充
+    let cipher = Sm4CipherMode::new(&key, CipherMode::Cbc).unwrap();
+    let ciphertext = cipher.encrypt(&[], plaintext, &iv).unwrap();
     
     println!("密文: {}", hex::encode(&ciphertext));
     
     // CBC 解密
-    let decrypted = cipher.decrypt(&ciphertext).unwrap();
+    let decrypted = cipher.decrypt(&[], &ciphertext, &iv).unwrap();
     
     println!("明文: {}", String::from_utf8(decrypted).unwrap());
 }
@@ -328,11 +348,24 @@ fn main() {
 ## 互操作性测试
 
 ```rust
-use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use serde::Deserialize;
+use serde_json::Value;
 use std::fs;
-use libsm::sm3::hash::Sm3Hash;
+
 use hex;
+use libsm::sm2::encrypt::{DecryptCtx, EncryptCtx};
+use libsm::sm2::signature::SigCtx;
+use libsm::sm3::hash::Sm3Hash;
+use libsm::sm4::cipher::Sm4Cipher;
+use libsm::sm4::cipher_mode::{CipherMode, Sm4CipherMode};
+
+#[derive(Debug, Deserialize)]
+struct Defaults {
+    sm4KeyHex: String,
+    sm4IvHex: String,
+    sm2PublicKeyHex: String,
+    sm2PrivateKeyHex: String,
+}
 
 #[derive(Debug, Deserialize)]
 struct TestVector {
@@ -340,13 +373,52 @@ struct TestVector {
     algo: String,
     op: String,
     mode: Option<String>,
+    padding: Option<String>,
     input: String,
-    expected: HashMap<String, String>,
+    keyHex: Option<String>,
+    ivHex: Option<String>,
+    publicKeyHex: Option<String>,
+    privateKeyHex: Option<String>,
+    expected: Value,
 }
 
 #[derive(Debug, Deserialize)]
 struct TestVectors {
+    defaults: Defaults,
     cases: Vec<TestVector>,
+}
+
+fn pkcs7_pad(data: &[u8]) -> Vec<u8> {
+    let pad = 16 - (data.len() % 16);
+    let mut out = data.to_vec();
+    out.extend(std::iter::repeat(pad as u8).take(pad));
+    out
+}
+
+fn pkcs7_unpad(data: &[u8]) -> Vec<u8> {
+    let pad = *data.last().unwrap() as usize;
+    data[..data.len() - pad].to_vec()
+}
+
+// libsm 默认输出 C1C2C3，按需转换为 C1C3C2
+fn c1c2c3_to_c1c3c2(cipher: &[u8]) -> Vec<u8> {
+    let c1_len = 65;
+    let c3_len = 32;
+    let c2_len = cipher.len() - c1_len - c3_len;
+    let c1 = &cipher[..c1_len];
+    let c2 = &cipher[c1_len..c1_len + c2_len];
+    let c3 = &cipher[c1_len + c2_len..];
+    [c1, c3, c2].concat()
+}
+
+fn c1c3c2_to_c1c2c3(cipher: &[u8]) -> Vec<u8> {
+    let c1_len = 65;
+    let c3_len = 32;
+    let c2_len = cipher.len() - c1_len - c3_len;
+    let c1 = &cipher[..c1_len];
+    let c3 = &cipher[c1_len..c1_len + c3_len];
+    let c2 = &cipher[c1_len + c3_len..];
+    [c1, c2, c3].concat()
 }
 
 fn main() {
@@ -357,11 +429,11 @@ fn main() {
         .expect("Unable to parse JSON");
     
     // 运行测试
-    for tc in vectors.cases {
+    for tc in vectors.cases.iter() {
         match tc.algo.as_str() {
-            "SM3" => test_sm3(&tc),
-            "SM4" => test_sm4(&tc),
-            "SM2" => test_sm2(&tc),
+            "SM3" => test_sm3(tc),
+            "SM4" => test_sm4(tc, &vectors.defaults),
+            "SM2" => test_sm2(tc, &vectors.defaults),
             _ => {}
         }
     }
@@ -371,21 +443,113 @@ fn test_sm3(tc: &TestVector) {
     let mut hasher = Sm3Hash::new(tc.input.as_bytes());
     let hash = hasher.get_hash();
     let actual = hex::encode(&hash);
-    let expected = tc.expected.get("hex").unwrap();
+    let expected = tc.expected.get("hex").and_then(|v| v.as_str()).unwrap_or("");
     
-    if &actual == expected {
+    if actual == expected {
         println!("✓ {} passed", tc.id);
     } else {
         println!("✗ {} failed", tc.id);
     }
 }
 
-fn test_sm4(tc: &TestVector) {
-    // 实现 SM4 测试逻辑
+fn test_sm4(tc: &TestVector, defaults: &Defaults) {
+    let key_hex = tc.keyHex.as_deref().unwrap_or(&defaults.sm4KeyHex);
+    let key = hex::decode(key_hex).unwrap();
+    let input = tc.input.as_bytes();
+
+    let mode = tc.mode.as_deref().unwrap_or("ECB");
+    let padding = tc.padding.as_deref().unwrap_or("PKCS7");
+
+    let (ciphertext, plain) = if mode == "ECB" {
+        let cipher = Sm4Cipher::new(&key).unwrap();
+        let padded = if padding == "PKCS7" {
+            pkcs7_pad(input)
+        } else {
+            input.to_vec()
+        };
+        let mut ct = Vec::new();
+        for block in padded.chunks(16) {
+            let enc = cipher.encrypt(block).unwrap();
+            ct.extend_from_slice(&enc);
+        }
+        let mut pt = Vec::new();
+        for block in ct.chunks(16) {
+            let dec = cipher.decrypt(block).unwrap();
+            pt.extend_from_slice(&dec);
+        }
+        let pt = if padding == "PKCS7" { pkcs7_unpad(&pt) } else { pt };
+        (ct, pt)
+    } else if mode == "CBC" {
+        let iv_hex = tc.ivHex.as_deref().unwrap_or(&defaults.sm4IvHex);
+        let iv = hex::decode(iv_hex).unwrap();
+        let cipher = Sm4CipherMode::new(&key, CipherMode::Cbc).unwrap();
+        let ct = cipher.encrypt(&[], input, &iv).unwrap();
+        let pt = cipher.decrypt(&[], &ct, &iv).unwrap();
+        (ct, pt)
+    } else {
+        println!("! {} skipped (mode {})", tc.id, mode);
+        return;
+    };
+
+    if let Some(expected_hex) = tc.expected.get("cipherHex").and_then(|v| v.as_str()) {
+        if hex::encode(&ciphertext) != expected_hex {
+            println!("✗ {} failed", tc.id);
+            return;
+        }
+    }
+
+    if plain == input {
+        println!("✓ {} passed", tc.id);
+    } else {
+        println!("✗ {} failed", tc.id);
+    }
 }
 
-fn test_sm2(tc: &TestVector) {
-    // 实现 SM2 测试逻辑
+fn test_sm2(tc: &TestVector, defaults: &Defaults) {
+    let pri_hex = tc.privateKeyHex.as_deref().unwrap_or(&defaults.sm2PrivateKeyHex);
+    let pub_hex = tc.publicKeyHex.as_deref().unwrap_or(&defaults.sm2PublicKeyHex);
+    let pri_bytes = hex::decode(pri_hex).unwrap();
+    let pub_bytes = hex::decode(pub_hex).unwrap();
+
+    let sig_ctx = SigCtx::new();
+    let sk = sig_ctx.load_seckey(&pri_bytes).unwrap();
+    let pk = sig_ctx.load_pubkey(&pub_bytes).unwrap();
+
+    if tc.op == "encrypt" {
+        let input = tc.input.as_bytes();
+        let encrypt_ctx = EncryptCtx::new(input.len(), pk.clone());
+        let cipher_c1c2c3 = encrypt_ctx.encrypt(input).unwrap();
+
+        let cipher_for_mode = match tc.mode.as_deref() {
+            Some("C1C3C2") => c1c2c3_to_c1c3c2(&cipher_c1c2c3),
+            _ => cipher_c1c2c3.clone(),
+        };
+
+        let cipher_for_decrypt = match tc.mode.as_deref() {
+            Some("C1C3C2") => c1c3c2_to_c1c2c3(&cipher_for_mode),
+            _ => cipher_for_mode.clone(),
+        };
+
+        let decrypt_ctx = DecryptCtx::new(input.len(), sk.clone());
+        let plain = decrypt_ctx.decrypt(&cipher_for_decrypt).unwrap();
+        if plain == input {
+            println!("✓ {} passed", tc.id);
+        } else {
+            println!("✗ {} failed", tc.id);
+        }
+        return;
+    }
+
+    if tc.op == "sign" {
+        let msg = tc.input.as_bytes();
+        let signature = sig_ctx.sign(msg, &sk, &pk);
+        let ok = sig_ctx.verify(msg, &pk, &signature);
+        if ok {
+            println!("✓ {} passed", tc.id);
+        } else {
+            println!("✗ {} failed", tc.id);
+        }
+    }
 }
 ```
 
