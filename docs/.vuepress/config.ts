@@ -78,13 +78,6 @@ export default defineUserConfig({
         ],
       },
       {
-        text: '多语言实现',
-        children: [
-          { text: 'TypeScript / JavaScript', link: '/implementations/typescript/' },
-          { text: 'Java（推荐库）', link: '/implementations/java/' },
-        ],
-      },
-      {
         text: '开发指南',
         children: [
           { text: '架构设计', link: '/dev/ARCHITECTURE.zh-CN' },
@@ -112,12 +105,6 @@ export default defineUserConfig({
         {
           text: '快速开始',
           children: ['/guide/getting-started', '/guide/about-guomi'],
-        },
-      ],
-      '/implementations/': [
-        {
-          text: '不同语言实现',
-          children: ['/implementations/typescript/', '/implementations/java/'],
         },
       ],
       '/algorithms/': [

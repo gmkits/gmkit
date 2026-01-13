@@ -89,17 +89,18 @@ public class SM2Interop {
 }
 ```
 
-@tab Go (smgo)
+@tab Go (gmsm)
 ```go
 package main
 
 import (
+  "crypto/rand"
   "encoding/hex"
   "encoding/json"
   "fmt"
   "os"
 
-  "github.com/ZZMarquis/gm/sm2"
+  "github.com/emmansun/gmsm/sm2"
 )
 
 type Defaults struct {
@@ -141,27 +142,45 @@ func main() {
       pubHex = vec.Defaults.Sm2PublicKeyHex
     }
     priBytes, _ := hex.DecodeString(priHex)
-    priv, _ := sm2.RawBytesToPrivateKey(priBytes)
-    pubBytes, _ := hex.DecodeString(pubHex)
-    if len(pubBytes) == 65 && pubBytes[0] == 0x04 {
-      pubBytes = pubBytes[1:]
+    priv, err := sm2.NewPrivateKey(priBytes)
+    if err != nil {
+      panic(err)
     }
-    pub, _ := sm2.RawBytesToPublicKey(pubBytes)
+    pubBytes, _ := hex.DecodeString(pubHex)
+    if len(pubBytes) == 64 {
+      pubBytes = append([]byte{0x04}, pubBytes...)
+    }
+    pub, err := sm2.NewPublicKey(pubBytes)
+    if err != nil {
+      panic(err)
+    }
 
     if c.Op == "encrypt" {
       // 按向量指定的密文模式加解密
-      mode := sm2.C1C3C2
+      splicing := sm2.C1C3C2
       if c.Mode == "C1C2C3" {
-        mode = sm2.C1C2C3
+        splicing = sm2.C1C2C3
       }
-      cipher, _ := sm2.Encrypt(pub, []byte(c.Input), mode)
-      plain, _ := sm2.Decrypt(priv, cipher, mode)
+      opts := sm2.NewPlainEncrypterOpts(sm2.MarshalUncompressed, splicing)
+      cipher, err := sm2.Encrypt(rand.Reader, pub, []byte(c.Input), opts)
+      if err != nil {
+        panic(err)
+      }
+      var plain []byte
+      if splicing == sm2.C1C3C2 {
+        plain, err = sm2.Decrypt(priv, cipher)
+      } else {
+        plain, err = priv.Decrypt(rand.Reader, cipher, sm2.NewPlainDecrypterOpts(splicing))
+      }
+      if err != nil {
+        panic(err)
+      }
       fmt.Println(c.ID, string(plain) == c.Input)
     }
     if c.Op == "sign" {
-      // 默认 userId = 1234567812345678
-      sig, _ := sm2.Sign(priv, nil, []byte(c.Input))
-      ok := sm2.Verify(pub, nil, []byte(c.Input), sig)
+      // 默认 uid = 1234567812345678
+      sig, _ := priv.Sign(rand.Reader, []byte(c.Input), sm2.DefaultSM2SignerOpts)
+      ok := sm2.VerifyASN1WithSM2(pub, nil, []byte(c.Input), sig)
       fmt.Println(c.ID, ok)
     }
   }
@@ -331,7 +350,7 @@ public class SM3Interop {
 }
 ```
 
-@tab Go (smgo)
+@tab Go (gmsm)
 ```go
 package main
 
@@ -340,7 +359,7 @@ import (
   "encoding/json"
   "os"
 
-  "github.com/ZZMarquis/gm/sm3"
+  "github.com/emmansun/gmsm/sm3"
 )
 
 type Case struct {
@@ -366,8 +385,8 @@ func main() {
       continue
     }
     // 计算 SM3 摘要并比对向量
-    out := sm3.Sm3Sum([]byte(c.Input))
-    if hex.EncodeToString(out) != c.Expected.Hex {
+    sum := sm3.Sum([]byte(c.Input))
+    if hex.EncodeToString(sum[:]) != c.Expected.Hex {
       panic(c.ID)
     }
   }
@@ -488,17 +507,19 @@ public class SM4Interop {
 }
 ```
 
-@tab Go (smgo)
+@tab Go (gmsm)
 ```go
 package main
 
 import (
+  "crypto/cipher"
   "encoding/hex"
   "encoding/json"
   "os"
 
-  "github.com/ZZMarquis/gm/sm4"
-  "github.com/ZZMarquis/gm/util"
+  gmsmCipher "github.com/emmansun/gmsm/cipher"
+  "github.com/emmansun/gmsm/padding"
+  "github.com/emmansun/gmsm/sm4"
 )
 
 type Defaults struct {
@@ -536,37 +557,54 @@ func main() {
       keyHex = vec.Defaults.Sm4KeyHex
     }
     key, _ := hex.DecodeString(keyHex)
-    ivHex := c.IvHex
-    if ivHex == "" {
-      ivHex = vec.Defaults.Sm4IvHex
+    block, err := sm4.NewCipher(key)
+    if err != nil {
+      panic(err)
     }
-    iv, _ := hex.DecodeString(ivHex)
 
-    // smgo 需要手动 PKCS5/PKCS7 填充
+    // gmsm 提供 ECB + PKCS7 填充工具
+    pkcs7 := padding.NewPKCS7Padding(sm4.BlockSize)
     data := []byte(c.Input)
     if c.Padding == "PKCS7" {
-      data = util.PKCS5Padding(data, sm4.BlockSize)
+      data = pkcs7.Pad(data)
     }
 
-    var cipher []byte
+    var cipherText []byte
     if c.Mode == "ECB" {
-      cipher, _ = sm4.ECBEncrypt(key, data)
+      cipherText = make([]byte, len(data))
+      gmsmCipher.NewECBEncrypter(block).CryptBlocks(cipherText, data)
     } else if c.Mode == "CBC" {
-      cipher, _ = sm4.CBCEncrypt(key, iv, data)
+      ivHex := c.IvHex
+      if ivHex == "" {
+        ivHex = vec.Defaults.Sm4IvHex
+      }
+      iv, _ := hex.DecodeString(ivHex)
+      cipherText = make([]byte, len(data))
+      cipher.NewCBCEncrypter(block, iv).CryptBlocks(cipherText, data)
     }
 
-    if exp, ok := c.Expected["cipherHex"].(string); ok && hex.EncodeToString(cipher) != exp {
+    if exp, ok := c.Expected["cipherHex"].(string); ok && hex.EncodeToString(cipherText) != exp {
       panic(c.ID)
     }
 
     var plainPadded []byte
     if c.Mode == "ECB" {
-      plainPadded, _ = sm4.ECBDecrypt(key, cipher)
+      plainPadded = make([]byte, len(cipherText))
+      gmsmCipher.NewECBDecrypter(block).CryptBlocks(plainPadded, cipherText)
     } else {
-      plainPadded, _ = sm4.CBCDecrypt(key, iv, cipher)
+      ivHex := c.IvHex
+      if ivHex == "" {
+        ivHex = vec.Defaults.Sm4IvHex
+      }
+      iv, _ := hex.DecodeString(ivHex)
+      plainPadded = make([]byte, len(cipherText))
+      cipher.NewCBCDecrypter(block, iv).CryptBlocks(plainPadded, cipherText)
     }
     if c.Padding == "PKCS7" {
-      plainPadded = util.PKCS5UnPadding(plainPadded)
+      plainPadded, err = pkcs7.Unpad(plainPadded)
+      if err != nil {
+        panic(err)
+      }
     }
     if string(plainPadded) != c.Input {
       panic(c.ID)
