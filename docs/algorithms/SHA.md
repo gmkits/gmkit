@@ -59,7 +59,7 @@ SHA 系列算法在不同平台上的性能差异：
 import { sha256, sha512, OutputFormat } from 'gmkitx';
 
 const hex256 = sha256('Hello, World!'); // 64 字符 hex
-const b64512 = sha512('Hello, World!', { format: OutputFormat.BASE64 });
+const b64512 = sha512('Hello, World!', { outputFormat: OutputFormat.BASE64 });
 ```
 
 命名空间等价用法：
@@ -81,7 +81,7 @@ const mac = sha.hmacSha256('key', 'data');
 import { sha256, OutputFormat } from 'gmkitx';
 
 const hex = sha256('payload');
-const base64 = sha256('payload', { format: OutputFormat.BASE64 });
+const base64 = sha256('payload', { outputFormat: OutputFormat.BASE64 });
 ```
 
 ### SHA-384

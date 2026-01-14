@@ -18,13 +18,15 @@ tag:
 
 ## 概述
 
-ZUC（祖冲之算法）是中国自主设计的流密码算法，以中国古代数学家祖冲之命名。ZUC 算法被 3GPP 组织采纳为 4G LTE 国际标准的第三组加密和完整性算法（128-EEA3 和 128-EIA3），广泛应用于移动通信领域。
+ZUC（祖冲之算法）是中国自主设计的流密码算法，以中国古代数学家祖冲之命名。ZUC-128 被 3GPP 采纳为 4G LTE 国际标准的第三组加密和完整性算法（128-EEA3 和 128-EIA3），广泛应用于移动通信领域。
 
 ### 标准依据
 
 - **GM/T 0001-2012**: ZUC 序列密码算法
 - **3GPP TS 35.221**: ZUC-128 加密算法（128-EEA3）
 - **3GPP TS 35.222**: ZUC-128 完整性算法（128-EIA3）
+
+> **实现范围**: GMKitX 当前实现 ZUC-128；ZUC-256（GM/T 0001.1-2023）暂未覆盖。
 
 ### 主要特性
 
@@ -80,9 +82,9 @@ const ciphertext = zuc.encrypt(key, iv, 'Hello, ZUC!');
 const plaintext = zuc.decrypt(key, iv, ciphertext);
 ```
 
-##  加密算法（128-EEA3）
+##  ZUC-128 流加密
 
-ZUC 是同步流密码，通过生成密钥流与明文异或实现加密。
+ZUC 是同步流密码，通过生成密钥流与明文异或实现加密（加解密为同一操作）。
 
 ### 函数式 API
 
@@ -114,15 +116,14 @@ const zuc = new ZUC(key, iv);
 // 加密
 const ciphertext = zuc.encrypt('Hello, ZUC!');
 
-// 需要重新初始化实例才能解密
-const zucDecryptor = new ZUC(key, iv);
-const plaintext = zucDecryptor.decrypt(ciphertext);
+// 解密时需使用相同 key/iv
+const plaintext = zuc.decrypt(ciphertext);
 ```
 
 ### 多种输入输出格式
 
 ```typescript
-import { zucEncrypt, OutputFormat } from 'gmkitx';
+import { zucEncrypt, zucDecrypt, OutputFormat } from 'gmkitx';
 
 // 输入字符串，输出十六进制（默认）
 const hexCipher = zucEncrypt(key, iv, 'Hello', {
@@ -134,10 +135,9 @@ const base64Cipher = zucEncrypt(key, iv, 'Hello', {
   outputFormat: OutputFormat.BASE64
 });
 
-// 输入字符串，输出字节数组
-const bytesCipher = zucEncrypt(key, iv, 'Hello', {
-  outputFormat: OutputFormat.BYTES
-});
+// 解密时自动识别 hex/base64
+const plain1 = zucDecrypt(key, iv, hexCipher);
+const plain2 = zucDecrypt(key, iv, base64Cipher);
 
 // 输入字节数组
 const bytesInput = new Uint8Array([72, 101, 108, 108, 111]);
@@ -146,46 +146,25 @@ const encrypted = zucEncrypt(key, iv, bytesInput);
 
 ## 🔒 完整性算法（128-EIA3）
 
-ZUC 还提供消息认证码（MAC）功能，用于验证数据完整性。
+EIA3 是 3GPP LTE/5G 的完整性算法，使用 `COUNT/BEARER/DIRECTION` 作为参数。
 
-### 生成 MAC
-
-```typescript
-import { zucMac } from 'gmkitx';
-
-const key = '0123456789abcdeffedcba9876543210';
-const iv = 'fedcba98765432100123456789abcdef';
-const message = 'Important Message';
-
-// 生成 32 位 MAC
-const mac = zucMac(key, iv, message);
-console.log('MAC:', mac); // 8 个十六进制字符
-```
-
-### 验证 MAC
+### 生成 MAC-I
 
 ```typescript
-import { zucMac } from 'gmkitx';
+import { eia3 } from 'gmkitx';
 
-// 发送方
 const key = '0123456789abcdeffedcba9876543210';
-const iv = 'fedcba98765432100123456789abcdef';
+const count = 0x398a59b4;
+const bearer = 0x1a;
+const direction = 0; // 0=上行, 1=下行
 const message = 'Important Message';
-const mac = zucMac(key, iv, message);
 
-// 将 message 和 mac 发送给接收方...
-
-// 接收方
-const receivedMessage = 'Important Message';
-const receivedMac = mac;
-const calculatedMac = zucMac(key, iv, receivedMessage);
-
-if (calculatedMac === receivedMac) {
-  console.log('✅ 消息完整，未被篡改');
-} else {
-  console.log('❌ 消息已被篡改！');
-}
+// 生成 32 位 MAC-I
+const mac = eia3(key, count, bearer, direction, message);
+console.log('MAC-I:', mac); // 8 个十六进制字符
 ```
+
+> **提示**: 通用业务场景如需消息认证，通常更推荐 HMAC-SM3；EIA3 主要面向 3GPP 协议。
 
 ## 🔑 密钥流生成
 
@@ -200,13 +179,15 @@ const key = '0123456789abcdeffedcba9876543210';
 const iv = 'fedcba98765432100123456789abcdef';
 
 // 生成 16 字节（128 位）的密钥流
-const keystream = zucKeystream(key, iv, 16);
+const words = Math.ceil(16 / 4); // length 参数是 32 位字数量
+const keystream = zucKeystream(key, iv, words);
 console.log('密钥流:', keystream); // 32 个十六进制字符
 
 // 手动异或实现加密
 function manualEncrypt(plaintext: string, key: string, iv: string): string {
   const plaintextBytes = new TextEncoder().encode(plaintext);
-  const keystreamBytes = hexToBytes(zucKeystream(key, iv, plaintextBytes.length));
+  const words = Math.ceil(plaintextBytes.length / 4);
+  const keystreamBytes = hexToBytes(zucKeystream(key, iv, words)).slice(0, plaintextBytes.length);
   
   const cipherBytes = new Uint8Array(plaintextBytes.length);
   for (let i = 0; i < plaintextBytes.length; i++) {
@@ -223,20 +204,21 @@ function manualEncrypt(plaintext: string, key: string, iv: string): string {
 
 | 函数 | 说明 | 返回值 |
 |------|------|--------|
-| `zucEncrypt(key, iv, plaintext, options?)` | ZUC 加密 | `string \| Uint8Array` |
-| `zucDecrypt(key, iv, ciphertext, options?)` | ZUC 解密 | `string \| Uint8Array` |
+| `zucEncrypt(key, iv, plaintext, options?)` | ZUC 加密 | `string` |
+| `zucDecrypt(key, iv, ciphertext, options?)` | ZUC 解密 | `string` |
 
-### 完整性保护
+### 完整性保护（3GPP）
 
 | 函数 | 说明 | 返回值 |
 |------|------|--------|
-| `zucMac(key, iv, message, options?)` | 生成 MAC（32 位） | `string` |
+| `eea3(key, count, bearer, direction, length)` | 生成 EEA3 密钥流 | `string` |
+| `eia3(key, count, bearer, direction, message)` | 生成 EIA3 MAC-I（32 位） | `string` |
 
 ### 密钥流生成
 
 | 函数 | 说明 | 返回值 |
 |------|------|--------|
-| `zucKeystream(key, iv, length)` | 生成指定长度的密钥流 | `string` |
+| `zucKeystream(key, iv, length)` | 生成指定长度的密钥流（length 为 32 位字数量） | `string` |
 
 ### 类 API
 
@@ -245,13 +227,13 @@ function manualEncrypt(plaintext: string, key: string, iv: string): string {
 | `new ZUC(key, iv)` | 创建 ZUC 实例 | `ZUC` |
 | `encrypt(plaintext, options?)` | 加密 | `string \| Uint8Array` |
 | `decrypt(ciphertext, options?)` | 解密 | `string \| Uint8Array` |
-| `generateKeystream(length)` | 生成密钥流 | `Uint8Array` |
+| `keystream(length)` | 生成密钥流（length 为 32 位字数量） | `string` |
 
 ### 选项参数
 
 ```typescript
 interface ZUCOptions {
-  outputFormat?: 'hex' | 'base64' | 'bytes';  // 输出格式
+  outputFormat?: 'hex' | 'base64';  // 输出格式
 }
 ```
 
@@ -259,106 +241,57 @@ interface ZUCOptions {
 
 ### 1. 移动通信加密（4G/5G）
 
-```typescript
-import { zucEncrypt, zucDecrypt } from 'gmkitx';
+3GPP 场景请使用 EEA3/EIA3 辅助函数（COUNT/BEARER/DIRECTION 由协议提供）：
 
-// 模拟 LTE 数据加密
-class LTECipher {
-  private readonly key: string;
-  
-  constructor(k: string) {
-    this.key = k;
-  }
-  
-  // 加密上行数据
-  encryptUplink(data: string, count: number, bearer: number): string {
-    const iv = this.generateIV(count, bearer, 0); // 0 = uplink
-    return zucEncrypt(this.key, iv, data);
-  }
-  
-  // 加密下行数据
-  encryptDownlink(data: string, count: number, bearer: number): string {
-    const iv = this.generateIV(count, bearer, 1); // 1 = downlink
-    return zucEncrypt(this.key, iv, data);
-  }
-  
-  // 根据 3GPP 标准生成 IV
-  private generateIV(count: number, bearer: number, direction: number): string {
-    // IV = COUNT || BEARER || DIRECTION || 0...0
-    const countHex = count.toString(16).padStart(8, '0');
-    const bearerBits = (bearer << 27) | (direction << 26);
-    const ivSuffix = bearerBits.toString(16).padStart(24, '0');
-    return countHex + ivSuffix;
-  }
-}
+```typescript
+import { eea3, eia3 } from 'gmkitx';
+
+const key = '00112233445566778899aabbccddeeff';
+const count = 0x398a59b4;
+const bearer = 0x1a;
+const direction = 0; // 0=上行, 1=下行
+
+const messageBytes = new TextEncoder().encode('LTE payload');
+const bitLen = messageBytes.length * 8;
+
+// EEA3：生成密钥流（按需 XOR 明文）
+const keystreamHex = eea3(key, count, bearer, direction, bitLen);
+
+// EIA3：生成完整性标签
+const mac = eia3(key, count, bearer, direction, messageBytes);
 ```
 
 ### 2. 数据流加密
 
-```typescript
-import { ZUC } from 'gmkitx';
-
-// 流式数据加密
-class StreamCipher {
-  private zuc: ZUC;
-  
-  constructor(key: string, iv: string) {
-    this.zuc = new ZUC(key, iv);
-  }
-  
-  // 加密数据流
-  encryptStream(dataChunks: string[]): string[] {
-    return dataChunks.map(chunk => this.zuc.encrypt(chunk));
-  }
-  
-  // 实时视频流加密
-  encryptVideoFrame(frame: Uint8Array): Uint8Array {
-    return this.zuc.encrypt(frame, {
-      outputFormat: OutputFormat.BYTES
-    }) as Uint8Array;
-  }
-}
-```
+ZUC 的 `encrypt/decrypt` 每次调用都会从 IV 起始，**不适合**直接对分片重复调用。  
+如需分块处理，可为每块使用独立 IV，或自行维护密钥流偏移（使用 `zucKeystream` 生成并 XOR）。
 
 ### 3. 消息完整性保护
 
+ZUC 加密本身不提供认证，通用场景建议配合 HMAC-SM3：
+
 ```typescript
-import { zucEncrypt, zucMac } from 'gmkitx';
+import { zucEncrypt, zucDecrypt, hmac } from 'gmkitx';
 
 // 同时提供加密和完整性保护
 class SecureMessage {
   static send(key: string, message: string) {
-    const encIV = generateRandomIV();
-    const macIV = generateRandomIV();
-    
-    // 加密消息
-    const ciphertext = zucEncrypt(key, encIV, message);
-    
-    // 生成 MAC
-    const mac = zucMac(key, macIV, ciphertext);
-    
-    return { ciphertext, mac, encIV, macIV };
+    const iv = generateRandomIV();
+    const ciphertext = zucEncrypt(key, iv, message);
+    const mac = hmac(key, ciphertext); // HMAC-SM3
+    return { ciphertext, mac, iv };
   }
   
   static receive(key: string, packet: any): string | null {
-    const { ciphertext, mac, encIV, macIV } = packet;
-    
-    // 验证 MAC
-    const calculatedMac = zucMac(key, macIV, ciphertext);
-    if (calculatedMac !== mac) {
+    const { ciphertext, mac, iv } = packet;
+    const calculated = hmac(key, ciphertext);
+    if (calculated !== mac) {
       console.error('MAC 验证失败，消息可能被篡改');
       return null;
     }
-    
-    // 解密消息
-    return zucDecrypt(key, encIV, ciphertext);
+    return zucDecrypt(key, iv, ciphertext);
   }
 }
-
-// 使用
-const key = '0123456789abcdeffedcba9876543210';
-const packet = SecureMessage.send(key, 'Secret Message');
-const decrypted = SecureMessage.receive(key, packet);
 ```
 
 ### 4. IoT 设备通信
@@ -402,52 +335,6 @@ class IoTDevice {
     return counter.toString(16).padStart(32, '0');
   }
 }
-```
-
-### 5. 文件加密
-
-```typescript
-import { zucEncrypt, zucDecrypt } from 'gmkitx';
-import { readFileSync, writeFileSync } from 'fs';
-
-// 文件加密工具
-class FileEncryptor {
-  static encryptFile(
-    inputPath: string,
-    outputPath: string,
-    key: string
-  ): void {
-    const data = readFileSync(inputPath);
-    const iv = generateRandomIV();
-    
-    // 加密文件内容
-    const encrypted = zucEncrypt(key, iv, data, {
-      outputFormat: OutputFormat.BASE64
-    });
-    
-    // 保存 IV 和密文
-    const output = JSON.stringify({ iv, encrypted });
-    writeFileSync(outputPath, output);
-  }
-  
-  static decryptFile(
-    inputPath: string,
-    outputPath: string,
-    key: string
-  ): void {
-    const input = JSON.parse(readFileSync(inputPath, 'utf-8'));
-    const { iv, encrypted } = input;
-    
-    // 解密文件内容
-    const decrypted = zucDecrypt(key, iv, encrypted);
-    writeFileSync(outputPath, decrypted);
-  }
-}
-
-// 使用
-const key = '0123456789abcdeffedcba9876543210';
-FileEncryptor.encryptFile('document.pdf', 'document.enc', key);
-FileEncryptor.decryptFile('document.enc', 'document_decrypted.pdf', key);
 ```
 
 ##  高级用法
@@ -531,8 +418,9 @@ const encrypted = encryptBatch(messages, key);
    - 必须使用相同的密钥和 IV 才能正确解密
 5. **同步性**: ZUC 是同步流密码，必须从头开始处理数据
 6. **密钥保密**: 密钥必须妥善保管，泄露将导致所有加密数据不安全
-7. **完整性**: ZUC 加密不提供完整性保护，应配合 MAC 使用
-8. **状态管理**: 使用类 API 时，加密后实例状态已改变，不能直接用于解密
+7. **完整性**: ZUC 加密不提供完整性保护，应配合 HMAC-SM3 或 EIA3 使用
+8. **分块处理**: `encrypt/decrypt` 每次从 IV 起始，分片需独立 IV 或自行维护密钥流偏移
+9. **二进制数据**: `zucDecrypt` 会按 UTF-8 解码字符串，二进制场景请用密钥流 XOR 自行处理
 
 ##  常见问题
 
@@ -548,13 +436,12 @@ A:
 
 A: ZUC 是流密码，相同的密钥和 IV 会产生相同的密钥流。如果重复使用，攻击者可以通过分析两个密文的异或值来推断明文。这是流密码的常见漏洞。
 
-### Q: ZUC 的 MAC 功能和 SM3 哈希有什么区别？
+### Q: EIA3 和 HMAC-SM3 有什么区别？
 
 A: 
-- ZUC MAC 需要密钥，只有持有密钥的人才能生成和验证
-- SM3 是公开哈希，任何人都能计算
-- ZUC MAC 用于完整性保护和认证
-- SM3 用于数据摘要和完整性校验
+- **EIA3**: 3GPP 协议定义的完整性算法，参数包含 COUNT/BEARER/DIRECTION
+- **HMAC-SM3**: 通用消息认证码，接口更简单，适合业务系统
+- 两者都需要密钥，但使用场景不同，需按协议选择
 
 ### Q: 可以用 ZUC 加密大文件吗？
 

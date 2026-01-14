@@ -14,7 +14,7 @@ tag:
 
 # 性能优化建议 (Performance Optimization Guide)
 
-基于 GMT 0009-2023 标准的 GMKit 性能优化指南。
+基于 GM/T 0009-2023 标准的 GMKitX 性能优化指南。性能数据为示意值，具体以实测为准。
 
 ## 已实现的优化
 
@@ -68,7 +68,7 @@ function kdf(z: Uint8Array, klen: number): Uint8Array {
 
 ### 2. 公钥格式优化
 
-#### GMT 0009-2023 推荐使用非压缩格式
+#### GM/T 0009-2023 推荐使用非压缩格式
 
 ```typescript
 // ✅ 推荐：使用非压缩格式（默认）
@@ -85,10 +85,10 @@ const keyPair = generateKeyPair(true);
 
 ### 3. 用户 ID 优化
 
-#### GMT 0009-2023 推荐使用空字符串
+#### GM/T 0009-2023 推荐使用空字符串
 
 ```typescript
-// ✅ GMT 0009-2023 推荐：空字符串，略微提升性能
+// ✅ GM/T 0009-2023 推荐：空字符串，略微提升性能
 const signature = sign(privateKey, data, { userId: '' });
 
 // ✅ 向后兼容：使用默认值（性能差异极小）
@@ -127,7 +127,7 @@ function constantTimeEqual(a: Uint8Array, b: Uint8Array): boolean {
 
 ### 1. 选择合适的密文模式
 
-GMT 0009-2023 明确推荐 C1C3C2 模式：
+GM/T 0009-2023 明确推荐 C1C3C2 模式：
 
 ```typescript
 // ✅ 推荐：显式指定 C1C3C2 模式（避免自动检测开销）
@@ -331,7 +331,7 @@ self.onmessage = (e) => {
 
 ### ✅ 推荐做法
 
-1. **使用 GMT 0009-2023 推荐的默认值**
+1. **使用 GM/T 0009-2023 推荐的默认值**
    - 密文模式：C1C3C2（显式指定）
    - 公钥格式：非压缩（默认）
    - 用户 ID：空字符串（新项目）
@@ -420,8 +420,8 @@ console.log('Memory used:', {
 ## 版本历史
 
 - **v0.1.0**: 初始性能优化
-- **v0.9.1**: 增强发布流程、补充 SM4 类测试以保障性能回归
-- **当前版本** (v0.9.1): 基于 GMT 0009-2023 的优化建议
+- **v0.9.2**: 文档对齐与示例修订，补充标准使用建议
+- **当前版本** (v0.9.2): 基于 GM/T 0009-2023 的优化建议
 
 ## 贡献
 

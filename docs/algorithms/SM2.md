@@ -137,10 +137,10 @@ const cipher2 = sm2Encrypt(publicKey, plaintext, {
 
 ### 输出格式
 
-支持多种输出格式：
+支持十六进制与 Base64 输出，解密端可自动识别输入格式：
 
 ```typescript
-import { sm2Encrypt, OutputFormat } from 'gmkitx';
+import { sm2Encrypt, sm2Decrypt, OutputFormat } from 'gmkitx';
 
 // 十六进制输出（默认）
 const hexCipher = sm2Encrypt(publicKey, plaintext, {
@@ -151,6 +151,10 @@ const hexCipher = sm2Encrypt(publicKey, plaintext, {
 const base64Cipher = sm2Encrypt(publicKey, plaintext, {
   outputFormat: OutputFormat.BASE64
 });
+
+// 解密时自动检测 hex/base64
+const plain1 = sm2Decrypt(privateKey, hexCipher);
+const plain2 = sm2Decrypt(privateKey, base64Cipher);
 ```
 
 ## 数字签名
@@ -160,16 +164,16 @@ SM2 支持数字签名和验签功能，确保数据完整性和来源可信。
 ### 基本签名
 
 ```typescript
-import { sm2Sign, sm2Verify } from 'gmkitx';
+import { sign, verify } from 'gmkitx';
 
 const { publicKey, privateKey } = generateKeyPair();
 const message = '重要消息';
 
 // 签名
-const signature = sm2Sign(privateKey, message);
+const signature = sign(privateKey, message);
 
 // 验签
-const isValid = sm2Verify(publicKey, message, signature);
+const isValid = verify(publicKey, message, signature);
 console.log('签名有效:', isValid);
 ```
 
@@ -177,69 +181,83 @@ console.log('签名有效:', isValid);
 
 ### 带用户 ID 的签名
 
-SM2 签名支持用户标识符（User ID）：
+SM2 签名支持用户标识符（User ID）。GM/T 0009-2023 推荐使用空字符串，GMKitX 为向后兼容保留默认值：
 
 ```typescript
-import { sm2Sign, sm2Verify, DEFAULT_USER_ID } from 'gmkitx';
+import { sign, verify, DEFAULT_USER_ID } from 'gmkitx';
 
-const userId = '1234567812345678'; // 自定义用户ID
+const userId = '1234567812345678'; // 自定义用户 ID
 
-// 使用自定义用户ID签名
-const signature = sm2Sign(privateKey, message, {
-  userId: userId
+// 使用自定义 userId 签名
+const signature = sign(privateKey, message, {
+  userId
 });
 
-// 验签时也需要提供相同的用户ID
-const isValid = sm2Verify(publicKey, message, signature, {
-  userId: userId
+// 验签时也必须提供相同的 userId
+const isValid = verify(publicKey, message, signature, {
+  userId
 });
 ```
 
-> **注意**: 如果不指定 userId，将使用默认值 `DEFAULT_USER_ID = '1234567812345678'`
+> **注意**: 如果不指定 userId，将使用默认值 `DEFAULT_USER_ID = '1234567812345678'`。如需严格对齐 GM/T 0009-2023，请显式传入 `userId: ''`。
 
 ### 签名格式
 
-支持两种签名格式：
+支持 DER 与 Raw 两种签名格式（默认 Raw）：
 
 ```typescript
-import { sm2Sign, SignatureFormat } from 'gmkitx';
+import { sign, verify } from 'gmkitx';
 
-// DER 格式（默认，ASN.1编码）
-const derSig = sm2Sign(privateKey, message, {
-  format: SignatureFormat.DER
-});
+// DER 格式（ASN.1 编码）
+const derSig = sign(privateKey, message, { der: true });
 
-// RAW 格式（r || s，128位十六进制）
-const rawSig = sm2Sign(privateKey, message, {
-  format: SignatureFormat.RAW
-});
+// Raw 格式（r || s，128 位十六进制）
+const rawSig = sign(privateKey, message, { der: false });
+
+// 验签会自动尝试识别 DER；如需明确指定：
+const ok = verify(publicKey, message, derSig, { der: true });
 ```
 
 ## 密钥交换
 
-SM2 支持 ECDH 密钥交换协议，用于在不安全信道上协商共享密钥。
+SM2 密钥交换遵循 GM/T 0003.3/GM/T 0009 协议，包含长期密钥 + 临时密钥，支持相互认证与前向保密。
 
 ```typescript
-import { sm2KeyExchange } from 'gmkitx';
+import { generateKeyPair, keyExchange } from 'gmkitx';
 
-// Alice 和 Bob 各自生成密钥对
-const aliceKeyPair = generateKeyPair();
-const bobKeyPair = generateKeyPair();
+// A/B 长期密钥对
+const alice = generateKeyPair();
+const bob = generateKeyPair();
 
-// Alice 使用 Bob 的公钥计算共享密钥
-const aliceSharedKey = sm2KeyExchange(
-  aliceKeyPair.privateKey,
-  bobKeyPair.publicKey
-);
+// A/B 临时密钥对
+const aliceTemp = generateKeyPair();
+const bobTemp = generateKeyPair();
 
-// Bob 使用 Alice 的公钥计算共享密钥
-const bobSharedKey = sm2KeyExchange(
-  bobKeyPair.privateKey,
-  aliceKeyPair.publicKey
-);
+// A 先把临时公钥发给 B
+const aliceTempPub = aliceTemp.publicKey;
+const bobTempPub = bobTemp.publicKey;
 
-// 双方得到相同的共享密钥
-console.log(aliceSharedKey === bobSharedKey); // true
+// B 计算共享密钥，并返回自己的临时公钥
+const resultB = keyExchange({
+  privateKey: bob.privateKey,
+  publicKey: bob.publicKey,
+  tempPrivateKey: bobTemp.privateKey,
+  peerPublicKey: alice.publicKey,
+  peerTempPublicKey: aliceTempPub,
+  isInitiator: false
+});
+
+// A 收到 B 的临时公钥后，完成协商
+const resultA = keyExchange({
+  privateKey: alice.privateKey,
+  publicKey: alice.publicKey,
+  tempPrivateKey: aliceTemp.privateKey,
+  peerPublicKey: bob.publicKey,
+  peerTempPublicKey: resultB.tempPublicKey,
+  isInitiator: true
+});
+
+console.log(resultA.sharedKey === resultB.sharedKey); // true
 ```
 
 ## 面向对象 API
@@ -290,14 +308,14 @@ const publicKey = sm2.getPublicKey();
 
 | 函数 | 说明 | 返回值 |
 |------|------|--------|
-| `sm2Sign(privateKey, message, options?)` | SM2 签名 | `string` |
-| `sm2Verify(publicKey, message, signature, options?)` | SM2 验签 | `boolean` |
+| `sign(privateKey, message, options?)` | SM2 签名 | `string` |
+| `verify(publicKey, message, signature, options?)` | SM2 验签 | `boolean` |
 
 ### 密钥交换
 
 | 函数 | 说明 | 返回值 |
 |------|------|--------|
-| `sm2KeyExchange(privateKey, publicKey)` | SM2 密钥交换 | `string` |
+| `keyExchange(params)` | SM2 密钥交换 | `SM2KeyExchangeResult` |
 
 ## 高级用法
 
@@ -327,11 +345,11 @@ const customParams = {
 const keyPairs = Array.from({ length: 10 }, () => generateKeyPair());
 
 // 批量签名
-const signatures = messages.map(msg => sm2Sign(privateKey, msg));
+const signatures = messages.map(msg => sign(privateKey, msg));
 
 // 批量验签
 const results = messages.map((msg, i) => 
-  sm2Verify(publicKey, msg, signatures[i])
+  verify(publicKey, msg, signatures[i])
 );
 ```
 
@@ -342,9 +360,12 @@ const results = messages.map((msg, i) =>
 3. **公钥格式**: 
    - 非压缩格式: 04 开头，130 位十六进制（65 字节）
    - 压缩格式: 02 或 03 开头，66 位十六进制（33 字节）
-4. **用户 ID**: 签名时使用的用户 ID 在验签时必须保持一致
-5. **密文模式**: 加密和解密时的密文模式必须匹配
-6. **编码格式**: 确保输入输出编码格式一致（hex/base64）
+4. **用户 ID**: 签名/验签必须使用相同 userId；GM/T 0009-2023 推荐 `''`，库默认仍为 `DEFAULT_USER_ID`
+5. **密文模式**: C1C3C2 与 C1C2C3 必须一致；必要时显式指定模式
+6. **编码格式**: 输出为 hex/base64，解密端需匹配或使用自动识别
+7. **ASN.1 密文**: 如密文以 `0x30` 开头，按 ASN.1 解析；与 Java/OpenSSL 互操作时常见
+8. **签名输入**: 默认会计算 `SM3(Z || M)`，不要自行先哈希；如需签名哈希，请使用 `skipZComputation`
+9. **大数据**: SM2 适合加密小数据；大数据请走 SM4 + SM2 混合加密
 
 ## 常见问题
 

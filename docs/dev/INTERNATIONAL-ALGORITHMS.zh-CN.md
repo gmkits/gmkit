@@ -18,7 +18,7 @@ tag:
 
 ## 概述
 
-GMKit 除了提供中国国密算法（SM2, SM3, SM4, ZUC）外，还支持国际标准的哈希算法（SHA-256, SHA-384, SHA-512, SHA-1），并为**所有算法**提供灵活的编码格式选项（hex 和 base64）。
+GMKitX 除了提供中国国密算法（SM2, SM3, SM4, ZUC）外，还支持国际标准的哈希算法（SHA-256, SHA-384, SHA-512, SHA-1），并为**哈希/加密输出**提供灵活的编码格式选项（hex 和 base64）。
 
 ## 输出格式配置
 
@@ -29,7 +29,7 @@ GMKit 除了提供中国国密算法（SM2, SM3, SM4, ZUC）外，还支持国�
 
 ### 统一的 API 设计
 
-GMKit 采用参数配置方式而非函数名后缀方式，原因如下：
+GMKitX 采用参数配置方式而非函数名后缀方式，原因如下：
 
 1. **API 简洁性**：避免函数名爆炸（如 `sm3Hex`, `sm3Base64` 等）
 2. **向后兼容**：默认使用 hex 格式，保持与现有代码的兼容性
@@ -177,7 +177,7 @@ const decrypted2 = zucDecrypt(key, iv, base64Encrypted);
 
 ### 支持的算法
 
-GMKit 基于高性能的 `@noble/hashes` 库提供以下 SHA 算法：
+GMKitX 基于高性能的 `@noble/hashes` 库提供以下 SHA 算法：
 
 - **SHA-256**: 256 位输出，最常用的哈希算法
 - **SHA-384**: 384 位输出，SHA-512 的截断版本
@@ -453,9 +453,9 @@ function decryptAES_Node(encrypted: string, key: Buffer, iv: string, tag: string
 }
 ```
 
-## 对比：GMKit 国密算法 vs Web Crypto API
+## 对比：GMKitX 国密算法 vs Web Crypto API
 
-| 特性 | GMKit 国密算法 | Web Crypto API |
+| 特性 | GMKitX 国密算法 | Web Crypto API |
 |------|----------------|----------------|
 | **算法** | SM2, SM3, SM4, ZUC | AES, RSA, ECDSA, SHA-2, etc. |
 | **标准** | 中国密码行业标准 | 国际标准 (NIST, PKCS) |
@@ -495,7 +495,7 @@ const logHash = digest('data'); // 默认 hex
 
 - **不要硬编码密钥**：使用环境变量或密钥管理服务
 - **定期轮换密钥**：建立密钥轮换机制
-- **使用强随机数**：GMKit 使用 `@noble/curves` 的安全随机数生成器
+- **使用强随机数**：GMKitX 使用 `@noble/curves` 的安全随机数生成器
 
 ### 4. 错误处理
 
@@ -528,9 +528,9 @@ const finalHash = sm3.digest();
 ### 2. 选择合适的算法
 
 - **哈希**：SHA-256 和 SM3 性能相近，都很快
-- **对称加密**：AES（Web Crypto）> SM4（GMKit）性能，但 SM4 足够快
+- **对称加密**：AES（Web Crypto）> SM4（GMKitX）性能，但 SM4 足够快
 - **非对称加密**：大数据用对称加密，只用非对称加密密钥
 
 ## 总结
 
-GMKit 提供了灵活的输出格式支持和完整的国际标准哈希算法实现。对于 AES 和 RSA，建议使用 Web Crypto API 以获得最佳性能和安全性。选择合适的算法和配置，根据项目需求在国密算法和国际标准算法之间权衡。
+GMKitX 提供了灵活的输出格式支持和完整的国际标准哈希算法实现。对于 AES 和 RSA，建议使用 Web Crypto API 以获得最佳性能和安全性。选择合适的算法和配置，根据项目需求在国密算法和国际标准算法之间权衡。

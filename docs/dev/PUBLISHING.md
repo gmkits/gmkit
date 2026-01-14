@@ -15,15 +15,15 @@ tag:
 
 # 发布指南 / Publishing Guide
 
-本文档介绍如何发布 GMKit 到 NPM，以及如何使用不同的模块格式。
+本文档介绍如何发布 GMKitX 到 NPM，以及如何使用不同的模块格式。
 
-This document describes how to publish GMKit to NPM and how to use different module formats.
+This document describes how to publish GMKitX to NPM and how to use different module formats.
 
 ## 模块格式支持 / Module Format Support
 
-GMKit 现在支持三种模块格式，确保在各种环境下都能正常工作：
+GMKitX 现在支持三种模块格式，确保在各种环境下都能正常工作：
 
-GMKit now supports three module formats to ensure it works in various environments:
+GMKitX now supports three module formats to ensure it works in various environments:
 
 ### 1. ES Module (ESM)
 最现代的模块格式，支持 tree-shaking，推荐在现代 JavaScript 项目中使用。
@@ -40,7 +40,7 @@ import { digest, sm4Encrypt, generateKeyPair } from 'gmkitx';
 import * as gmkit from 'gmkitx';
 ```
 
-**文件位置 / File Location:** `dist/gmkit.js`
+**文件位置 / File Location:** `dist/index.js`
 
 ### 2. CommonJS (CJS)
 Node.js 传统模块格式，兼容旧版 Node.js 和打包工具。
@@ -57,17 +57,17 @@ const { digest, sm4Encrypt, generateKeyPair } = require('gmkitx');
 const gmkit = require('gmkitx');
 ```
 
-**文件位置 / File Location:** `dist/gmkit.cjs`
+**文件位置 / File Location:** `dist/index.cjs`
 
-### 3. UMD (Universal Module Definition)
-通用模块定义，可以直接在浏览器中通过 `<script>` 标签使用。
+### 3. IIFE (Global Build)
+全局构建格式，可以直接在浏览器中通过 `<script>` 标签使用。
 
-Universal Module Definition, can be used directly in browsers with `<script>` tags.
+IIFE global build, can be used directly in browsers with `<script>` tags.
 
 ```html
 <!-- 通过 CDN 使用（推荐） -->
 <!-- Use via CDN (recommended) -->
-<script src="https://unpkg.com/GMKit@latest/dist/gmkit.umd.js"></script>
+<script src="https://unpkg.com/gmkitx@latest/dist/index.global.js"></script>
 <script>
   // 全局变量 GMKit 现在可用
   // Global variable GMKit is now available
@@ -77,14 +77,14 @@ Universal Module Definition, can be used directly in browsers with `<script>` ta
 
 <!-- 或使用 jsDelivr -->
 <!-- Or use jsDelivr -->
-<script src="https://cdn.jsdelivr.net/npm/gmkitx@latest/dist/gmkit.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gmkitx@latest/dist/index.global.js"></script>
 ```
 
-**文件位置 / File Location:** `dist/gmkit.umd.js`
+**文件位置 / File Location:** `dist/index.global.js`
 
 **CDN 链接 / CDN Links:**
-- unpkg: `https://unpkg.com/GMKit@latest/dist/gmkit.umd.js`
-- jsDelivr: `https://cdn.jsdelivr.net/npm/gmkitx@latest/dist/gmkit.umd.js`
+- unpkg: `https://unpkg.com/gmkitx@latest/dist/index.global.js`
+- jsDelivr: `https://cdn.jsdelivr.net/npm/gmkitx@latest/dist/index.global.js`
 
 ## 发布流程 / Publishing Process
 
@@ -143,7 +143,7 @@ Document the changes in `CHANGELOG.md`:
 ## [0.2.0] - 2025-10-14
 
 ### Added
-- UMD 模块格式支持
+- IIFE 全局构建支持
 - CDN 使用支持（unpkg, jsDelivr）
 
 ### Changed
@@ -194,7 +194,7 @@ When the tag is pushed, GitHub Actions will automatically:
 2. ✅ 安装依赖 / Install dependencies
 3. ✅ 运行类型检查 / Run type checking
 4. ✅ 运行测试 / Run tests
-5. ✅ 构建项目（生成 ESM, CJS, UMD）/ Build project (generate ESM, CJS, UMD)
+5. ✅ 构建项目（生成 ESM, CJS, IIFE）/ Build project (generate ESM, CJS, IIFE)
 6. ✅ 验证标签版本与 package.json 版本一致 / Verify tag version matches package.json
 7. ✅ 发布到 NPM / Publish to NPM
 8. ✅ 创建 GitHub Release / Create GitHub Release
@@ -212,7 +212,7 @@ After successful publication, verify the package:
 ```bash
 # 检查 NPM 上的最新版本
 # Check latest version on NPM
-npm view gmkit version
+npm view gmkitx version
 
 # 在新项目中安装测试
 # Install and test in a new project
@@ -314,7 +314,7 @@ If there's an issue with a release, you can deprecate the problematic version:
 ```bash
 # 弃用特定版本
 # Deprecate a specific version
-npm deprecate gmkit@0.2.0 "This version has critical bugs, please upgrade to 0.2.1"
+npm deprecate gmkitx@0.2.0 "This version has critical bugs, please upgrade to 0.2.1"
 
 # 或者发布一个新的修复版本
 # Or publish a new patch version
@@ -338,12 +338,12 @@ npm run build
 # Create local package
 npm pack
 
-# 这会生成 gmkit-0.2.0.tgz 文件
-# This generates a gmkit-0.2.0.tgz file
+# 这会生成 gmkitx-0.2.0.tgz 文件
+# This generates a gmkitx-0.2.0.tgz file
 
 # 在另一个项目中测试安装
 # Test installation in another project
-npm install /path/to/gmkit-0.2.0.tgz
+npm install /path/to/gmkitx-0.2.0.tgz
 ```
 
 ## 持续集成 / Continuous Integration

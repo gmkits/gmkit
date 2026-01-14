@@ -193,6 +193,13 @@ const checksum = sha256('普通文件内容');
 const hash = sha512('日志数据');
 ```
 
+## 常见坑（必看）
+
+1. **SM2 userId 不一致**：签名/验签必须使用相同 userId；GM/T 0009-2023 推荐 `''`，库默认仍为 `1234567812345678`
+2. **SM4/GCM IV 长度**：GCM 需 12 字节 IV；CBC/CTR 等为 16 字节；同一密钥下 IV 不能重复
+3. **密文编码**：SM2/SM4/ZUC 输出是 hex/base64 字符串，跨语言时要明确编码
+4. **流密码/CTR 类模式**：ZUC/CTR/GCM 重复 IV 等同重用密钥流，属于高危漏洞
+
 ##  法律法规依据
 
 ### 主要法规
@@ -223,8 +230,9 @@ const hash = sha512('日志数据');
    - 工具链和开发支持增强
 
 3. **国际认可度**
-   - SM2/SM3/SM4 已被 ISO/IEC 标准化
-   - 国际互通性提升
+   - SM3/SM4 已被 ISO/IEC 收录
+   - SM2 相关内容处于国际标准化讨论中
+   - 国际互通性逐步提升
 
 4. **应用场景扩展**
    - 从政务金融向更多行业渗透
@@ -255,4 +263,4 @@ const hash = sha512('日志数据');
 - [全国信息安全标准化技术委员会](https://www.tc260.org.cn/)
 - [商用密码网](http://www.gmbz.org.cn/)
 - [GMKitX 性能测试](/performance/PERFORMANCE)
-- [GMT-0009 标准合规性](/standards/GMT-0009-COMPLIANCE)
+- [GM/T 0009 标准合规性](/standards/GMT-0009-COMPLIANCE)

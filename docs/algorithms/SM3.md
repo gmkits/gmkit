@@ -30,7 +30,7 @@ SM3 是中国国家密码管理局于 2010 年 12 月 17 日发布的密码杂�
 - **安全性**: 256 位输出，提供良好的抗碰撞能力
 - **性能**: 纯 TypeScript 实现，性能取决于运行环境和硬件支持
 - **流式处理**: 支持分块更新，适合处理大文件
-- **多种输出**: 支持 hex、base64、字节数组等格式
+- **多种输出**: 支持 hex、base64 等格式
 - **标准兼容**: 与主流实现（OpenSSL、Hutool等）完全兼容
 
 ### 性能与安全权衡
@@ -82,7 +82,7 @@ SM3 支持多种输出格式：
 import { sm3Digest, OutputFormat } from 'gmkitx';
 
 const hash = sm3Digest('Hello', {
-  format: OutputFormat.HEX
+  outputFormat: OutputFormat.HEX
 });
 // 输出: "66c7f0f462eeedd9d1f2d46bdc10e4e24167c4875cf2f7a2297da02b8f4ba8e0"
 ```
@@ -91,18 +91,16 @@ const hash = sm3Digest('Hello', {
 
 ```typescript
 const hash = sm3Digest('Hello', {
-  format: OutputFormat.BASE64
+  outputFormat: OutputFormat.BASE64
 });
 // 输出: "Zsfw9GLu7dnR8tRr3BDk4kFnxIdc8veiKX2gK49LqOA="
 ```
 
-### 字节数组输出
+如需字节数组，可自行从 hex/base64 转换：
 
 ```typescript
-const hash = sm3Digest('Hello', {
-  format: OutputFormat.BYTES
-});
-// 输出: Uint8Array(32) [102, 199, 240, 244, ...]
+const hexHash = sm3Digest('Hello');
+const bytes = Buffer.from(hexHash, 'hex'); // Node.js
 ```
 
 ##  流式处理
@@ -163,8 +161,8 @@ const fileHash = hashFile('./document.pdf');
 ```typescript
 import { SM3, OutputFormat } from 'gmkitx';
 
-// 创建实例
-const sm3 = new SM3();
+// 创建实例（构造时可指定输出格式）
+const sm3 = new SM3(OutputFormat.HEX);
 
 // 更新数据（可多次调用）
 sm3.update('part1');
@@ -173,15 +171,14 @@ sm3.update('part2');
 // 获取哈希值（十六进制）
 const hexHash = sm3.digest();
 
-// 获取哈希值（Base64）
-const base64Hash = sm3.digest({ format: OutputFormat.BASE64 });
-
-// 获取哈希值（字节数组）
-const bytesHash = sm3.digest({ format: OutputFormat.BYTES });
+// 修改输出格式后再 digest
+sm3.setOutputFormat(OutputFormat.BASE64);
+sm3.update('new data');
+const base64Hash = sm3.digest();
 
 // 重置状态，可以重新使用
 sm3.reset();
-sm3.update('new data');
+sm3.update('other data');
 const newHash = sm3.digest();
 ```
 
@@ -191,8 +188,9 @@ const newHash = sm3.digest();
 
 | 函数 | 说明 | 返回值 |
 |------|------|--------|
-| `sm3Digest(data, options?)` | 计算 SM3 哈希值 | `string \| Uint8Array` |
-| `sm3(data)` | 计算 SM3 哈希值（简写） | `string` |
+| `digest(data, options?)` | 计算 SM3 哈希值（主函数） | `string` |
+| `sm3Digest(data, options?)` | 计算 SM3 哈希值（别名） | `string` |
+| `hmac(key, data, options?)` | 计算 HMAC-SM3 | `string` |
 
 ### 类 API
 
@@ -200,14 +198,15 @@ const newHash = sm3.digest();
 |------|------|--------|
 | `new SM3()` | 创建 SM3 实例 | `SM3` |
 | `update(data)` | 更新数据 | `void` |
-| `digest(options?)` | 获取哈希值 | `string \| Uint8Array` |
+| `digest()` | 获取哈希值 | `string` |
 | `reset()` | 重置状态 | `void` |
+| `SM3.hmac(key, data, options?)` | 计算 HMAC-SM3（静态方法） | `string` |
 
 ### 选项参数
 
 ```typescript
 interface DigestOptions {
-  format?: 'hex' | 'base64' | 'bytes';  // 输出格式
+  outputFormat?: 'hex' | 'base64';  // 输出格式
 }
 ```
 
@@ -240,7 +239,7 @@ if (calculatedHash === receivedHash) {
 ```typescript
 import { sm3Digest } from 'gmkitx';
 
-// 存储密码时先哈希
+// 存储密码时先哈希（示例；生产请使用带迭代的 KDF）
 function hashPassword(password: string, salt: string): string {
   return sm3Digest(password + salt);
 }
@@ -263,12 +262,11 @@ if (inputHash === storedHash) {
 ### 3. 数字签名的消息摘要
 
 ```typescript
-import { sm3Digest, sm2Sign } from 'gmkitx';
+import { sign } from 'gmkitx';
 
-// SM2 签名前通常先计算消息摘要
+// 注意：SM2 签名默认会计算 SM3(Z || M)，一般无需手动预哈希
 const message = '合同内容...';
-const digest = sm3Digest(message);
-const signature = sm2Sign(privateKey, digest);
+const signature = sign(privateKey, message);
 ```
 
 ### 4. 区块链哈希
@@ -326,38 +324,13 @@ function isDuplicate(content: string): boolean {
 
 ### HMAC-SM3（密钥哈希）
 
-虽然 gmkitx 不直接提供 HMAC-SM3，但可以手动实现：
+GMKitX 已内置 HMAC-SM3：
 
 ```typescript
-import { sm3Digest } from 'gmkitx';
+import { hmac, OutputFormat } from 'gmkitx';
 
-function hmacSM3(key: string, message: string): string {
-  const blockSize = 64; // SM3 块大小 512位/8 = 64字节
-  
-  // 如果密钥长度超过块大小，先哈希
-  if (key.length > blockSize) {
-    key = sm3Digest(key);
-  }
-  
-  // 填充密钥到块大小
-  const paddedKey = key.padEnd(blockSize, '\x00');
-  
-  // 生成 ipad 和 opad
-  const ipad = paddedKey.split('').map(c => 
-    String.fromCharCode(c.charCodeAt(0) ^ 0x36)
-  ).join('');
-  
-  const opad = paddedKey.split('').map(c => 
-    String.fromCharCode(c.charCodeAt(0) ^ 0x5c)
-  ).join('');
-  
-  // HMAC = H(opad || H(ipad || message))
-  const innerHash = sm3Digest(ipad + message);
-  return sm3Digest(opad + innerHash);
-}
-
-// 使用
-const hmac = hmacSM3('secret-key', 'message');
+const mac = hmac('secret-key', 'message');
+const mac64 = hmac('secret-key', 'message', { outputFormat: OutputFormat.BASE64 });
 ```
 
 ### 计算文件指纹
@@ -454,6 +427,7 @@ const hash = sm3Digest(largeDataAsString); // 可能导致内存问题
 4. **编码一致性**: 确保输入数据编码一致（UTF-8）
 5. **不要用于加密**: SM3 是哈希算法，不是加密算法
 6. **盐值**: 存储密码时务必加盐（salt）
+7. **密码存储**: 仅哈希不够，建议使用 PBKDF2/BCrypt 等加盐与迭代的 KDF
 
 ##  常见问题
 

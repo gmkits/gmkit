@@ -14,9 +14,9 @@ tag:
   - Tree-shaking
 ---
 
-# GMKit 导入方式示例
+# GMKitX 导入方式示例
 
-GMKit 支持多种灵活的导入方式，满足不同场景的需求。
+GMKitX 支持多种灵活的导入方式，满足不同场景的需求。
 
 ## 1. 算法模块导入（推荐）
 
@@ -83,14 +83,14 @@ const cipher = sm4Encrypt(key, 'Hello', {
 import * as gmkitx from 'gmkitx';
 
 // 通过命名空间访问
-const keyPair = gmkit.sm2.generateKeyPair();
-const hash = gmkit.sm3.digest('Hello');
-const cipher = gmkit.sm4.encrypt(key, 'Hello', { mode: 'ecb' });
-const zucCipher = gmkit.zuc.encrypt(zucKey, zucIv, 'Hello');
+const keyPair = gmkitx.sm2.generateKeyPair();
+const hash = gmkitx.sm3.digest('Hello');
+const cipher = gmkitx.sm4.encrypt(key, 'Hello', { mode: 'ecb' });
+const zucCipher = gmkitx.zuc.encrypt(zucKey, zucIv, 'Hello');
 
 // 也可以访问具名导出
-const hash2 = gmkit.digest('Hello');
-const encrypted = gmkit.sm2Encrypt(keyPair.publicKey, 'Hello');
+const hash2 = gmkitx.digest('Hello');
+const encrypted = gmkitx.sm2Encrypt(keyPair.publicKey, 'Hello');
 ```
 
 ## 4. CommonJS 导入
@@ -120,9 +120,9 @@ const hash2 = digest('Hello');
   const keyPair = GMKit.sm2.generateKeyPair();
   const hash = GMKit.sm3.digest('Hello, World!');
   
-  // 方式 2: 使用具名函数（通过 default 访问）
-  const hash2 = GMKit.default.digest('Hello');
-  const encrypted = GMKit.default.sm2Encrypt(keyPair.publicKey, 'Hello');
+  // 方式 2: 使用具名函数
+  const hash2 = GMKit.digest('Hello');
+  const encrypted = GMKit.sm2Encrypt(keyPair.publicKey, 'Hello');
 </script>
 ```
 
@@ -133,14 +133,14 @@ const hash2 = digest('Hello');
 ```typescript
 // 只在需要时加载 SM2
 async function useSM2() {
-  const { sm2 } = await import('gmkit');
+  const { sm2 } = await import('gmkitx');
   const keyPair = sm2.generateKeyPair();
   return keyPair;
 }
 
 // 按需加载特定功能
 async function hashData(data: string) {
-  const { digest } = await import('gmkit');
+  const { digest } = await import('gmkitx');
   return digest(data);
 }
 ```

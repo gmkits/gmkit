@@ -13,11 +13,11 @@ tag:
   - 代码组织
 ---
 
-# GMKit 架构文档
+# GMKitX 架构文档
 
 ## 概述
 
-GMKit 采用模块化、可扩展的架构设计，便于后续功能扩展和维护。
+GMKitX 采用模块化、可扩展的架构设计，便于后续功能扩展和维护。
 
 ## 目录结构
 
@@ -32,22 +32,27 @@ gmkit/
 │   │   ├── sm3/            # SM3 哈希算法
 │   │   │   ├── index.ts    # SM3 主要功能实现
 │   │   │   └── class.ts    # SM3 面向对象 API
-│   │   └── sm4/            # SM4 分组密码算法
-│   │       ├── index.ts    # SM4 主要功能实现
-│   │       └── class.ts    # SM4 面向对象 API
+│   │   ├── sm4/            # SM4 分组密码算法
+│   │   │   ├── index.ts    # SM4 主要功能实现
+│   │   │   └── class.ts    # SM4 面向对象 API
+│   │   ├── zuc/            # ZUC 流密码算法
+│   │   │   ├── index.ts    # ZUC 主要功能实现
+│   │   │   ├── core.ts     # ZUC 核心状态机
+│   │   │   └── class.ts    # ZUC 面向对象 API
+│   │   └── sha/            # SHA 系列哈希算法
+│   │       ├── index.ts    # SHA 主要功能实现
+│   │       └── class.ts    # SHA 面向对象 API
 │   ├── core/               # 核心工具模块
 │   │   ├── utils.ts        # 通用工具函数
 │   │   └── asn1.ts         # ASN.1 编解码
 │   ├── types/              # 类型定义
 │   │   └── constants.ts    # 常量定义
 │   └── index.ts            # 主入口文件
-├── demo/                    # 演示页面
-│   ├── index.html          # Web 演示界面
-│   └── README.md           # 演示说明
+├── demo/                    # Demo 应用
+├── demo-vue/                # Vue Demo
+├── docs/                    # 文档站点
 ├── test/                    # 测试文件
 ├── dist/                    # 构建输出（gitignored）
-├── README.md               # 中文文档（默认）
-├── README.en.md            # 英文文档
 └── package.json            # 包配置
 ```
 
@@ -91,7 +96,7 @@ SM2 椭圆曲线公钥密码算法实现。
 - 数字签名 / 签名验证
 
 **特点**:
-- 已准备好集成 @noble/curves 库的架构
+- 基于 @noble/curves 实现椭圆曲线运算
 - 支持自定义曲线参数
 - 完整的中文注释
 
@@ -113,13 +118,30 @@ SM3 密码哈希算法实现。
 SM4 分组密码算法实现。
 
 **主要功能**:
-- ECB、CBC 模式加解密
+- ECB/CBC/CTR/CFB/OFB/GCM 模式加解密
 - 多种填充模式支持
 
 **特点**:
 - 完整的 S盒实现
 - 支持多种工作模式
 - 清晰的中文注释
+
+### crypto/zuc/
+
+ZUC 流密码算法实现。
+
+**主要功能**:
+- ZUC-128 加解密
+- 密钥流生成
+- EEA3/EIA3 辅助函数
+
+### crypto/sha/
+
+SHA 系列哈希算法实现（基于 @noble/hashes）。
+
+**主要功能**:
+- SHA-1 / SHA-256 / SHA-384 / SHA-512
+- HMAC-SHA
 
 ### core/
 
@@ -160,7 +182,7 @@ const keyPair = generateKeyPair();
 ### 面向对象 API
 
 ```typescript
-import { SM2, SM3, SM4 } from 'gmkitx';
+import { SM2, SM3, SM4, CipherMode } from 'gmkitx';
 
 // SM3 哈希
 const sm3 = new SM3();
@@ -169,7 +191,9 @@ sm3.update(' World!');
 const hash = sm3.digest();
 
 // SM4 加密
-const sm4 = new SM4(key, { mode: 'CBC', iv });
+const key = '0123456789abcdeffedcba9876543210';
+const iv = 'fedcba98765432100123456789abcdef';
+const sm4 = new SM4(key, { mode: CipherMode.CBC, iv });
 const encrypted = sm4.encrypt('secret message');
 
 // SM2 签名
@@ -180,22 +204,17 @@ const isValid = sm2.verify('message', signature);
 
 ## 未来扩展计划
 
-1. **完整的 @noble/curves 集成**
-   - 使用 @noble/curves 实现真实的椭圆曲线运算
-   - 提升 SM2 算法性能和安全性
-
-2. **更多国密算法**
+1. **更多国密算法**
    - SM9: 标识密码算法
-   - ZUC: 祖冲之序列密码算法
+   - ZUC-256: 更高安全级别的序列密码
 
-3. **性能优化**
+2. **性能优化**
    - WebAssembly 加速
    - Web Worker 支持
 
-4. **更多功能**
-   - 流式哈希计算
+3. **更多功能**
    - 密钥导出格式（PEM、DER）
-   - 更多工作模式（CTR、GCM）
+   - 更丰富的互操作向量与示例
 
 ## 贡献指南
 
@@ -208,10 +227,11 @@ const isValid = sm2.verify('message', signature);
 ## 技术栈
 
 - **TypeScript**: 类型安全的开发体验
-- **Vite**: 快速的构建工具
-- **Vitest**: 现代化的测试框架
-- **@noble/curves**: 准备集成的椭圆曲线库
-- **@noble/hashes**: 准备集成的哈希库
+- **tsup**: 库打包
+- **Vite**: 文档与演示构建
+- **Vitest**: 测试框架
+- **@noble/curves**: 椭圆曲线库
+- **@noble/hashes**: 哈希库
 
 ## 许可证
 

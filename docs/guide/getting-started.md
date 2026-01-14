@@ -112,13 +112,11 @@ const hexHash = digest('订单摘要');
 
 // 输出 Base64
 const base64Hash = digest('订单摘要', {
-  format: OutputFormat.BASE64
+  outputFormat: OutputFormat.BASE64
 });
 
-// 输出字节数组
-const bytesHash = digest('订单摘要', {
-  format: OutputFormat.BYTES
-});
+// 如需字节数组可自行转换（Node.js 示例）
+const bytesHash = Buffer.from(hexHash, 'hex');
 ```
 
 ### 场景 2：对称加密（SM4）
@@ -168,16 +166,16 @@ console.log(decrypted); // 'Hello, SM2!'
 ### 场景 4：数字签名（SM2）
 
 ```typescript
-import { generateKeyPair, sm2Sign, sm2Verify } from 'gmkitx';
+import { generateKeyPair, sign, verify } from 'gmkitx';
 
 const { publicKey, privateKey } = generateKeyPair();
 const message = '重要文件内容';
 
 // 签名
-const signature = sm2Sign(privateKey, message);
+const signature = sign(privateKey, message);
 
 // 验签
-const isValid = sm2Verify(publicKey, message, signature);
+const isValid = verify(publicKey, message, signature);
 
 console.log('签名验证:', isValid); // true
 ```

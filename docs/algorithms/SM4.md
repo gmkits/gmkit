@@ -30,7 +30,7 @@ SM4（原名 SMS4）是中国国家密码管理局于 2012 年 3 月 21 日发�
 - **安全性**: 128 位密钥和分组长度，提供合理的安全强度
 - **性能**: 纯 TypeScript 实现，性能取决于运行环境和硬件支持
 - **多种模式**: 支持 ECB、CBC、CTR、CFB、OFB、GCM 六种分组模式
-- **灵活填充**: 支持 PKCS7、PKCS5、Zero、NoPadding 等填充方式
+- **灵活填充**: 支持 PKCS7、Zero、None 等填充方式（Java 的 PKCS5Padding 等价于 PKCS7）
 - **标准兼容**: 与主流实现（OpenSSL、Hutool等）完全兼容
 
 ### 性能与安全权衡
@@ -158,7 +158,8 @@ const plaintext = sm4Decrypt(key, ciphertext, {
 import { sm4Encrypt, sm4Decrypt, CipherMode } from 'gmkitx';
 
 const key = '0123456789abcdeffedcba9876543210';
-const iv = 'fedcba98765432100123456789abcdef';
+const iv = 'fedcba9876543210012345678'; // 12 字节（24 hex）
+const aad = 'header-data';
 
 const ciphertext = sm4Encrypt(key, 'Hello, SM4!', {
   mode: CipherMode.CFB,
@@ -205,14 +206,16 @@ const iv = 'fedcba98765432100123456789abcdef';
 // 加密（返回密文和认证标签）
 const { ciphertext, tag } = sm4Encrypt(key, 'Hello, SM4!', {
   mode: CipherMode.GCM,
-  iv: iv
+  iv: iv,
+  aad
 });
 
 // 解密（需要提供认证标签）
 const plaintext = sm4Decrypt(key, ciphertext, {
   mode: CipherMode.GCM,
   iv: iv,
-  tag: tag
+  tag: tag,
+  aad
 });
 ```
 
@@ -234,15 +237,10 @@ const ciphertext = sm4Encrypt(key, plaintext, {
 });
 ```
 
-### PKCS5 填充
+### PKCS5 填充（Java 习惯叫法）
 
-```typescript
-const ciphertext = sm4Encrypt(key, plaintext, {
-  mode: CipherMode.CBC,
-  padding: PaddingMode.PKCS5,
-  iv: iv
-});
-```
+SM4 的块大小为 16 字节，实际应使用 PKCS7。  
+在 Java 中常见的 `PKCS5Padding` 与 PKCS7 等价，可直接用 `PaddingMode.PKCS7`。
 
 ### Zero 填充
 
@@ -289,12 +287,11 @@ const ciphertext = sm4Encrypt(key, plaintext, {
 });
 ```
 
-### 字节数组输出
+如需字节数组，可自行从 hex/base64 转换：
 
 ```typescript
-const ciphertext = sm4Encrypt(key, plaintext, {
-  outputFormat: OutputFormat.BYTES
-});
+const hexCipher = sm4Encrypt(key, plaintext);
+const bytes = Buffer.from(hexCipher, 'hex'); // Node.js
 ```
 
 ##  面向对象 API
@@ -325,16 +322,16 @@ sm4.setPadding(PaddingMode.NONE);
 
 | 函数 | 说明 | 返回值 |
 |------|------|--------|
-| `sm4Encrypt(key, plaintext, options?)` | SM4 加密 | `string \| Uint8Array \| {ciphertext, tag}` |
-| `sm4Decrypt(key, ciphertext, options?)` | SM4 解密 | `string \| Uint8Array` |
+| `sm4Encrypt(key, plaintext, options?)` | SM4 加密 | `string \| {ciphertext, tag}` |
+| `sm4Decrypt(key, ciphertext, options?)` | SM4 解密 | `string` |
 
 ### 类 API
 
 | 方法 | 说明 | 返回值 |
 |------|------|--------|
 | `new SM4(key, options?)` | 创建 SM4 实例 | `SM4` |
-| `encrypt(plaintext, options?)` | 加密 | `string \| Uint8Array \| {ciphertext, tag}` |
-| `decrypt(ciphertext, options?)` | 解密 | `string \| Uint8Array` |
+| `encrypt(plaintext, options?)` | 加密 | `string \| {ciphertext, tag}` |
+| `decrypt(ciphertext, options?)` | 解密 | `string` |
 | `setMode(mode)` | 设置分组模式 | `void` |
 | `setPadding(padding)` | 设置填充模式 | `void` |
 
@@ -342,10 +339,12 @@ sm4.setPadding(PaddingMode.NONE);
 
 ```typescript
 interface SM4Options {
-  mode?: CipherMode;          // 分组模式
-  padding?: PaddingMode;      // 填充模式
-  iv?: string;                // 初始化向量（除 ECB 外必需）
-  tag?: string;               // 认证标签（GCM 解密时必需）
+  mode?: CipherMode;           // 分组模式
+  padding?: PaddingMode;       // 填充模式
+  iv?: string;                 // 初始化向量（CBC/CTR/CFB/OFB: 16 字节；GCM: 12 字节）
+  aad?: string | Uint8Array;   // 关联数据（GCM 可选）
+  tag?: string;                // 认证标签（GCM 解密时必需）
+  tagLength?: number;          // 标签长度（12-16 字节，仅 GCM 加密）
   outputFormat?: OutputFormat; // 输出格式
 }
 ```
@@ -386,23 +385,27 @@ function decryptFile(inputPath: string, key: string): string {
 ### 2. 数据库字段加密
 
 ```typescript
-import { sm4Encrypt, sm4Decrypt } from 'gmkitx';
+import { sm4Encrypt, sm4Decrypt, CipherMode } from 'gmkitx';
 
 class UserService {
   private readonly encryptionKey = process.env.ENCRYPTION_KEY!;
   
-  // 加密敏感字段
-  encryptSensitiveData(data: string): string {
-    return sm4Encrypt(this.encryptionKey, data, {
+  // 加密敏感字段（存储时需保存 iv 与 tag）
+  encryptSensitiveData(data: string): { ciphertext: string; tag: string; iv: string } {
+    const iv = generateRandomIV(12); // GCM 12 字节 IV
+    const { ciphertext, tag } = sm4Encrypt(this.encryptionKey, data, {
       mode: CipherMode.GCM,
-      iv: generateRandomIV()
+      iv
     });
+    return { ciphertext, tag, iv };
   }
   
   // 解密敏感字段
-  decryptSensitiveData(encrypted: string): string {
-    return sm4Decrypt(this.encryptionKey, encrypted, {
-      mode: CipherMode.GCM
+  decryptSensitiveData(payload: { ciphertext: string; tag: string; iv: string }): string {
+    return sm4Decrypt(this.encryptionKey, payload.ciphertext, {
+      mode: CipherMode.GCM,
+      iv: payload.iv,
+      tag: payload.tag
     });
   }
   
@@ -423,7 +426,7 @@ import { sm4Encrypt, sm4Decrypt, CipherMode } from 'gmkitx';
 // 客户端：加密请求数据
 function encryptRequest(data: any, apiKey: string): string {
   const jsonData = JSON.stringify(data);
-  const iv = generateRandomIV();
+  const iv = generateRandomIV(12);
   
   const { ciphertext, tag } = sm4Encrypt(apiKey, jsonData, {
     mode: CipherMode.GCM,
@@ -456,10 +459,10 @@ import { sm4Encrypt, sm2Encrypt, generateKeyPair } from 'gmkitx';
 function hybridEncrypt(data: string, recipientPublicKey: string) {
   // 生成随机 SM4 密钥
   const sm4Key = generateRandomSM4Key();
-  const iv = generateRandomIV();
+  const iv = generateRandomIV(12);
   
   // 用 SM4 加密数据
-  const encryptedData = sm4Encrypt(sm4Key, data, {
+  const { ciphertext, tag } = sm4Encrypt(sm4Key, data, {
     mode: CipherMode.GCM,
     iv: iv
   });
@@ -467,7 +470,7 @@ function hybridEncrypt(data: string, recipientPublicKey: string) {
   // 用 SM2 加密 SM4 密钥
   const encryptedKey = sm2Encrypt(recipientPublicKey, sm4Key);
   
-  return { encryptedKey, encryptedData, iv };
+  return { encryptedKey, ciphertext, tag, iv };
 }
 ```
 
@@ -506,32 +509,10 @@ class EncryptedLogger {
 
 ##  高级用法
 
-### 流式加密大文件
+### 大文件处理建议
 
-```typescript
-import { SM4, CipherMode } from 'gmkitx';
-import { createReadStream, createWriteStream } from 'fs';
-
-function encryptLargeFile(inputPath: string, outputPath: string, key: string) {
-  const sm4 = new SM4(key, { mode: CipherMode.CTR });
-  const iv = generateRandomIV();
-  
-  const readStream = createReadStream(inputPath, { highWaterMark: 16 * 1024 });
-  const writeStream = createWriteStream(outputPath);
-  
-  // 先写入 IV
-  writeStream.write(iv + '\n');
-  
-  readStream.on('data', (chunk) => {
-    const encrypted = sm4.encrypt(chunk, { iv });
-    writeStream.write(encrypted);
-  });
-  
-  readStream.on('end', () => {
-    writeStream.end();
-  });
-}
-```
+SM4 API 不是流式状态机；CTR/CFB/OFB/GCM 每次调用都会从 IV 起始重新生成密钥流。  
+如需分块处理，请为每个块生成 **独立 IV** 并保存 `iv/tag`，或自行实现计数器状态管理。
 
 ### 密钥派生
 
@@ -578,9 +559,9 @@ function generateSM4Key(): string {
   return randomBytes(16).toString('hex');
 }
 
-// 生成随机 IV（128位）
-function generateRandomIV(): string {
-  return randomBytes(16).toString('hex');
+// 生成随机 IV（默认 128 位；GCM 推荐 96 位）
+function generateRandomIV(bytes: number = 16): string {
+  return randomBytes(bytes).toString('hex');
 }
 ```
 
@@ -600,15 +581,16 @@ const key = await keyManagementService.getKey('sm4-key-id');
 ##  注意事项
 
 1. **密钥长度**: SM4 密钥必须是 128 位（32 个十六进制字符）
-2. **IV 长度**: 初始化向量必须是 128 位（32 个十六进制字符）
-3. **IV 唯一性**: 每次加密应使用不同的 IV，切勿重复使用
+2. **IV 长度**: CBC/CTR/CFB/OFB 为 128 位；GCM 推荐 96 位（12 字节）
+3. **IV 唯一性**: CTR/GCM 必须保证同一密钥下 IV 不可重复
 4. **密钥保密**: 密钥必须妥善保管，泄露将导致所有加密数据不安全
 5. **模式选择**: 
    - 敏感数据推荐使用 GCM 模式
    - 一般数据使用 CBC 模式
    - 避免使用 ECB 模式
 6. **填充攻击**: 使用 PKCS7 填充时注意 padding oracle 攻击
-7. **认证**: 非 GCM 模式不提供完整性保护，考虑额外使用 MAC
+7. **Zero 填充**: 明文尾部若含 0x00 会丢失语义，需可逆长度或避免使用
+8. **认证**: GCM 解密必须校验 tag，AAD 也需一致；非 GCM 模式不提供完整性保护，需额外 MAC
 
 ##  常见问题
 
