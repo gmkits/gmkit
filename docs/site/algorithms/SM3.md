@@ -12,12 +12,12 @@ tag: [SM3, HMAC, 摘要]
 SM3 把任意长度字节序列映射为 256-bit 摘要。摘要不是加密，也不能单独证明发送者身份；需要共享密钥认证时使用 HMAC-SM3。
 
 <div class="doc-path-grid doc-path-grid-compact">
-  <a class="doc-path-card" href="/api/typescript/sm3.html">
+  <a class="doc-path-card" href="/manual/typescript/api/sm3.html">
     <span class="doc-path-label">gmkitx</span>
     <strong>TypeScript SM3 API</strong>
     <small>一次性摘要、HMAC、输出编码、增量状态和 reset 行为。</small>
   </a>
-  <a class="doc-path-card" href="/api/java/sm3.html">
+  <a class="doc-path-card" href="/manual/java/api/sm3.html">
     <span class="doc-path-label">cn.gmkit:gmkit</span>
     <strong>Java SM3 API</strong>
     <small>实例与静态重载、String、Charset、Hex、Base64 和失败行为。</small>
@@ -75,5 +75,5 @@ Java 的 `SM3` 是无状态对象入口，`SM3Util` 是同语义静态入口；�
 
 - GM/T 0004-2012 `abc` 固定向量
 - [共享互操作向量](/standards/interop-vectors)
-- [TypeScript SM3 可执行案例](/api/typescript/sm3.html#可执行案例)
-- [Java SM3 可执行案例](/api/java/sm3.html#可执行案例)
+- [TypeScript SM3 可执行案例](/manual/typescript/api/sm3.html#可执行案例)
+- [Java SM3 可执行案例](/manual/java/api/sm3.html#可执行案例)

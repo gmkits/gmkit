@@ -49,4 +49,4 @@ Java 的 `SM3` 和 `SM3Util` 都是一次性无状态入口，没有 TypeScript 
 
 `null` 输入、非法编码和底层摘要初始化问题抛 `GmkitException`。空 `byte[]` 是合法消息，可得到 SM3 空消息摘要。
 
-全部 String、byte[]、Charset、Hex 和 Base64 重载见 [Java SM3 API](/api/java/sm3.html)。
+全部 String、byte[]、Charset、Hex 和 Base64 重载见 [Java SM3 API](/manual/java/api/sm3.html)。

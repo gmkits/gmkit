@@ -539,12 +539,12 @@ ZUC.eea3(key, count, bearer, direction, bitLength): string
 ::: details 查看测试源码
 <!-- code-sample id="api-typescript-zuc-14" steps="准备参数|生成字节密钥流|生成 word 密钥流|非法参数断言" -->
 ```js
-<!-- @include: ../../examples/node/public-api-manual.mjs#ts-zuc-example -->
+<!-- @include: ../../../examples/node/public-api-manual.mjs#ts-zuc-example -->
 ```
 :::
 
 ## 相关页面
 
 - [跨语言 ZUC、EEA3、EIA3 参数与向量](/algorithms/ZUC.html)
-- [TypeScript 编码、随机数与字节工具](/api/typescript/common.html)
-- [TypeScript SM4 API](/api/typescript/sm4.html)：一般业务的认证加密选择
+- [TypeScript 编码、随机数与字节工具](./common.html)
+- [TypeScript SM4 API](./sm4.html)：一般业务的认证加密选择

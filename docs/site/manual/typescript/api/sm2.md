@@ -101,7 +101,7 @@ configureRNG('strict');
 
 已发布接口允许省略部分输入格式。该行为只用于读取旧数据；新协议必须显式保存并传入编码。兼容优先级见[旧系统迁移](/manual/migration.html#密文和签名自动识别)。
 
-密钥生成、加密、签名以及未提供临时私钥的密钥交换都需要安全随机数。浏览器通常使用 Web Crypto，Node.js 使用系统密码学随机源；受限运行环境应先注入平台 CSPRNG，详见[随机源 API](/api/typescript/common.html#随机数与环境)。
+密钥生成、加密、签名以及未提供临时私钥的密钥交换都需要安全随机数。浏览器通常使用 Web Crypto，Node.js 使用系统密码学随机源；受限运行环境应先注入平台 CSPRNG，详见[随机源 API](./common.html#随机数与环境)。
 
 ## 密钥与公钥格式
 
@@ -705,13 +705,13 @@ TypeScript 0.10.1 没有公开的预计算 `e` 签名接口。替代方案和互
 ::: details 查看测试源码
 <!-- code-sample id="api-typescript-sm2-13" steps="准备输入|生成 SM2 密钥对|SM2 签名|SM2 验签|篡改断言" -->
 ```js
-<!-- @include: ../../examples/node/public-api-manual.mjs#ts-sm2-example -->
+<!-- @include: ../../../examples/node/public-api-manual.mjs#ts-sm2-example -->
 ```
 :::
 
 ## 相关页面
 
 - [跨语言 SM2 协议与向量](/algorithms/SM2.html)
-- [输入编码、随机源与字节工具](/api/typescript/common.html)
-- [raw/DER 签名转换工具](/api/typescript/common.html#asn-1-与-sm2-签名)
-- [TypeScript SM4 API](/api/typescript/sm4.html)：大数据混合加密的对称算法部分
+- [输入编码、随机源与字节工具](./common.html)
+- [raw/DER 签名转换工具](./common.html#asn-1-与-sm2-签名)
+- [TypeScript SM4 API](./sm4.html)：大数据混合加密的对称算法部分

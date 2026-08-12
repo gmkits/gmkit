@@ -125,4 +125,4 @@ SM9 Native Action 的验证顺序固定为：
 
 随机签名和随机 IBE 密文只验证可验签、可解密和篡改失败，不冒充固定国标向量。
 
-完整句柄成员、异常和诊断入口见 [Java SM9 API](/api/java/sm9.html)。
+完整句柄成员、异常和诊断入口见 [Java SM9 API](/manual/java/api/sm9.html)。

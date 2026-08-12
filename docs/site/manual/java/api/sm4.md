@@ -406,7 +406,7 @@ JUnit 文档测试覆盖 GCM 往返和篡改 tag 失败；SM4 专项测试还覆
 ::: details 查看 GCM 文档案例
 <!-- code-sample id="api-java-sm4-12" steps="准备参数|SM4-GCM 加密|加密结果断言|SM4-GCM 解密|成功断言|构造篡改结果|失败断言" -->
 ```java
-<!-- @include: ../../../../packages/java/gmkit/src/test/java/cn/gmkit/PublicApiManualExamplesTest.java#java-sm4-example -->
+<!-- @include: ../../../../../packages/java/gmkit/src/test/java/cn/gmkit/PublicApiManualExamplesTest.java#java-sm4-example -->
 ```
 :::
 
@@ -419,10 +419,10 @@ mvn -pl gmkit -Dtest=PublicApiManualExamplesTest,SM4StandardVectorsTest,SM4Error
 
 ## 公共项覆盖
 
-本页覆盖 `SM4`、`SM4Util`、`SM4Options`、`SM4CipherResult` 四个公开顶层类型及全部公开成员。模式和 padding 枚举定义见 [Java 核心 API](/api/java/core.html#sm4-枚举)。
+本页覆盖 `SM4`、`SM4Util`、`SM4Options`、`SM4CipherResult` 四个公开顶层类型及全部公开成员。模式和 padding 枚举定义见 [Java 核心 API](./core.html#sm4-枚举)。
 
 ## 相关页面
 
 - [跨语言 SM4 模式与认证加密](/algorithms/SM4.html)
-- [Java 核心 Provider 与安全上下文](/api/java/core.html#gmsecuritycontext)
-- [TypeScript SM4 API](/api/typescript/sm4.html)
+- [Java 核心 Provider 与安全上下文](./core.html#gmsecuritycontext)
+- [TypeScript SM4 API](/manual/typescript/api/sm4.html)

@@ -90,4 +90,4 @@ tag: [SM2, SM4-GCM, 混合加密]
 - 该组合只提供加密与认证，不提供发送者数字签名；需要不可否认性时在协议层另加 SM2 签名。
 - 不把 payload 的 Java 类序列化结果当稳定网络格式。
 
-全部构造器、重载和字段 getter 见 [Java SM2 + SM4 混合加密 API](/api/java/integration.html)。
+全部构造器、重载和字段 getter 见 [Java SM2 + SM4 混合加密 API](/manual/java/api/integration.html)。

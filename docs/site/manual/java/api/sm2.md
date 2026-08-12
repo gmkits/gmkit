@@ -794,7 +794,7 @@ JUnit 文档测试覆盖标准 Z 签名、正确消息和金额篡改；SM2 专�
 ::: details 查看标准签名文档案例
 <!-- code-sample id="api-java-sm2-23" steps="准备输入|生成 SM2 密钥对|SM2 签名|SM2 验签|篡改断言" -->
 ```java
-<!-- @include: ../../../../packages/java/gmkit/src/test/java/cn/gmkit/PublicApiManualExamplesTest.java#java-sm2-example -->
+<!-- @include: ../../../../../packages/java/gmkit/src/test/java/cn/gmkit/PublicApiManualExamplesTest.java#java-sm2-example -->
 ```
 :::
 
@@ -845,6 +845,6 @@ mvn -pl gmkit -Dtest=PublicApiManualExamplesTest,SM2StandardVectorsTest,SM2Bounc
 ## 相关页面
 
 - [跨语言 SM2 协议与固定向量](/algorithms/SM2.html)
-- [Java 核心格式、异常和安全上下文](/api/java/core.html)
-- [Java SM2 + SM4 混合加密 API](/api/java/integration.html)
-- [TypeScript SM2 API](/api/typescript/sm2.html)
+- [Java 核心格式、异常和安全上下文](./core.html)
+- [Java SM2 + SM4 混合加密 API](./integration.html)
+- [TypeScript SM2 API](/manual/typescript/api/sm2.html)

@@ -88,4 +88,4 @@ Java 密码 API 处理 `byte[]`。`String` 重载只是把文本按某个 `Chars
 
 应用层可以统一捕获密码失败，但不应把 key、明文、完整签名或内部异常堆栈返回给对端。
 
-完整类型与方法见 [Java core API](/api/java/core.html)。
+完整类型与方法见 [Java core API](/manual/java/api/core.html)。

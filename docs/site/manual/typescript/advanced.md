@@ -104,4 +104,4 @@ tag: [RNG, ASN.1, 状态管理]
 
 `SM2CurveParams` 是已发布的兼容声明。0.10.1 固定使用标准 `sm2p256v1`；省略该对象即可。传入不同的 `p/a/b/Gx/Gy/n` 会抛错，不能借此启用其他椭圆曲线。
 
-底层成员的完整签名见 [TypeScript 通用 API](/api/typescript/common.html)、[SM2 API](/api/typescript/sm2.html)、[SM4 API](/api/typescript/sm4.html) 和 [ZUC API](/api/typescript/zuc.html)。
+底层成员的完整签名见 [TypeScript 通用 API](/manual/typescript/api/common.html)、[SM2 API](/manual/typescript/api/sm2.html)、[SM4 API](/manual/typescript/api/sm4.html) 和 [ZUC API](/manual/typescript/api/zuc.html)。

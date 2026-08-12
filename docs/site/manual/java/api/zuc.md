@@ -19,7 +19,7 @@ tag:
 
 `ZUC` 与 `ZUCUtil` 提供 ZUC-128 密钥流、异或加解密、128-EEA3 机密性保护和 128-EIA3 完整性保护。两个类都是无状态静态入口，方法签名和结果一致；当前不支持 ZUC-256。
 
-EEA3/EIA3 适用于明确规定这些参数和比特顺序的通信协议。普通业务若需要认证加密，优先使用 [SM4-GCM 或 SM4-CCM](/api/java/sm4.html)，不要自行把裸 ZUC 加密与另一套 MAC 拼接成新协议。
+EEA3/EIA3 适用于明确规定这些参数和比特顺序的通信协议。普通业务若需要认证加密，优先使用 [SM4-GCM 或 SM4-CCM](./sm4.html)，不要自行把裸 ZUC 加密与另一套 MAC 拼接成新协议。
 
 ::: warning 最容易写错的是长度单位
 `lengthBytes` 按字节计数，`lengthWords` 按 32-bit word 计数，`bitLength` 按 bit 计数。它们不能互换。
@@ -325,7 +325,7 @@ JUnit 文档测试同时断言 8 字节固定密钥流和非法 key 的失败路
 ::: details 查看文档案例
 <!-- code-sample id="api-java-zuc-10" steps="生成 ZUC 字节密钥流|固定向量断言|非法参数断言" -->
 ```java
-<!-- @include: ../../../../packages/java/gmkit/src/test/java/cn/gmkit/PublicApiManualExamplesTest.java#java-zuc-example -->
+<!-- @include: ../../../../../packages/java/gmkit/src/test/java/cn/gmkit/PublicApiManualExamplesTest.java#java-zuc-example -->
 ```
 :::
 
@@ -362,5 +362,5 @@ static String eea3(
 ## 相关页面
 
 - [跨语言 ZUC、EEA3 与 EIA3 向量](/algorithms/ZUC.html)
-- [Java 核心编码与常量时间比较](/api/java/core.html)
-- [TypeScript ZUC API](/api/typescript/zuc.html)
+- [Java 核心编码与常量时间比较](./core.html)
+- [TypeScript ZUC API](/manual/typescript/api/zuc.html)

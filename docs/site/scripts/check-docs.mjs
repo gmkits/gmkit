@@ -294,7 +294,7 @@ async function checkManualCoverage(language, entries, expectedSymbols) {
       failures.push(`api/manual-coverage.json 的 ${language} 页面不存在: ${relativePage}`);
       continue;
     }
-    if (!relativePage.startsWith(`api/${language}/`) || !relativePage.endsWith('.md')) {
+    if (!relativePage.startsWith(`manual/${language}/api/`) || !relativePage.endsWith('.md')) {
       failures.push(`api/manual-coverage.json 的 ${language} 页面路径非法: ${relativePage}`);
     }
     if (!Array.isArray(symbols) || symbols.length === 0) {
@@ -364,32 +364,32 @@ for (const javaType of javaTypes) {
 }
 
 const requiredExamplePages = new Map([
-  ['api/typescript/common.md', ['ts-common-example']],
-  ['api/typescript/sm2.md', ['ts-sm2-example']],
-  ['api/typescript/sm3.md', ['ts-sm3-sha-example']],
-  ['api/typescript/sha.md', ['ts-sm3-sha-example']],
-  ['api/typescript/sm4.md', ['ts-sm4-example']],
-  ['api/typescript/zuc.md', ['ts-zuc-example']],
-  ['api/java/core.md', ['java-core-example']],
-  ['api/java/sm2.md', ['java-sm2-example']],
-  ['api/java/sm3.md', ['java-sm3-example', 'java-sm3-hmac-example']],
-  ['api/java/sm4.md', ['java-sm4-example']],
-  ['api/java/zuc.md', ['java-zuc-example']],
-  ['api/java/sm9.md', ['java-sm9-example', 'java-sm9-pem-example']],
-  ['api/java/integration.md', ['java-hybrid-example']],
+  ['manual/typescript/api/common.md', ['ts-common-example']],
+  ['manual/typescript/api/sm2.md', ['ts-sm2-example']],
+  ['manual/typescript/api/sm3.md', ['ts-sm3-sha-example']],
+  ['manual/typescript/api/sha.md', ['ts-sm3-sha-example']],
+  ['manual/typescript/api/sm4.md', ['ts-sm4-example']],
+  ['manual/typescript/api/zuc.md', ['ts-zuc-example']],
+  ['manual/java/api/core.md', ['java-core-example']],
+  ['manual/java/api/sm2.md', ['java-sm2-example']],
+  ['manual/java/api/sm3.md', ['java-sm3-example', 'java-sm3-hmac-example']],
+  ['manual/java/api/sm4.md', ['java-sm4-example']],
+  ['manual/java/api/zuc.md', ['java-zuc-example']],
+  ['manual/java/api/sm9.md', ['java-sm9-example', 'java-sm9-pem-example']],
+  ['manual/java/api/integration.md', ['java-hybrid-example']],
 ]);
 const requiredOutcomePages = [
-  'api/typescript/sm2.md',
-  'api/typescript/sm3.md',
-  'api/typescript/sm4.md',
-  'api/typescript/zuc.md',
-  'api/typescript/sha.md',
-  'api/java/sm2.md',
-  'api/java/sm3.md',
-  'api/java/sm4.md',
-  'api/java/zuc.md',
-  'api/java/sm9.md',
-  'api/java/integration.md',
+  'manual/typescript/api/sm2.md',
+  'manual/typescript/api/sm3.md',
+  'manual/typescript/api/sm4.md',
+  'manual/typescript/api/zuc.md',
+  'manual/typescript/api/sha.md',
+  'manual/java/api/sm2.md',
+  'manual/java/api/sm3.md',
+  'manual/java/api/sm4.md',
+  'manual/java/api/zuc.md',
+  'manual/java/api/sm9.md',
+  'manual/java/api/integration.md',
 ];
 const exampleRunner = await readFile(path.join(docsRoot, 'scripts', 'test-examples.mjs'), 'utf8');
 
@@ -585,7 +585,11 @@ for (const chapter of userManualCoverage.chapters ?? []) {
   }
 }
 
-for (const file of markdownFiles.filter((entry) => entry.includes(`${path.sep}manual${path.sep}`))) {
+// API 详解属于成员级 API 清单，不重复塞进按任务组织的 manual-coverage。
+const taskManualFiles = markdownFiles.filter((entry) => entry.includes(`${path.sep}manual${path.sep}`)
+  && !entry.includes(`${path.sep}manual${path.sep}typescript${path.sep}api${path.sep}`)
+  && !entry.includes(`${path.sep}manual${path.sep}java${path.sep}api${path.sep}`));
+for (const file of taskManualFiles) {
   const relative = path.relative(docsRoot, file).replaceAll('\\', '/');
   if (!seenManualPages.has(relative)) {
     failures.push(`manual/manual-coverage.json 缺少手册页面: ${relative}`);

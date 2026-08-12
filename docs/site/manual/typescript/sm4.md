@@ -97,4 +97,4 @@ ECB/CBC 的默认填充是 PKCS7；`NONE` 要求长度是 16 字节倍数；`ZER
 
 `SM4` 类可以保存 key、mode 和初始配置，但不能让同一个 GCM nonce 安全地重复使用。并发任务使用独立实例或顶层函数，并在调用前为每条消息生成、登记和保存新 nonce。
 
-全部模式、选项、结果对象和类工厂见 [TypeScript SM4 API](/api/typescript/sm4.html)。
+全部模式、选项、结果对象和类工厂见 [TypeScript SM4 API](/manual/typescript/api/sm4.html)。

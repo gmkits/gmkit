@@ -347,7 +347,7 @@ JUnit 文档测试覆盖默认 GCM 元数据、往返解密和篡改 tag 失败�
 ::: details 查看混合加密文档案例
 <!-- code-sample id="api-java-integration-08" steps="准备参数|混合加密|载荷字段断言|混合解密|成功断言|构造篡改载荷|失败断言" -->
 ```java
-<!-- @include: ../../../../packages/java/gmkit/src/test/java/cn/gmkit/PublicApiManualExamplesTest.java#java-hybrid-example -->
+<!-- @include: ../../../../../packages/java/gmkit/src/test/java/cn/gmkit/PublicApiManualExamplesTest.java#java-hybrid-example -->
 ```
 :::
 
@@ -364,6 +364,6 @@ mvn -pl gmkit -Dtest=PublicApiManualExamplesTest,SMIntegrationTest test
 
 ## 相关页面
 
-- [Java SM2 API](/api/java/sm2.html)
-- [Java SM4 API](/api/java/sm4.html)
+- [Java SM2 API](./sm2.html)
+- [Java SM4 API](./sm4.html)
 - [跨语言公共约定](/api/common.html)

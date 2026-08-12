@@ -716,15 +716,15 @@ if (bytesToHex(autoDecodeString('ABC')) !== '0abc') {
 
 | 旧名称 | 替代名称 | 说明页 |
 |:--|:--|:--|
-| `generateKeyPair` | `sm2GenerateKeyPair` | [SM2](/api/typescript/sm2.html) |
-| `getPublicKeyFromPrivateKey` | `sm2GetPublicKeyFromPrivateKey` | [SM2](/api/typescript/sm2.html) |
-| `compressPublicKey` | `sm2CompressPublicKey` | [SM2](/api/typescript/sm2.html) |
-| `decompressPublicKey` | `sm2DecompressPublicKey` | [SM2](/api/typescript/sm2.html) |
-| `sign` | `sm2Sign` | [SM2](/api/typescript/sm2.html) |
-| `verify` | `sm2Verify` | [SM2](/api/typescript/sm2.html) |
-| `keyExchange` | `sm2KeyExchange` | [SM2](/api/typescript/sm2.html) |
-| `digest` | `sm3Digest` | [SM3](/api/typescript/sm3.html) |
-| `hmac` | `sm3Hmac` | [SM3](/api/typescript/sm3.html) |
+| `generateKeyPair` | `sm2GenerateKeyPair` | [SM2](./sm2.html) |
+| `getPublicKeyFromPrivateKey` | `sm2GetPublicKeyFromPrivateKey` | [SM2](./sm2.html) |
+| `compressPublicKey` | `sm2CompressPublicKey` | [SM2](./sm2.html) |
+| `decompressPublicKey` | `sm2DecompressPublicKey` | [SM2](./sm2.html) |
+| `sign` | `sm2Sign` | [SM2](./sm2.html) |
+| `verify` | `sm2Verify` | [SM2](./sm2.html) |
+| `keyExchange` | `sm2KeyExchange` | [SM2](./sm2.html) |
+| `digest` | `sm3Digest` | [SM3](./sm3.html) |
+| `hmac` | `sm3Hmac` | [SM3](./sm3.html) |
 | `setRNGPolicy` | `configureRNG` | 本页“随机源” |
 
 </ApiTable>
@@ -765,13 +765,13 @@ if (bytesToHex(autoDecodeString('ABC')) !== '0abc') {
 ::: details 查看测试源码
 <!-- code-sample id="api-typescript-common-28" steps="Base64 解码|Hex 编码断言|非法输入断言|签名格式转换|往返断言" -->
 ```js
-<!-- @include: ../../examples/node/public-api-manual.mjs#ts-common-example -->
+<!-- @include: ../../../examples/node/public-api-manual.mjs#ts-common-example -->
 ```
 :::
 
 ## 相关页面
 
 - [跨语言编码、错误与安全约定](/api/common.html)
-- [TypeScript SM2 API](/api/typescript/sm2.html)
-- [TypeScript SM4 API](/api/typescript/sm4.html)
+- [TypeScript SM2 API](./sm2.html)
+- [TypeScript SM4 API](./sm4.html)
 - [API 稳定性规则](https://github.com/gmkits/gmkit/blob/main/docs/API_STABILITY.md)

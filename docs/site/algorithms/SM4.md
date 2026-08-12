@@ -12,12 +12,12 @@ tag: [SM4, GCM, CCM, 分组密码]
 SM4 的密钥和分组长度都是 128 bit。GMKit 两端提供 ECB、CBC、CTR、CFB、OFB、GCM 和 CCM；能否互操作取决于 mode、padding、IV/nonce、AAD、tag 和字段编码，而不是算法名本身。
 
 <div class="doc-path-grid doc-path-grid-compact">
-  <a class="doc-path-card" href="/api/typescript/sm4.html">
+  <a class="doc-path-card" href="/manual/typescript/api/sm4.html">
     <span class="doc-path-label">gmkitx</span>
     <strong>TypeScript SM4 API</strong>
     <small>选项、结果对象、SM4 类、全部模式以及认证失败案例。</small>
   </a>
-  <a class="doc-path-card" href="/api/java/sm4.html">
+  <a class="doc-path-card" href="/manual/java/api/sm4.html">
     <span class="doc-path-label">cn.gmkit:gmkit</span>
     <strong>Java SM4 API</strong>
     <small>实例与静态重载、Builder、结果对象和 Provider 配置。</small>
@@ -90,11 +90,11 @@ GCM/CCM 业务案例应每次生成新 nonce，验证正确往返，并分别篡
 - key 必须是 16 字节，不能截断口令、时间戳、UUID 或普通摘要充当 key。
 - CBC 的 IV 应不可预测；CTR/CFB/OFB/GCM/CCM 在同一 key 下不得复用 IV/nonce。
 - ECB 会暴露重复分组；CBC/CTR/CFB/OFB 只提供机密性，仍需经过审查的认证机制。
-- Java 需要封装业务载荷与会话 key 时，使用 [SM2 + SM4 混合加密 API](/api/java/integration.html)；该对象不定义跨语言序列化格式。
+- Java 需要封装业务载荷与会话 key 时，使用 [SM2 + SM4 混合加密 API](/manual/java/api/integration.html)；该对象不定义跨语言序列化格式。
 
 ## 验证依据
 
 - GB/T 32907-2016 单分组向量
 - [共享互操作向量](/standards/interop-vectors)
-- [TypeScript SM4 可执行案例](/api/typescript/sm4.html#可执行案例)
-- [Java SM4 可执行案例](/api/java/sm4.html#可执行案例)
+- [TypeScript SM4 可执行案例](/manual/typescript/api/sm4.html#可执行案例)
+- [Java SM4 可执行案例](/manual/java/api/sm4.html#可执行案例)

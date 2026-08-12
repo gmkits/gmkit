@@ -119,4 +119,4 @@ Uint8Array 明文
 - 传入的 `SM2CurveParams` 只能重复声明标准 `sm2p256v1` 参数；0.10.1 不支持自定义曲线。
 - 既有系统的格式分支统一在迁移层处理，不混入本页的标准调用。
 
-替代方案和风险见[旧系统迁移](/manual/migration.html)。全部函数、选项和类成员见 [TypeScript SM2 API](/api/typescript/sm2.html)。
+替代方案和风险见[旧系统迁移](/manual/migration.html)。全部函数、选项和类成员见 [TypeScript SM2 API](/manual/typescript/api/sm2.html)。

@@ -69,4 +69,4 @@ ZUC 是流密码：加密和解密都是明文/密文与同一密钥流异或。
 - 比较 MAC-I 时先解码为 4 字节，再使用 `constantTimeEqual`。
 - key、COUNT 或方向字段复用规则遵循上层 3GPP 协议，不能由示例自行发明。
 
-完整函数、`ZUC` 类和 `ZUCState` 见 [TypeScript ZUC API](/api/typescript/zuc.html)。
+完整函数、`ZUC` 类和 `ZUCState` 见 [TypeScript ZUC API](/manual/typescript/api/zuc.html)。

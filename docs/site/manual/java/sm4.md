@@ -78,4 +78,4 @@ tag、AAD、nonce、ciphertext 或 key 任一不匹配，解密抛 `GmkitExcepti
 
 ECB/CBC 的默认填充是 PKCS7；`NONE` 要求长度为 16 字节倍数；`ZERO` 无法无歧义恢复原文尾部零。
 
-全部实例、静态入口、Builder 字段和结果 getter 见 [Java SM4 API](/api/java/sm4.html)。
+全部实例、静态入口、Builder 字段和结果 getter 见 [Java SM4 API](/manual/java/api/sm4.html)。

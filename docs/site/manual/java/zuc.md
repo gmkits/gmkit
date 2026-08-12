@@ -58,4 +58,4 @@ EEA3 只保护机密性，EIA3 提供 32-bit 完整性标签。只执行 EEA3 �
 
 普通 `ZUC.encrypt/decrypt` 是对称异或运算。相同 key/IV 复用会泄漏消息关系，且没有认证 tag。协议必须另行规定 IV 唯一性和完整性机制。
 
-全部静态方法、String 便利重载和参数约束见 [Java ZUC API](/api/java/zuc.html)。
+全部静态方法、String 便利重载和参数约束见 [Java ZUC API](/manual/java/api/zuc.html)。

@@ -462,12 +462,12 @@ public SM9UnsupportedPlatformException(String message, Throwable cause);
 ::: details 查看测试源码
 <!-- code-sample id="api-java-sm9-15" steps="准备身份与消息|创建 KGC 主密钥并派生身份私钥|SM9 签名|SM9 验签|身份失败断言|消息篡改断言|SM9 IBE 加密|SM9 IBE 解密|成功断言|长度失败断言" -->
 ```java
-<!-- @include: ../../../../packages/java/gmkit-sm9/src/test/java/cn/gmkit/sm9/SM9ManualExamplesTest.java#java-sm9-example -->
+<!-- @include: ../../../../../packages/java/gmkit-sm9/src/test/java/cn/gmkit/sm9/SM9ManualExamplesTest.java#java-sm9-example -->
 ```
 
 <!-- code-sample id="api-java-sm9-16" steps="准备身份、订单消息和临时 PEM 文件路径|生成 KGC 签名主密钥，并导出可分发的主公钥 PEM|派生身份私钥，并使用口令加密后写入 PEM|重新导入加密身份私钥，并用它签名订单消息|导入主公钥 PEM，使用相同身份完成验签|成功断言" -->
 ```java
-<!-- @include: ../../../../packages/java/gmkit-sm9/src/test/java/cn/gmkit/sm9/SM9KeyPemTest.java#java-sm9-pem-example -->
+<!-- @include: ../../../../../packages/java/gmkit-sm9/src/test/java/cn/gmkit/sm9/SM9KeyPemTest.java#java-sm9-pem-example -->
 ```
 :::
 

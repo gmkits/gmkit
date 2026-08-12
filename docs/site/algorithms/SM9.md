@@ -12,7 +12,7 @@ tag: [SM9, Java, JNI, GmSSL]
 SM9 使用身份字符串参与密钥派生和密码运算。GMKit 当前只通过 Java 制品 `cn.gmkit:gmkit-sm9:0.10.1` 提供签名、验签、基于身份的加密（IBE）、PEM 和流式签名；底层由 JNI 调用随 JAR 分发的 GmSSL 本地动态库。`gmkitx` 不提供 SM9、WASM 占位或浏览器降级实现。
 
 <div class="doc-path-grid doc-path-grid-compact">
-  <a class="doc-path-card" href="/api/java/sm9.html">
+  <a class="doc-path-card" href="/manual/java/api/sm9.html">
     <span class="doc-path-label">Java · gmkit-sm9</span>
     <strong>SM9 API 说明书</strong>
     <small>依赖、平台诊断、句柄、签名、IBE、PEM、文件路径、限制和可执行案例。</small>
@@ -124,4 +124,4 @@ IBE 的 255 字节上限适合保护短会话材料，不适合直接处理文�
 
 固定结果的可核查来源是锁定提交的 [`tests/sm9test.c`](https://github.com/guanzhi/GmSSL/blob/d655c06b3a6b0fe8cff900f293bf0e5aac6eb0a2/tests/sm9test.c)。Java 公共 API 不暴露原始 `ks/ke/ds/de` 内存结构，因此标准派生向量在 GmSSL 层执行，Java 层专门验证公开 API 行为和边界。
 
-完整可运行案例与测试对应关系见 [Java SM9 API 说明书](/api/java/sm9.html#可执行案例)。
+完整可运行案例与测试对应关系见 [Java SM9 API 说明书](/manual/java/api/sm9.html#可执行案例)。

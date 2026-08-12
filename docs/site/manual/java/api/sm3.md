@@ -19,7 +19,7 @@ tag:
 
 SM3 把任意长度消息映射为固定 256 bit（32 字节）摘要。`SM3` 提供无状态的实例方法，`SM3Util` 提供同语义的静态方法；两者都支持一次性摘要和 HMAC-SM3，不维护分块输入状态。
 
-摘要只能判断内容是否一致，不能证明消息来自谁。需要共享密钥认证时使用 HMAC-SM3；需要数字签名时使用 [SM2](/api/java/sm2.html)。
+摘要只能判断内容是否一致，不能证明消息来自谁。需要共享密钥认证时使用 HMAC-SM3；需要数字签名时使用 [SM2](./sm2.html)。
 
 ::: tip 本页适用范围
 以下签名和默认值按 `gmkit 0.10.1` 说明。字符串消息默认按 UTF-8 编码，不会自动识别为 Hex 或 Base64。
@@ -236,14 +236,14 @@ if (Bytes.constantTimeEquals(
 ::: details 查看固定向量测试
 <!-- code-sample id="api-java-sm3-07" steps="计算 SM3 摘要|固定向量断言" -->
 ```java
-<!-- @include: ../../../../packages/java/gmkit/src/test/java/cn/gmkit/PublicApiManualExamplesTest.java#java-sm3-example -->
+<!-- @include: ../../../../../packages/java/gmkit/src/test/java/cn/gmkit/PublicApiManualExamplesTest.java#java-sm3-example -->
 ```
 :::
 
 ::: details 查看 HMAC 篡改测试
 <!-- code-sample id="api-java-sm3-08" steps="准备认证输入|计算 HMAC-SM3 并断言" -->
 ```java
-<!-- @include: ../../../../packages/java/gmkit/src/test/java/cn/gmkit/PublicApiManualExamplesTest.java#java-sm3-hmac-example -->
+<!-- @include: ../../../../../packages/java/gmkit/src/test/java/cn/gmkit/PublicApiManualExamplesTest.java#java-sm3-hmac-example -->
 ```
 :::
 
@@ -261,5 +261,5 @@ mvn -pl gmkit -Dtest=PublicApiManualExamplesTest test
 ## 相关页面
 
 - [跨语言 SM3 固定向量](/algorithms/SM3.html)
-- [核心编码、异常与常量时间比较](/api/java/core.html)
-- [TypeScript SM3 API](/api/typescript/sm3.html)
+- [核心编码、异常与常量时间比较](./core.html)
+- [TypeScript SM3 API](/manual/typescript/api/sm3.html)

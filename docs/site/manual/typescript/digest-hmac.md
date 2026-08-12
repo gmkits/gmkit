@@ -74,4 +74,4 @@ HMAC 校验失败返回业务层“不接受消息”。摘要不带 key，不�
 
 一次性消息优先用顶层函数；只有流式读取、超大消息或分块协议才需要增量类。
 
-完整成员见 [TypeScript SM3 API](/api/typescript/sm3.html) 和 [TypeScript SHA API](/api/typescript/sha.html)。
+完整成员见 [TypeScript SM3 API](/manual/typescript/api/sm3.html) 和 [TypeScript SHA API](/manual/typescript/api/sha.html)。
