@@ -6,6 +6,7 @@ import org.junit.jupiter.api.condition.EnabledIf;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -52,6 +53,29 @@ class SM9StreamingSignTest {
             assertNotNull(first);
             assertNotNull(second);
             assertTrue(SM9.verify(master, "reuse@example.com", "second".getBytes(), second));
+        }
+    }
+
+    @Test
+    void modeAndFinishedStateShouldBeEnforced() {
+        byte[] message = "state-machine".getBytes(java.nio.charset.StandardCharsets.UTF_8);
+        try (SM9SignMasterKey master = SM9.generateSignMasterKey();
+             SM9SignKey signKey = master.extractKey("state@example.com");
+             SM9Signature signer = new SM9Signature(true);
+             SM9Signature verifier = new SM9Signature(false)) {
+
+            // 验签上下文不能执行签名，签名上下文不能执行验签。
+            assertThrows(SM9Exception.class, () -> verifier.sign(signKey));
+            signer.update(message);
+            byte[] signature = signer.sign(signKey);
+            assertThrows(SM9Exception.class, () -> signer.update(message));
+            assertThrows(SM9Exception.class, () -> signer.sign(signKey));
+
+            verifier.update(message);
+            assertTrue(verifier.verify(signature, master, "state@example.com"));
+            assertThrows(SM9Exception.class, () -> verifier.update(message));
+            assertThrows(SM9Exception.class,
+                    () -> verifier.verify(signature, master, "state@example.com"));
         }
     }
 

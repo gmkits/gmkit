@@ -5,6 +5,7 @@ package cn.gmkit.sm9;
  * <p>
  * 创建时通过 {@code doSign} 指定模式：{@code true} 为签名，{@code false} 为验签。
  * 使用完毕后应调用 {@link #close()} 释放 native 资源（推荐使用 try-with-resources）。
+ * 同一个上下文不能与 {@code close()} 并发使用；调用方应在单线程或外部同步下管理句柄。
  *
  * <h2>典型用法</h2>
  * <pre>{@code
@@ -24,6 +25,12 @@ public final class SM9Signature implements AutoCloseable {
 
     private boolean closed;
 
+    /** 当前上下文模式；true 为签名，false 为验签。 */
+    private boolean doSign;
+
+    /** sign/verify 完成后必须 reset 才能再次 update。 */
+    private boolean finished;
+
     /**
      * 创建签名或验签上下文。
      *
@@ -37,6 +44,7 @@ public final class SM9Signature implements AutoCloseable {
             throw new SM9Exception(SM9Messages.operationReturnedNull("sign ctx new"));
         }
         this.ctx = context;
+        this.doSign = doSign;
         try {
             init(doSign);
         } catch (RuntimeException ex) {
@@ -63,7 +71,10 @@ public final class SM9Signature implements AutoCloseable {
      * @throws SM9Exception 上下文已关闭或 native 初始化失败时抛出
      */
     public void reset(boolean doSign) {
+        ctx();
         init(doSign);
+        this.doSign = doSign;
+        this.finished = false;
     }
 
     /**
@@ -89,12 +100,15 @@ public final class SM9Signature implements AutoCloseable {
      */
     public SM9Signature update(byte[] data, int offset, int length) {
         SM9Checks.requireRange(data, offset, length, "data range");
+        ensureReady();
         if (length == 0) {
             return this;
         }
-        int code = SM9NativeBridge.sm9SignUpdate(ctx(), data, offset, length);
+        int code = doSign
+                ? SM9NativeBridge.sm9SignUpdate(ctx, data, offset, length)
+                : SM9NativeBridge.sm9VerifyUpdate(ctx, data, offset, length);
         if (code != 1) {
-            throw new SM9Exception(SM9Messages.operationFailed("sign update", code));
+            throw new SM9Exception(SM9Messages.operationFailed(doSign ? "sign update" : "verify update", code));
         }
         return this;
     }
@@ -107,8 +121,10 @@ public final class SM9Signature implements AutoCloseable {
      * @throws SM9Exception 私钥为空、上下文已关闭或 native 签名失败时抛出
      */
     public byte[] sign(SM9SignKey signKey) {
+        ensureMode(true, "sign");
         SM9Checks.requireNonNull(signKey, "signKey");
-        byte[] signature = SM9NativeBridge.sm9SignFinish(ctx(), signKey.handle());
+        finished = true;
+        byte[] signature = SM9NativeBridge.sm9SignFinish(ctx, signKey.handle());
         if (signature == null) {
             throw new SM9Exception(SM9Messages.operationReturnedNull("sign finish"));
         }
@@ -125,12 +141,28 @@ public final class SM9Signature implements AutoCloseable {
      * @throws SM9Exception 签名、主公钥或 ID 无效，或上下文已关闭时抛出
      */
     public boolean verify(byte[] signature, SM9SignMasterKey masterPublicKey, String id) {
+        ensureMode(false, "verify");
         SM9Checks.requireNonEmpty(signature, "signature");
         SM9Checks.requireNonNull(masterPublicKey, "masterPublicKey");
         String userId = SM9Checks.requireNonBlank(id, "id");
+        finished = true;
         int code = SM9NativeBridge.sm9VerifyFinish(
-            ctx(), signature, masterPublicKey.handle(), SM9Checks.utf8Bytes(userId));
+            ctx, signature, masterPublicKey.handle(), SM9Checks.utf8Bytes(userId));
         return code == 1;
+    }
+
+    private void ensureReady() {
+        ctx();
+        if (finished) {
+            throw new SM9Exception(SM9Messages.signatureFinished());
+        }
+    }
+
+    private void ensureMode(boolean requiredMode, String operation) {
+        ensureReady();
+        if (doSign != requiredMode) {
+            throw new SM9Exception(SM9Messages.wrongSignatureMode(operation, doSign));
+        }
     }
 
     private long ctx() {

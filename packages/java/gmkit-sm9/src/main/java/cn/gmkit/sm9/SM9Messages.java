@@ -55,6 +55,17 @@ final class SM9Messages {
         return label + " 已释放，无法继续使用 / " + label + " has been closed";
     }
 
+    static String wrongSignatureMode(String operation, boolean doSign) {
+        String expected = doSign ? "签名" : "验签";
+        return "SM9Signature 当前是" + expected + "模式，不能调用 " + operation
+                + " / SM9Signature is in " + (doSign ? "sign" : "verify")
+                + " mode and cannot call " + operation;
+    }
+
+    static String signatureFinished() {
+        return "SM9Signature 已完成，请先 reset / SM9Signature has finished; call reset before reuse";
+    }
+
     static String pemIo(String operation, String file) {
         return "SM9 " + operation + " 处理 PEM 文件失败：" + file
                 + " / SM9 " + operation + " failed for PEM file: " + file;
