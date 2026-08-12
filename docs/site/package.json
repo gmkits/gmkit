@@ -9,6 +9,7 @@
   },
   "scripts": {
     "dev": "vuepress dev .",
+    "prebuild": "node scripts/clean.mjs",
     "build": "vuepress build .",
     "generate:api:typescript": "typedoc --options typedoc.json",
     "generate:api:java": "node scripts/generate-java-api.mjs",
