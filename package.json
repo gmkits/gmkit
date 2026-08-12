@@ -11,7 +11,8 @@
   "scripts": {
     "verify": "npm run test:ts && npm run test:java && npm run parity && npm run build:ts && npm run test:package -w packages/ts",
     "test:ts": "npm run type-check -w packages/ts && npm test -w packages/ts",
-    "test:java": "mvn -f packages/java/pom.xml -B -ntp test",
+    "test:java": "npm run test:sm9-bundle && mvn -f packages/java/pom.xml -B -ntp test",
+    "test:sm9-bundle": "node scripts/test-sm9-runtime-assembly.mjs",
     "parity": "mvn -f packages/java/pom.xml -B -ntp -pl gmkit -Dtest=InteropComplianceTest test && npm exec -w packages/ts -- vitest run test/interop-compliance.test.ts --config vitest.config.ts",
     "build:ts": "npm run build -w packages/ts",
     "build:java": "mvn -f packages/java/pom.xml -B -ntp -DskipTests install",

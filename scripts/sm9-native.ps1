@@ -182,6 +182,47 @@ function New-GmsslRoot {
     return $RootDir
 }
 
+function Write-RuntimeManifest {
+    param([string]$ResourceRoot)
+
+    function Get-RelativeResourcePath {
+        param([string]$BasePath, [string]$FilePath)
+        $baseUri = New-Object System.Uri(($BasePath.TrimEnd('\') + '\'))
+        $fileUri = New-Object System.Uri($FilePath)
+        return $baseUri.MakeRelativeUri($fileUri).ToString().Replace('/', '/')
+    }
+
+    $nativeRoot = Join-Path $ResourceRoot 'native'
+    $metadataDir = Join-Path $ResourceRoot 'META-INF/gmkit'
+    $nativeFiles = @(Get-ChildItem -LiteralPath $nativeRoot -Recurse -File -ErrorAction Stop |
+        Sort-Object FullName
+    )
+    if ($nativeFiles.Count -eq 0) {
+        throw "没有可写入清单的 native 文件：$nativeRoot"
+    }
+
+    $hashLines = foreach ($file in $nativeFiles) {
+        $relative = Get-RelativeResourcePath $ResourceRoot $file.FullName
+        $hash = (Get-FileHash -LiteralPath $file.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
+        "$hash  $relative"
+    }
+    $platforms = $nativeFiles |
+        ForEach-Object { Get-RelativeResourcePath $nativeRoot $_.Directory.FullName } |
+        Sort-Object -Unique
+    $properties = @(
+        'bundle.format=1'
+        'gmssl.version=3.1.1'
+        "gmssl.commit=$GmsslRef"
+        "platforms=$($platforms -join ',')"
+        ''
+    ) -join "`n"
+    $manifest = ($hashLines | Sort-Object) -join "`n"
+    New-Item -ItemType Directory -Force -Path $metadataDir | Out-Null
+    $utf8 = New-Object System.Text.UTF8Encoding($false)
+    [System.IO.File]::WriteAllText((Join-Path $metadataDir 'sm9-native.properties'), $properties, $utf8)
+    [System.IO.File]::WriteAllText((Join-Path $metadataDir 'sm9-native.sha256'), "$manifest`n", $utf8)
+}
+
 $repoRoot = Resolve-RepoRoot
 $javaRoot = Join-Path $repoRoot 'packages/java'
 $platformId = if ($Platform -eq 'current') { Get-CurrentPlatform } else { $Platform }
@@ -295,6 +336,8 @@ if ($Stage) {
     New-Item -ItemType Directory -Force -Path $stageDir | Out-Null
     Copy-Item -LiteralPath (Join-Path $runtimeDir $nativeInfo.Bridge) -Destination (Join-Path $stageDir $nativeInfo.Bridge) -Force
     Copy-Item -LiteralPath (Join-Path $runtimeDir $nativeInfo.Gmssl) -Destination (Join-Path $stageDir $nativeInfo.Gmssl) -Force
+    # loader 在 JAR fallback 前会校验当前平台文件；每次 Stage 都重建清单，避免旧哈希残留。
+    Write-RuntimeManifest (Join-Path $javaRoot 'gmkit-sm9/target/generated-resources/sm9-runtime')
     Write-Host "==> 已填充 gmkit-sm9 runtime：$stageDir"
 }
 
@@ -306,7 +349,7 @@ if ($PackageRuntime) {
         '-f', (Join-Path $javaRoot 'pom.xml'),
         '-B',
         '-ntp',
-        '-Prelease',
+        '-Psm9-runtime-bundle,release',
         '-pl', 'gmkit-sm9',
         '-Dgpg.skip=true',
         '-DskipTests',

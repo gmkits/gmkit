@@ -6,6 +6,7 @@ import org.junit.jupiter.api.condition.EnabledIf;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -77,6 +78,34 @@ class SM9StreamingSignTest {
             assertThrows(SM9Exception.class,
                     () -> verifier.verify(signature, master, "state@example.com"));
         }
+    }
+
+    @Test
+    void resetShouldSwitchBetweenSignAndVerifyModes() {
+        byte[] message = "reset-mode-switch".getBytes(java.nio.charset.StandardCharsets.UTF_8);
+        try (SM9SignMasterKey master = SM9.generateSignMasterKey();
+             SM9SignKey signKey = master.extractKey("reset-mode@example.com");
+             SM9Signature context = new SM9Signature(true)) {
+
+            context.update(message);
+            byte[] signature = context.sign(signKey);
+
+            context.reset(false);
+            context.update(message);
+            assertTrue(context.verify(signature, master, "reset-mode@example.com"));
+
+            context.reset(true);
+            context.update(message);
+            assertNotNull(context.sign(signKey));
+        }
+    }
+
+    @Test
+    void closeShouldBeIdempotentAndRejectFurtherUse() {
+        SM9Signature context = new SM9Signature(true);
+        context.close();
+        assertDoesNotThrow(context::close);
+        assertThrows(SM9Exception.class, () -> context.update(new byte[] {1}));
     }
 
     private static void feedInChunks(SM9Signature ctx, byte[] data) {
