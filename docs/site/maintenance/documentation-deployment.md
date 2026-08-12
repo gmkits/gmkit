@@ -21,7 +21,7 @@ npm ci
 npm run docs:verify
 ```
 
-`docs:verify` 会构建 gmkitx，生成 TypeDoc 与 Java/SM9 聚合 Javadoc，检查公开 API、版本、措辞和链接，再执行 Node、Go、Python、Rust、Hutool 示例。Java Javadoc 使用 `doclint=all`，公共成员缺少参数、返回值或异常说明时会失败。
+`docs:verify` 会构建 gmkitx，生成 TypeDoc 与 Java/SM9 聚合 Javadoc，检查公开 API、版本、措辞和链接，再执行 Node、Go、Python、Rust、Hutool 示例。SM9 普通文档 lane 只做 native 边界检查；Java Javadoc 使用 `doclint=all`，公共成员缺少参数、返回值或异常说明时会失败。SM9 真实运行证据来自专用五平台 Action。
 
 ## 部署顺序
 

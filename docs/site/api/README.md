@@ -21,12 +21,12 @@ tag:
   <a class="doc-path-card" href="/api/typescript/">
     <span class="doc-path-label">npm · gmkitx</span>
     <strong>TypeScript API 说明书</strong>
-    <small>121 个根导出，覆盖浏览器与 Node.js 的参数、状态、默认值和失败断言。</small>
+    <small><ApiPackageSummary package-id="typescript" />覆盖浏览器与 Node.js 的参数、状态、默认值和失败断言。</small>
   </a>
   <a class="doc-path-card" href="/api/java/">
     <span class="doc-path-label">Maven · cn.gmkit</span>
     <strong>Java API 说明书</strong>
-    <small>46 个公共顶层类型，覆盖重载、Builder、Provider、异常和资源关闭。</small>
+    <small><ApiPackageSummary package-id="java" />覆盖重载、Builder、Provider、异常和资源关闭。</small>
   </a>
   <a class="doc-path-card" href="/api/common.html">
     <span class="doc-path-label">双语言协议</span>

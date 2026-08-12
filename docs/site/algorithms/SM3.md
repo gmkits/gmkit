@@ -61,7 +61,7 @@ Java 的 `SM3` 是无状态对象入口，`SM3Util` 是同语义静态入口；�
 
 </ApiTable>
 
-同一个 `abc` 摘要的标准 Base64 为 `Zsfw9GLu7dnR8tRr3BDk4kFnyHXP9/KinX2gK49LqOA=`。TypeScript 与 Java API 页分别给出可直接运行的成功断言。
+同一个 `abc` 摘要的标准 Base64 为 `Zsfw9GLu7dnR8tRr3BDk4kFnxIdc8veiKX2gK49LqOA=`。TypeScript 与 Java API 页分别给出可直接运行的成功断言。
 
 ## 使用边界
 

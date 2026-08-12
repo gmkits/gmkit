@@ -38,7 +38,7 @@ SM9 位于独立制品 `cn.gmkit:gmkit-sm9:0.10.1`，依赖随 JAR 分发的本�
 3. `SM9.isAvailable()`：依赖库和 bridge 是否已成功加载。
 4. `SM9.nativeLoadErrorMessage()`：不可用时的诊断；可用时为 `null`。
 
-`isAvailable() == false` 时不要调用生成密钥、签名或加密方法。测试在没有本地产物的开发机上会跳过；五平台 Action 通过 `-Dgmkit.sm9.requireNative=true` 禁止这种跳过。
+`isAvailable() == false` 时不要调用生成密钥、签名或加密方法。普通文档 CI 只验证平台诊断和不可用时的明确失败边界；不会把跳过 native 的测试报告为 SM9 运行成功。五平台 Action 通过 `-Dgmkit.sm9.requireNative=true` 强制执行签名、验签、IBE、PEM 和资源生命周期测试。
 
 ## 四种密钥角色
 

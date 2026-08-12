@@ -1,6 +1,6 @@
 ---
 title: Java API 说明书
-description: 按 core、SM2、SM3、SM4、ZUC、SM9 和混合加密查阅 GMKit Java 的 46 个公开类型及成员。
+description: 按 core、SM2、SM3、SM4、ZUC、SM9 和混合加密查阅 GMKit Java 的公开类型及成员。
 pageInfo: false
 contributors: false
 editLink: false
@@ -16,7 +16,7 @@ tag:
 
 # Java API 说明书
 
-GMKit Java 当前版本为 `0.10.1`，由主包 `cn.gmkit:gmkit` 和独立 SM9 包 `cn.gmkit:gmkit-sm9` 组成。本说明书覆盖 46 个公开顶层类型，并继续说明公开构造器、方法重载、Builder 字段、默认值、异常和资源生命周期。
+GMKit Java 当前版本为 `0.10.1`，由主包 `cn.gmkit:gmkit` 和独立 SM9 包 `cn.gmkit:gmkit-sm9` 组成。本说明书覆盖公开顶层类型、构造器、方法重载、Builder 字段、默认值、异常和资源生命周期。当前类型数量由构建产物生成：<ApiPackageSummary package-id="java" />。
 
 第一次接入先按 [Java 使用手册](/manual/java/) 完成安装、自检、成功与失败案例；需要核对某个方法的参数、重载或异常时，再从下方目录进入对应 API 页。应用代码只使用发布 JAR 中的 public 类型，不依赖 package-private 实现。
 
@@ -155,7 +155,7 @@ if (!byInstance.equals(byUtility)) {
   </a>
 </div>
 
-上面七页合计覆盖 46 个公开顶层类型。需要按类名或方法名核对时，可查看各页末尾的“公共项覆盖”。
+上面七页覆盖当前公开顶层类型。需要按类名或方法名核对时，可查看各页末尾的“公共项覆盖”，或进入本次构建生成的 Javadoc 签名索引。
 
 ## 输入、返回与失败总则
 

@@ -43,11 +43,13 @@ const examples = [
     cwd: path.join(repoRoot, 'packages', 'java'),
   },
   {
-    name: 'api-java-sm9',
+    name: 'api-java-sm9-boundary',
     ...mavenExample([
       '-pl',
       'gmkit-sm9',
-      '-Dtest=SM9ManualExamplesTest,SM9KeyPemTest,ManualJavaSm9UserGuideTest',
+      // 普通文档 CI 只验证 SM9 测试源码可编译、平台诊断和不可用时的失败边界。
+      // 五平台真实签名/IBE 运行由 sm9-native.yml 强制执行，不能在这里用 skip 冒充成功。
+      '-Dtest=SM9NativeAvailableTest,SM9ManualExamplesTest,SM9KeyPemTest,ManualJavaSm9UserGuideTest',
       'test',
     ]),
     cwd: path.join(repoRoot, 'packages', 'java'),
@@ -128,3 +130,4 @@ for (const example of examples) {
   else await runCommand(example.command, example.args, { cwd: example.cwd });
 }
 console.log(`\n[docs-examples] PASS: ${examples.map(({ name }) => name).join(', ')}`);
+console.log('[docs-examples] SM9 runtime evidence: boundary lane only; full native behavior is required in sm9-native.yml');

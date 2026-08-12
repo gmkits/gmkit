@@ -1,6 +1,6 @@
 ---
 title: TypeScript API 说明书
-description: 按公共工具、SM2、SM3、SM4、ZUC 和 SHA 查阅 gmkitx 的 121 个根导出及公开成员。
+description: 按公共工具、SM2、SM3、SM4、ZUC 和 SHA 查阅 gmkitx 的根导出及公开成员。
 pageInfo: false
 contributors: false
 editLink: false
@@ -16,7 +16,7 @@ tag:
 
 # TypeScript API 说明书
 
-`gmkitx` 是面向 TypeScript 和 JavaScript 的密码工具包，当前发布版为 `0.10.1`。本说明书覆盖包根入口的 121 个导出，并继续说明公开类成员、选项字段、默认值、编码、状态变化和失败行为。
+`gmkitx` 是面向 TypeScript 和 JavaScript 的密码工具包，当前发布版为 `0.10.1`。本说明书覆盖包根入口和公开类成员，并说明选项字段、默认值、编码、状态变化和失败行为。当前导出数量由构建产物生成：<ApiPackageSummary package-id="typescript" />。
 
 先安装并运行固定向量，确认包入口和运行环境正常。查具体方法时，可直接从下方 API 目录进入对应算法页。应用代码只从 `gmkitx` 包根导入；不要依赖仓库 `src/*` 或 Node/bundler 的 `dist/*` 深度路径。
 
@@ -182,7 +182,7 @@ if (!env.hasTextEncoder || !env.hasTextDecoder) {
 
 <div class="doc-path-grid">
   <a class="doc-path-card" href="/api/typescript/common.html">
-    <span class="doc-path-label">56 个根导出</span>
+    <span class="doc-path-label">公共基础入口</span>
     <strong>公共类型与工具</strong>
     <small>格式常量、Hex/Base64、UTF-8、RNG、环境、字节和 ASN.1。</small>
   </a>
@@ -213,7 +213,7 @@ if (!env.hasTextEncoder || !env.hasTextDecoder) {
   </a>
 </div>
 
-上面六页合计覆盖包根入口的 121 个导出。需要按名称核对时，可查看各页末尾的“本页覆盖的公共 API”。
+上面六页覆盖包根入口和公开成员。需要按名称核对时，可查看各页末尾的“本页覆盖的公共 API”，或进入本次构建生成的 TypeDoc 签名索引。
 
 ## 输入与返回值总则
 

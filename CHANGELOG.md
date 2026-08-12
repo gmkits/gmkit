@@ -71,7 +71,7 @@
 - Made Java and TypeScript parity fail closed on missing, empty, malformed, duplicated, unsupported, or zero-match shared vectors. Java now consumes every SM2/SM3/SM4/ZUC case instead of skipping SM2.
 - Rejected malformed and non-canonical Base64 input, including invalid padding and non-zero pad bits, while retaining explicit unpadded decoding compatibility.
 - Rejected truncated or excessively nested ASN.1 input in the public XML visualization helper.
-- Updated the inlined Noble curve/hash implementation and the Vitest/Vite build chain; the complete npm workspace dependency graph now passes `npm audit` with zero known vulnerabilities.
+- Updated the inlined Noble curve/hash implementation and the Vitest/Vite build chain. The release audit covered the dependency graph available at release time; current workspace and documentation-tooling audit results are reported separately and are not implied by this historical note.
 - Added real npm tarball install tests for ESM, CommonJS, browser IIFE, and deprecated compatibility aliases across the supported Node.js release matrix.
 
 - **TS SM4 CK table — GB/T 32907-2016 conformance fix**.

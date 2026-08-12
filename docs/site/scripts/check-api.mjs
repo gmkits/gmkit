@@ -233,6 +233,15 @@ await requireFile(path.join(publicApi, 'java', 'latest', 'cn', 'gmkit', 'sm4', '
 await requireFile(path.join(publicApi, 'java', 'latest', 'cn', 'gmkit', 'zuc', 'ZUC.html'), 'ZUC Javadoc');
 await requireFile(path.join(publicApi, 'java', 'latest', 'cn', 'gmkit', 'sm9', 'SM9.html'), 'SM9 Javadoc');
 await requireFile(path.join(publicApi, 'manifest.json'), 'API 生成清单');
+const apiManifest = JSON.parse(await readFile(path.join(publicApi, 'manifest.json'), 'utf8'));
+const tsSummary = apiManifest.packages?.find(({ id }) => id === 'typescript')?.apiSummary;
+const javaSummary = apiManifest.packages?.find(({ id }) => id === 'java')?.apiSummary;
+if (tsSummary?.typescriptRootExports !== publicExportNames(tsEntry).length) {
+  failures.push(`API 清单 TypeScript 导出数量不一致: manifest=${tsSummary?.typescriptRootExports ?? '<missing>'}, source=${publicExportNames(tsEntry).length}`);
+}
+if (!Number.isSafeInteger(javaSummary?.javaPublicTypes) || javaSummary.javaPublicTypes <= 0) {
+  failures.push('API 清单缺少 Java 公共顶层类型统计');
+}
 const versionsPath = path.join(publicApi, 'versions.json');
 await requireFile(versionsPath, 'API 版本清单');
 const versionsManifest = JSON.parse(await readFile(versionsPath, 'utf8'));
