@@ -208,8 +208,10 @@ export class SM2 {
    * @param peerTempPublicKey - 对方临时公钥（十六进制字符串）
    * @param isInitiator - 是否为发起方
    * @param options - 可选参数
-   * @returns 密钥交换结果
-   * @throws 任一密钥、身份、角色或派生长度无效，或确认标签不匹配时抛出错误
+   * @returns 密钥交换结果，包含本方临时公钥、共享密钥以及标准 S1（0x02）/S2（0x03）确认值
+   * @throws 任一密钥、身份、角色或派生长度无效
+   *
+   * 此方法只计算确认值，不接收或验证对端确认值；“确认标签不匹配”必须由上层协议处理。
    *
    * @example
    * ```typescript

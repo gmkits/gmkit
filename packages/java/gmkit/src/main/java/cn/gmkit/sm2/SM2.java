@@ -714,6 +714,10 @@ public final class SM2 {
 
     /**
      * 执行带确认信息的 SM2 密钥交换。
+     * <p>
+     * 按 SM2 标准，响应方 B 计算并发送 S1（0x02），发起方 A 通过
+     * {@code confirmationTag} 验证；发起方 A 返回 S2（0x03），响应方 B
+     * 再通过 {@link #confirmResponder(byte[], byte[])} 验证。该方法不负责网络传输。
      *
      * @param selfStaticPrivateKeyHex    己方静态私钥
      * @param selfEphemeralPrivateKeyHex 己方临时私钥
@@ -737,10 +741,10 @@ public final class SM2 {
     }
 
     /**
-     * 常量时间比较响应方确认标签。
+     * 常量时间比较响应方应验证的 S2 确认标签。
      *
-     * @param expectedS2      本地计算出的 S2
-     * @param confirmationTag 对端返回的确认标签
+     * @param expectedS2      响应方本地计算出的 S2
+     * @param confirmationTag 发起方返回的 S2
      * @return 一致时返回 {@code true}
      */
     public boolean confirmResponder(byte[] expectedS2, byte[] confirmationTag) {
