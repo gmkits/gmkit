@@ -61,6 +61,14 @@ function requiresFailureDocumentation(signature) {
   return /encrypt|decrypt|sign|verify|digest|hmac|keystream|exchange|decode|random|keypair/i.test(signature.name);
 }
 
+function requiresSemanticRemarks(reflection, parents) {
+  if (reflection.variant !== 'signature') return false;
+  // TypeDoc 会把继承方法投影到每个 SHA 类；强制每个投影签名重复写 remarks
+  // 没有额外信息。这里只对全局配置和确实有协议边界的 setter 设门禁。
+  if (/^(configureRNG|setCustomRNG|setTextCodec)$/.test(reflection.name)) return true;
+  return reflection.name === 'setCurveParams';
+}
+
 function checkTypeDocSemantics(reflection, parents = []) {
   const qualifiedName = [...parents, reflection.name].filter(Boolean).join('.');
   if (reflection.variant === 'signature') {
@@ -84,6 +92,9 @@ function checkTypeDocSemantics(reflection, parents = []) {
       if (!blockTagText(reflection.comment, '@throws') && !booleanFailure) {
         failures.push(`TypeDoc 密码操作缺少异常或 false 语义: ${qualifiedName}`);
       }
+    }
+    if (requiresSemanticRemarks(reflection, parents) && !blockTagText(reflection.comment, '@remarks')) {
+      failures.push(`TypeDoc 有状态或安全边界 API 缺少 @remarks: ${qualifiedName}`);
     }
   }
   for (const child of reflection.children ?? []) checkTypeDocSemantics(child, [...parents, reflection.name]);
@@ -201,6 +212,31 @@ if (manualCoverage.schemaVersion !== 2
     || manualCoverage.memberCoverage?.typescript !== 'typedoc-public-members') {
   failures.push('公共 API 覆盖数据未启用 TypeScript 成员级检查');
 }
+
+for (const [language, pages] of Object.entries(manualCoverage.semanticCoverage ?? {})) {
+  if (!pages || typeof pages !== 'object' || Array.isArray(pages)) {
+    failures.push(`公共 API 语义覆盖清单格式错误: ${language}`);
+    continue;
+  }
+  for (const [relativePage, terms] of Object.entries(pages)) {
+    if (!Array.isArray(terms) || terms.length === 0) {
+      failures.push(`公共 API 语义覆盖清单为空: ${relativePage}`);
+      continue;
+    }
+    let content;
+    try {
+      content = await readFile(path.join(docsRoot, relativePage), 'utf8');
+    } catch {
+      failures.push(`公共 API 语义覆盖页面不存在: ${relativePage}`);
+      continue;
+    }
+    for (const term of terms) {
+      if (typeof term !== 'string' || term.length === 0 || !content.includes(term)) {
+        failures.push(`${relativePage} 缺少语义说明主题: ${term}`);
+      }
+    }
+  }
+}
 const tsManualPage = new Map();
 const tsManualContents = new Map();
 for (const [relativePage, symbols] of Object.entries(manualCoverage.typescript ?? {})) {
@@ -238,6 +274,18 @@ const tsSummary = apiManifest.packages?.find(({ id }) => id === 'typescript')?.a
 const javaSummary = apiManifest.packages?.find(({ id }) => id === 'java')?.apiSummary;
 if (tsSummary?.typescriptRootExports !== publicExportNames(tsEntry).length) {
   failures.push(`API 清单 TypeScript 导出数量不一致: manifest=${tsSummary?.typescriptRootExports ?? '<missing>'}, source=${publicExportNames(tsEntry).length}`);
+}
+
+// 生成 API 与中文详解分离：每个公开成员必须在对应手册 API 页面出现，
+// 但构造器和 setter 的默认值、状态变化等语义由页面正文负责维护。
+const requiredApiPageFiles = [
+  ...Object.keys(manualCoverage.typescript ?? {}),
+  ...Object.keys(manualCoverage.java ?? {}),
+];
+for (const relativePage of requiredApiPageFiles) {
+  if (!relativePage.startsWith('manual/') || !relativePage.includes('/api/')) {
+    failures.push(`API 手册页面必须位于 manual/<language>/api/: ${relativePage}`);
+  }
 }
 if (!Number.isSafeInteger(javaSummary?.javaPublicTypes) || javaSummary.javaPublicTypes <= 0) {
   failures.push('API 清单缺少 Java 公共顶层类型统计');

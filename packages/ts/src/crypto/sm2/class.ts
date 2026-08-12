@@ -188,6 +188,7 @@ export class SM2 {
   /**
    * 设置标准曲线参数兼容声明。传入不同于标准 SM2 曲线的值后，签名或验签会拒绝执行。
    * @param curveParams - 标准 SM2 曲线参数
+   * @remarks 该声明不会切换曲线或重新计算密钥；它用于在后续签名和验签前拒绝非标准参数。实例保存的是调用方对象的当前引用。
    */
   setCurveParams(curveParams: SM2CurveParams): void {
     this.curveParams = curveParams;

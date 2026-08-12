@@ -4,6 +4,25 @@
     "typescript": "typedoc-public-members",
     "java": "declared-public-members"
   },
+  "semanticCoverage": {
+    "typescript": {
+      "manual/typescript/api/common.md": ["编码", "默认", "返回", "失败", "安全"],
+      "manual/typescript/api/sm2.md": ["编码", "默认", "返回值", "失败", "安全"],
+      "manual/typescript/api/sm3.md": ["编码", "默认", "返回", "失败", "状态", "安全"],
+      "manual/typescript/api/sm4.md": ["编码", "默认", "返回", "失败", "状态", "安全"],
+      "manual/typescript/api/zuc.md": ["编码", "默认", "返回", "失败", "状态", "安全"],
+      "manual/typescript/api/sha.md": ["编码", "默认", "返回", "失败", "状态", "安全"]
+    },
+    "java": {
+      "manual/java/api/core.md": ["编码", "默认", "返回", "失败", "安全"],
+      "manual/java/api/sm2.md": ["编码", "默认", "返回", "失败", "安全"],
+      "manual/java/api/sm3.md": ["编码", "默认", "返回", "失败", "安全"],
+      "manual/java/api/sm4.md": ["编码", "默认", "返回", "失败", "安全"],
+      "manual/java/api/zuc.md": ["编码", "返回", "失败", "安全"],
+      "manual/java/api/sm9.md": ["native", "PEM", "长度", "生命周期", "失败"],
+      "manual/java/api/integration.md": ["默认", "返回", "失败", "安全"]
+    }
+  },
   "typescript": {
     "manual/typescript/api/README.md": [
       "sha",

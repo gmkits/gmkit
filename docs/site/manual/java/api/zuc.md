@@ -21,6 +21,8 @@ tag:
 
 EEA3/EIA3 适用于明确规定这些参数和比特顺序的通信协议。普通业务若需要认证加密，优先使用 [SM4-GCM 或 SM4-CCM](./sm4.html)，不要自行把裸 ZUC 加密与另一套 MAC 拼接成新协议。
 
+裸 ZUC 只提供保密性，不提供消息来源认证或篡改检测；密钥、IV、COUNT、BEARER、DIRECTION 和消息 bit length 必须由上层协议固定并按安全方式管理。
+
 ::: warning 最容易写错的是长度单位
 `lengthBytes` 按字节计数，`lengthWords` 按 32-bit word 计数，`bitLength` 按 bit 计数。它们不能互换。
 :::
