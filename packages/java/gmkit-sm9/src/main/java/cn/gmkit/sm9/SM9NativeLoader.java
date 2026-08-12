@@ -250,7 +250,13 @@ final class SM9NativeLoader {
         }
     }
 
-    /** 供单元测试验证清单格式和篡改检测，不加载 native。 */
+    /**
+     * 供单元测试验证清单格式和篡改检测，不加载 native。
+     *
+     * @param content 需要校验的二进制内容
+     * @param expected 期望的 SHA-256 小写十六进制值
+     * @throws SM9Exception 内容摘要与期望值不一致或运行时不支持 SHA-256 时抛出
+     */
     static void verifyHashForTest(byte[] content, String expected) {
         try {
             String actual = toHex(MessageDigest.getInstance("SHA-256").digest(content));
