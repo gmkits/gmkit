@@ -42,7 +42,11 @@ class InteropComplianceTest {
 
     @Test
     void sharedVectorSetIsNonEmptyUniqueAndSupported() throws Exception {
-        List<Map<String, Object>> cases = cases(loadRoot());
+        Map<String, Object> root = loadRoot();
+        Object schemaVersion = root.get("schemaVersion");
+        assertTrue(schemaVersion instanceof Number, "共享向量缺少 schemaVersion");
+        assertEquals(2, ((Number) schemaVersion).intValue(), "共享向量 schemaVersion 不受支持");
+        List<Map<String, Object>> cases = cases(root);
         assertFalse(cases.isEmpty(), "共享互操作向量不能为空");
 
         Set<String> supported = new HashSet<>(Arrays.asList(
@@ -57,11 +61,26 @@ class InteropComplianceTest {
             "ZUC/eea3-encrypt",
             "ZUC/eia3"));
         Set<String> ids = new HashSet<>();
+        Set<String> sourceIds = new HashSet<>();
         for (Map<String, Object> vector : cases) {
             String id = requiredString(vector, "id");
             assertTrue(ids.add(id), "共享向量 ID 重复: " + id);
             String operation = requiredString(vector, "algo") + "/" + requiredString(vector, "op");
             assertTrue(supported.contains(operation), "共享向量操作不受支持: " + operation);
+            String sourceId = requiredString(vector, "sourceId");
+            String sourceType = requiredString(vector, "sourceType");
+            String sourceRef = requiredString(vector, "sourceRef");
+            requiredString(vector, "description");
+            assertTrue(sourceIds.add(sourceId), "共享向量 sourceId 重复: " + sourceId);
+            assertTrue("standard".equals(sourceType) || "project-fixture".equals(sourceType),
+                "共享向量 sourceType 不受支持: " + sourceType);
+            if ("standard".equals(sourceType)) {
+                assertTrue(sourceRef.matches("^(GM/T|3GPP|NIST|ISO|RFC|https?://).*"),
+                    "标准向量必须包含可核对的标准来源: " + id);
+            } else {
+                assertEquals("vectors/interop.json", sourceRef,
+                    "项目 fixture 的 sourceRef 必须指向共享文件: " + id);
+            }
         }
     }
 

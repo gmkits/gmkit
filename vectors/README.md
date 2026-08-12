@@ -5,6 +5,7 @@
 ## 文件
 
 - `interop.json`：SM2、SM3、SM4、ZUC 的 schema 化互操作用例。
+- `interop.schema.json`：共享向量的结构和来源约束；Java 与 TypeScript 测试都会执行关键来源校验。
 
 当前消费方：
 
@@ -15,8 +16,9 @@ Java 测试通过 Maven test resources 将根级 `vectors/` 挂载到 classpath�
 
 ## 向量规则
 
-- `source: "project"` 表示项目回归向量，只用于 GMKit Java/TS 对齐。
-- 标准向量必须写明标准来源，例如 `GM/T 0004-2012`、`3GPP TS 35.221` 或 `3GPP TS 35.222`。
+- `sourceType: "project-fixture"` 表示项目回归向量，只用于 GMKit Java/TS 对齐，不能写成国标固定向量。
+- `sourceType: "standard"` 表示有外部标准或参考实现来源的向量，`sourceRef` 必须写明标准来源，例如 `GM/T 0004-2012`、`3GPP TS 35.221` 或 `3GPP TS 35.222`。
+- 每个 case 必须有唯一 `sourceId`、可核对的 `sourceRef` 和描述；`meta.encoding` 说明字符串输入按 UTF-8 编码，Hex 字段按小写十六进制解释。
 - SM2 加密和未固定随机数的签名不比较完整字面值，只验证解密或验签性质。
 - `cases` 不能为空，`id` 必须唯一；Java 与 TypeScript 消费方都必须拒绝未知操作、缺失字段和零匹配分组，不能用跳过产生假绿。
 - 新增字段应向后兼容；字段重命名或删除必须同步更新 Java、TypeScript 测试和 CHANGELOG。

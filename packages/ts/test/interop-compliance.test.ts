@@ -38,8 +38,33 @@ describe('互操作性和标准测试向量', () => {
     if (!parsed || typeof parsed !== 'object' || !Array.isArray(parsed.cases)) {
       throw new Error('Invalid interop vectors: root.cases must be an array');
     }
+    if (parsed.schemaVersion !== 2) {
+      throw new Error(`Invalid interop vectors: unsupported schemaVersion ${parsed.schemaVersion}`);
+    }
     if (!parsed.defaults || typeof parsed.defaults !== 'object') {
       throw new Error('Invalid interop vectors: root.defaults must be an object');
+    }
+    const sourceIds = new Set<string>();
+    for (const testCase of parsed.cases) {
+      if (!testCase || typeof testCase !== 'object') {
+        throw new Error('Invalid interop vectors: every case must be an object');
+      }
+      for (const field of ['sourceId', 'sourceType', 'sourceRef', 'description']) {
+        if (typeof testCase[field] !== 'string' || testCase[field].trim().length === 0) {
+          throw new Error(`Invalid interop vectors: case ${testCase.id ?? '<unknown>'} missing ${field}`);
+        }
+      }
+      if (sourceIds.has(testCase.sourceId)) {
+        throw new Error(`Invalid interop vectors: duplicate sourceId ${testCase.sourceId}`);
+      }
+      sourceIds.add(testCase.sourceId);
+      if (!['standard', 'project-fixture'].includes(testCase.sourceType)) {
+        throw new Error(`Invalid interop vectors: invalid sourceType ${testCase.sourceType}`);
+      }
+      if (testCase.sourceType === 'standard'
+        && !/^(GM\/T|3GPP|NIST|ISO|RFC|https?:\/\/)/.test(testCase.sourceRef)) {
+        throw new Error(`Invalid interop vectors: standard case ${testCase.id} has no standard sourceRef`);
+      }
     }
     interopVectors = parsed;
   });
@@ -67,6 +92,16 @@ describe('互操作性和标准测试向量', () => {
       ids.add(testCase.id);
       expect(supported.has(`${testCase.algo}/${testCase.op}`),
         `unsupported vector operation: ${testCase.algo}/${testCase.op}`).toBe(true);
+    }
+  });
+
+  it('共享向量来源必须区分标准证据和项目 fixture', () => {
+    for (const testCase of interopVectors.cases) {
+      expect(testCase.sourceId).toBe(testCase.sourceId.trim());
+      expect(testCase.sourceRef).toBe(testCase.sourceRef.trim());
+      if (testCase.sourceType === 'project-fixture') {
+        expect(testCase.sourceRef).toBe('vectors/interop.json');
+      }
     }
   });
 

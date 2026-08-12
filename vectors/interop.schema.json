@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gmkit.cn/schemas/interop-v2.json",
+  "title": "GMKit cross-language interoperability vectors",
+  "type": "object",
+  "required": ["schemaVersion", "meta", "defaults", "cases"],
+  "properties": {
+    "schemaVersion": { "const": 2 },
+    "meta": {
+      "type": "object",
+      "required": ["version", "encoding", "note"],
+      "properties": {
+        "version": { "type": "string", "minLength": 1 },
+        "encoding": { "const": "hex" },
+        "note": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": true
+    },
+    "defaults": { "type": "object" },
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/case" }
+    }
+  },
+  "$defs": {
+    "case": {
+      "type": "object",
+      "required": [
+        "id",
+        "algo",
+        "op",
+        "sourceId",
+        "sourceType",
+        "sourceRef",
+        "description",
+        "expected"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "algo": { "enum": ["SM2", "SM3", "SM4", "ZUC"] },
+        "op": {
+          "enum": [
+            "digest",
+            "encrypt",
+            "sign",
+            "key-exchange",
+            "keystream",
+            "eea3",
+            "eea3-encrypt",
+            "eia3"
+          ]
+        },
+        "sourceId": { "type": "string", "minLength": 1 },
+        "sourceType": { "enum": ["standard", "project-fixture"] },
+        "sourceRef": { "type": "string", "minLength": 1 },
+        "description": { "type": "string", "minLength": 1 },
+        "expected": { "type": "object" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "sourceType": { "const": "standard" } } },
+          "then": {
+            "properties": {
+              "sourceRef": {
+                "pattern": "^(GM/T|3GPP|NIST|ISO|RFC|https?://)"
+              }
+            }
+          }
+        }
+      ],
+      "additionalProperties": true
+    }
+  }
+}
