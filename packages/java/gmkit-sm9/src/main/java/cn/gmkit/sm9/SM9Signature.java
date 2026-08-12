@@ -46,7 +46,7 @@ public final class SM9Signature implements AutoCloseable {
         this.ctx = context;
         this.doSign = doSign;
         try {
-            init(doSign);
+            init(context, doSign);
         } catch (RuntimeException ex) {
             SM9NativeBridge.sm9SignCtxFree(context);
             this.ctx = 0L;
@@ -55,10 +55,10 @@ public final class SM9Signature implements AutoCloseable {
         }
     }
 
-    private void init(boolean doSign) {
+    private void init(long context, boolean doSign) {
         int code = doSign
-                ? SM9NativeBridge.sm9SignInit(ctx())
-                : SM9NativeBridge.sm9VerifyInit(ctx());
+                ? SM9NativeBridge.sm9SignInit(context)
+                : SM9NativeBridge.sm9VerifyInit(context);
         if (code != 1) {
             throw new SM9Exception(SM9Messages.operationFailed(doSign ? "sign init" : "verify init", code));
         }
@@ -72,7 +72,20 @@ public final class SM9Signature implements AutoCloseable {
      */
     public void reset(boolean doSign) {
         ctx();
-        init(doSign);
+        // 先初始化新的 native context；失败时保留旧句柄和旧状态，避免半初始化对象继续被使用。
+        long next = SM9NativeBridge.sm9SignCtxNew();
+        if (next == 0L) {
+            throw new SM9Exception(SM9Messages.operationReturnedNull("sign ctx reset"));
+        }
+        try {
+            init(next, doSign);
+        } catch (RuntimeException ex) {
+            SM9NativeBridge.sm9SignCtxFree(next);
+            throw ex;
+        }
+        long previous = ctx;
+        ctx = next;
+        SM9NativeBridge.sm9SignCtxFree(previous);
         this.doSign = doSign;
         this.finished = false;
     }
