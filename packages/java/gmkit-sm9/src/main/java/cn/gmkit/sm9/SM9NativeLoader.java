@@ -127,25 +127,22 @@ final class SM9NativeLoader {
         }
         tempDir.toFile().deleteOnExit();
 
-        // 先解压并预加载 gmssl 依赖库（若资源存在）。
+        // 两个文件全部通过完整性检查后再加载，避免桥接库已损坏时先执行依赖库代码。
         String dependency = dependencyLibFileName();
         Map<String, String> hashes = loadHashManifest();
         Path dependencyFile = extractIfPresent(platform, dependency, tempDir, hashes);
-        if (dependencyFile != null) {
-            Throwable dependencyError = tryLoadFromFile(dependencyFile);
-            if (dependencyError != null) {
-                throw new SM9Exception(SM9Messages.nativeUnavailable(dependencyError), dependencyError);
-            }
-        }
-
-        // 再解压并加载桥接库。
         String bridge = bridgeLibFileName();
         Path bridgeFile = extractIfPresent(platform, bridge, tempDir, hashes);
-        if (bridgeFile == null) {
+        if (dependencyFile == null || bridgeFile == null) {
             throw new SM9UnsupportedPlatformException(
                     SM9Messages.nativeUnavailable(new IllegalStateException(
                             "缺少 native 资源 / missing native resource: "
-                                    + RESOURCE_ROOT + "/" + platform + "/" + bridge)));
+                                    + RESOURCE_ROOT + "/" + platform + "/"
+                                    + (dependencyFile == null ? dependency : bridge))));
+        }
+        Throwable dependencyError = tryLoadFromFile(dependencyFile);
+        if (dependencyError != null) {
+            throw new SM9Exception(SM9Messages.nativeUnavailable(dependencyError), dependencyError);
         }
         try {
             System.load(bridgeFile.toAbsolutePath().toString());
@@ -163,11 +160,12 @@ final class SM9NativeLoader {
                 return null;
             }
             Path target = targetDir.resolve(fileName);
+            // 校验失败的文件也应在 JVM 退出时清理。
+            target.toFile().deleteOnExit();
             try (OutputStream out = Files.newOutputStream(target)) {
                 copy(in, out);
             }
             verifyResourceHash(resource, target, hashes);
-            target.toFile().deleteOnExit();
             return target;
         } catch (IOException e) {
             throw new SM9Exception(SM9Messages.nativeUnavailable(e), e);
@@ -215,7 +213,10 @@ final class SM9NativeLoader {
                 if (parts.length != 2 || !parts[0].matches("[0-9a-fA-F]{64}")) {
                     throw new SM9Exception("SM9 native SHA-256 清单格式无效 / invalid native hash manifest entry: " + line);
                 }
-                result.put(parts[1].trim(), parts[0].toLowerCase(Locale.ROOT));
+                String resource = parts[1].trim();
+                if (result.put(resource, parts[0].toLowerCase(Locale.ROOT)) != null) {
+                    throw new SM9Exception("SM9 native SHA-256 清单条目重复 / duplicate native hash entry: " + resource);
+                }
             }
             return result;
         } catch (IOException ex) {
@@ -246,24 +247,6 @@ final class SM9NativeLoader {
                         + "，期望 " + expected + "，实际 " + actual);
             }
         } catch (NoSuchAlgorithmException | IOException ex) {
-            throw new SM9Exception(SM9Messages.nativeUnavailable(ex), ex);
-        }
-    }
-
-    /**
-     * 供单元测试验证清单格式和篡改检测，不加载 native。
-     *
-     * @param content 需要校验的二进制内容
-     * @param expected 期望的 SHA-256 小写十六进制值
-     * @throws SM9Exception 内容摘要与期望值不一致或运行时不支持 SHA-256 时抛出
-     */
-    static void verifyHashForTest(byte[] content, String expected) {
-        try {
-            String actual = toHex(MessageDigest.getInstance("SHA-256").digest(content));
-            if (!actual.equalsIgnoreCase(expected)) {
-                throw new SM9Exception("SM9 native SHA-256 校验失败 / native hash mismatch");
-            }
-        } catch (NoSuchAlgorithmException ex) {
             throw new SM9Exception(SM9Messages.nativeUnavailable(ex), ex);
         }
     }

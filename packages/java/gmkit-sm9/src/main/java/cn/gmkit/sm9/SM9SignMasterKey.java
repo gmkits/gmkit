@@ -6,6 +6,7 @@ package cn.gmkit.sm9;
  * 通过 {@link #generate()} 生成包含私有部分的完整主密钥，用于派生用户签名私钥；
  * 通过 {@link #importPublicMasterKeyPem(String)} 仅导入公开主密钥，用于验签。
  * 使用完毕后应调用 {@link #close()} 释放 native 资源（推荐使用 try-with-resources）。
+ * 实例不是并发安全对象；{@code close()} 不得与实例的其它方法并发执行，调用方必须自行同步。
  */
 public final class SM9SignMasterKey implements AutoCloseable {
 

@@ -6,6 +6,7 @@ package cn.gmkit.sm9;
  * 由 {@link SM9EncMasterKey#extractKey(String)} 派生，或从加密 PEM 文件导入。
  * 解密时需要用户标识（ID），因此该对象同时持有句柄与 ID。使用完毕后应调用
  * {@link #close()} 释放 native 资源（推荐使用 try-with-resources）。
+ * 实例不是并发安全对象；{@code close()} 不得与实例的其它方法并发执行，调用方必须自行同步。
  */
 public final class SM9EncKey implements AutoCloseable {
 

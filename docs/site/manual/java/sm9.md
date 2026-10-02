@@ -59,7 +59,7 @@ SM9 位于独立制品 `cn.gmkit:gmkit-sm9:0.10.1`，依赖随 JAR 分发的本�
 
 ## 端到端样例
 
-下面的测试包含平台检查、KGC 派生、加密 PEM、重新导入、签名验签、错误身份、IBE、255 字节上限和流式签名。所有本地句柄均由 try-with-resources 关闭。
+下面的测试源码包含平台检查、KGC 派生、加密 PEM、重新导入、签名验签、错误身份、IBE、255 字节上限和流式签名。文档验证 lane 只运行平台诊断和 native 不可用时的失败边界；签名、IBE、PEM 和句柄的真实执行由五平台 native Action 强制完成。所有本地句柄均由 try-with-resources 关闭。
 
 <!-- code-sample id="manual-java-sm9" steps="检查平台|准备参数|生成签名 KGC 主密钥|派生签名身份私钥|导入签名材料|SM9 签名|SM9 验签|验签失败断言|生成加密 KGC 主密钥|导入加密材料|SM9 IBE 加密|SM9 IBE 解密|身份失败断言|长度失败断言|流式 SM9 签名" -->
 ```java
@@ -112,7 +112,7 @@ GMKit 0.10.1 没有公开 SM9 + SM4 组合载荷类型；应用必须定义带 s
 - `SM9EncKey`
 - `SM9Signature`
 
-`close()` 可重复调用；关闭后继续使用会抛 `SM9Exception`。不要依赖 GC 或 finalizer 释放本地句柄。
+`close()` 可重复调用；关闭后执行 native 操作会抛 `SM9Exception`，`getId()` 仍可读取 Java 元数据。所有这些对象都不是并发安全类型，`close()` 不得与使用该句柄的任何操作并发执行；调用方必须使用外部同步或明确的对象所有权转移。不要依赖 GC 或 finalizer 释放本地句柄。
 
 ## 标准证据
 

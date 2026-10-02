@@ -11,6 +11,7 @@ package cn.gmkit.sm9;
  * SM9 加密单次明文长度上限为 {@value #MAX_PLAINTEXT_SIZE} 字节，超过时
  * {@link #encrypt(byte[], String)} 会抛出 {@link SM9Exception}；更大数据请采用混合加密
  * （例如用 SM4 加密数据、用 SM9 封装 SM4 密钥）。
+ * 实例不是并发安全对象；{@code close()} 不得与实例的其它方法并发执行，调用方必须自行同步。
  */
 public final class SM9EncMasterKey implements AutoCloseable {
 

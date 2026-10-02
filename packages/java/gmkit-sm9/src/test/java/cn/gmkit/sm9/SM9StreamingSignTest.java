@@ -67,6 +67,8 @@ class SM9StreamingSignTest {
 
             // 验签上下文不能执行签名，签名上下文不能执行验签。
             assertThrows(SM9Exception.class, () -> verifier.sign(signKey));
+            assertThrows(SM9Exception.class,
+                    () -> signer.verify(new byte[] {1}, master, "state@example.com"));
             signer.update(message);
             byte[] signature = signer.sign(signKey);
             assertThrows(SM9Exception.class, () -> signer.update(message));
@@ -106,6 +108,10 @@ class SM9StreamingSignTest {
         context.close();
         assertDoesNotThrow(context::close);
         assertThrows(SM9Exception.class, () -> context.update(new byte[] {1}));
+        assertThrows(SM9Exception.class, () -> context.update(new byte[0]));
+        assertThrows(SM9Exception.class, () -> context.reset(false));
+        assertThrows(SM9Exception.class, () -> context.sign(null));
+        assertThrows(SM9Exception.class, () -> context.verify(new byte[] {1}, null, "closed"));
     }
 
     private static void feedInChunks(SM9Signature ctx, byte[] data) {

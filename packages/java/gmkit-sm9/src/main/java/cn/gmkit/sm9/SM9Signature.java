@@ -93,9 +93,9 @@ public final class SM9Signature implements AutoCloseable {
     /**
      * 追加待处理数据。
      *
-     * @param data 数据
+     * @param data 原始消息字节；允许零长度，不允许 {@code null}
      * @return 当前上下文，便于链式调用
-     * @throws SM9Exception 数据为空、范围无效、上下文已关闭或 native 更新失败时抛出
+     * @throws SM9Exception 数据为 null、上下文已完成/关闭或 native 更新失败时抛出
      */
     public SM9Signature update(byte[] data) {
         SM9Checks.requireNonNull(data, "data");
@@ -106,10 +106,10 @@ public final class SM9Signature implements AutoCloseable {
      * 追加待处理数据的指定区间。
      *
      * @param data   数据缓冲
-     * @param offset 起始偏移
-     * @param length 长度
+     * @param offset 起始偏移，单位 byte，范围 0 到 data.length
+     * @param length 长度，单位 byte，允许 0，不得超过 data.length - offset
      * @return 当前上下文，便于链式调用
-     * @throws SM9Exception 缓冲区范围无效、上下文已关闭或 native 更新失败时抛出
+     * @throws SM9Exception 缓冲区范围无效、上下文已完成/关闭或 native 更新失败时抛出
      */
     public SM9Signature update(byte[] data, int offset, int length) {
         SM9Checks.requireRange(data, offset, length, "data range");
@@ -128,10 +128,11 @@ public final class SM9Signature implements AutoCloseable {
 
     /**
      * 使用用户签名私钥完成签名，输出 DER 编码的签名值。
+     * 进入完成阶段后，无论成功与否都必须 reset 才可继续使用。
      *
      * @param signKey 用户签名私钥
      * @return 签名值
-     * @throws SM9Exception 私钥为空、上下文已关闭或 native 签名失败时抛出
+     * @throws SM9Exception 私钥为空/已关闭、模式错误、上下文已完成/关闭或 native 签名失败时抛出
      */
     public byte[] sign(SM9SignKey signKey) {
         ensureMode(true, "sign");
@@ -146,12 +147,13 @@ public final class SM9Signature implements AutoCloseable {
 
     /**
      * 使用公开主密钥与用户标识完成验签。
+     * 进入完成阶段后，即使返回 false，也必须 reset 才可继续使用。
      *
-     * @param signature       待验证签名值
+     * @param signature       DER 编码签名字节，不允许 null 或零长度
      * @param masterPublicKey 公开主密钥
-     * @param id              签名者用户标识
-     * @return 验证通过返回 {@code true}
-     * @throws SM9Exception 签名、主公钥或 ID 无效，或上下文已关闭时抛出
+     * @param id              签名者用户标识，按 UTF-8 编码，不能为空白或包含 NUL
+     * @return GmSSL 验证通过返回 {@code true}；其非成功返回码统一映射为 {@code false}
+     * @throws SM9Exception 参数无效、主公钥已关闭、模式错误或上下文已完成/关闭时抛出
      */
     public boolean verify(byte[] signature, SM9SignMasterKey masterPublicKey, String id) {
         ensureMode(false, "verify");

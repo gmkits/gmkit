@@ -6,6 +6,7 @@ package cn.gmkit.sm9;
  * 由 {@link SM9SignMasterKey#extractKey(String)} 派生，或从加密 PEM 文件导入。
  * 持有一个指向 native 资源的句柄，使用完毕后应调用 {@link #close()} 释放（推荐使用
  * try-with-resources）。
+ * 实例不是并发安全对象；{@code close()} 不得与实例的其它方法并发执行，调用方必须自行同步。
  */
 public final class SM9SignKey implements AutoCloseable {
 

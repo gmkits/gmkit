@@ -255,7 +255,7 @@ cd packages/java
 mvn -pl gmkit -Dtest=PublicApiManualExamplesTest test
 ```
 
-SM9 的普通 Maven 测试在本机没有动态库时会跳过 native 案例；强制构建并执行 GmSSL 固定向量与 JNI 测试使用：
+文档验证 lane 只运行 SM9 平台诊断和 native 不可用时的失败边界，不执行签名、IBE、PEM 或句柄案例；这些案例不能在 native 缺失时以 skipped 计为成功。强制构建并执行 GmSSL 固定向量与 JNI 测试使用：
 
 ```powershell
 ./scripts/sm9-native.ps1 -Test
