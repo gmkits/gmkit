@@ -71,7 +71,7 @@ binary:      00 ff 80 41
 3. 使用同一个 `userId` 和原始消息字节验签。
 4. 验签为 `false` 时拒绝消息，不回退到 RAW、其他 ID 或 no-Z。
 
-可执行调用见 [TypeScript SM2 手册](/manual/typescript/sm2.html#签名-验签-加密和解密) 和 [Java SM2 手册](/manual/java/sm2.html#完整流程)。
+可执行调用见 [TypeScript SM2 手册](/manual/typescript/sm2.html#签名、验签、加密和解密) 和 [Java SM2 手册](/manual/java/sm2.html#完整流程)。
 
 ## SM2 加密对象
 

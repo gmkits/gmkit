@@ -59,6 +59,7 @@ export interface ZUCDecryptOptions {
  * @param plaintext Data to encrypt (string or Uint8Array) / 要加密的数据
  * @param options Encryption options / 加密选项
  * @returns Encrypted data (default hex string) / 加密后的数据（默认十六进制字符串）
+ * @throws key/IV 长度或编码无效、输出格式无效，或宿主文本编码器失败时抛出错误
  *
  * @example
  * // 默认 hex 格式（向后兼容）
@@ -86,6 +87,7 @@ export function encrypt(
  * @param ciphertext Encrypted data (hex or base64 string, auto-detected) / 加密的数据（十六进制或 base64，自动检测）
  * @param options 字符串输入编码；省略时优先识别 Hex，再识别 Base64
  * @returns Decrypted data as string / 解密后的数据
+ * @throws key、IV、密文编码无效或宿主文本解码器失败时抛出错误；ZUC 本身不校验消息完整性
  *
  * @example
  * // 自动检测输入格式
@@ -129,6 +131,7 @@ export function decryptBytes(
  * @param iv - 128 位初始向量（16 字节或 32 个十六进制字符）
  * @param length - 需要生成的 32 位字数量
  * @returns 十六进制字符串形式的密钥流
+ * @throws key/IV 无效、length 不是非负安全整数或超出宿主数组容量时抛出错误
  */
 export function getKeystreamWords(
   key: BytesLike,
@@ -178,6 +181,7 @@ export function getKeystream(
  * @param direction - 1 位方向标志（0 表示上行，1 表示下行）
  * @param length - 需要生成的密钥流比特长度
  * @returns EEA3 密钥流
+ * @throws key、COUNT、BEARER、DIRECTION 或 bit 长度无效时抛出错误
  */
 export function eea3(
   key: BytesLike,
@@ -235,6 +239,7 @@ export function eea3Encrypt(
  * @param message - 待认证的消息
  * @param bitLength - 参与认证的消息 bit 数；省略时使用全部字节
  * @returns 32 位 MAC-I（十六进制字符串）
+ * @throws key、COUNT、BEARER、DIRECTION 无效，或 bitLength 超过消息长度时抛出错误
  */
 export function eia3(
   key: BytesLike,

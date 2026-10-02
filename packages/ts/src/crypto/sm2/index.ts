@@ -858,6 +858,7 @@ export interface VerifyOptions {
  * 生成 SM2 密钥对
  * @param compressed - 是否返回压缩格式的公钥（默认 false，返回非压缩格式）
  * @returns 包含公钥和私钥的对象
+ * @throws strict 策略缺少安全随机源、随机源返回无效数据或重试耗尽时抛出错误
  */
 export function generateKeyPair(compressed: boolean = false): KeyPair {
   let privateKey: Uint8Array | undefined;
@@ -1039,6 +1040,7 @@ function kdf(z: Uint8Array, klen: number): Uint8Array {
  * @param data - 要加密的数据（字符串或 Uint8Array）
  * @param options - 加密选项对象
  * @returns 加密后的数据（默认十六进制字符串）
+ * @throws 公钥、模式或编码无效、随机源失败或 KDF 重试耗尽时抛出错误
  *
  * @example
  * // 基本用法
@@ -1123,6 +1125,7 @@ export function encrypt(
  * @param data - 要签名的数据（字符串或 Uint8Array）
  * @param options - 签名选项
  * @returns 签名（默认十六进制字符串；raw 为 r||s，der 为 ASN.1 DER）
+ * @throws 私钥、用户标识或格式选项无效，使用非标准曲线，或随机源失败时抛出错误
  */
 export function sign(
   privateKey: BytesLike,
@@ -1183,7 +1186,7 @@ export function sign(
  * @param data - 原始数据（字符串或 Uint8Array）
  * @param signature - 签名（十六进制字符串，r || s 格式或 DER 编码）
  * @param options - 验签选项
- * @returns 签名是否有效
+ * @returns 签名有效返回 true；签名不匹配、输入或选项无效以及内部校验异常均返回 false
  */
 export function verify(
   publicKey: BytesLike,
@@ -1366,6 +1369,7 @@ export interface SM2KeyExchangeResult {
  *
  * @param params - 密钥交换参数
  * @returns 密钥交换结果，包含临时公钥、共享密钥和可选的确认哈希值
+ * @throws 密钥、ID 或派生长度无效，公私钥不匹配，或所需随机源失败时抛出错误
  *
  * @example
  * ```typescript

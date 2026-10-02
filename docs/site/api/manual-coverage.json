@@ -4,6 +4,13 @@
     "typescript": "typedoc-public-members",
     "java": "declared-public-members"
   },
+  "typescriptNamespacePages": {
+    "sm2": "manual/typescript/api/sm2.md",
+    "sm3": "manual/typescript/api/sm3.md",
+    "sm4": "manual/typescript/api/sm4.md",
+    "zuc": "manual/typescript/api/zuc.md",
+    "sha": "manual/typescript/api/sha.md"
+  },
   "semanticCoverage": {
     "typescript": {
       "manual/typescript/api/common.md": ["编码", "默认", "返回", "失败", "安全"],

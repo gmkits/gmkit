@@ -283,6 +283,7 @@ export class ZUCState {
  * @param iv - 128 位初始向量（16 字节或 32 个十六进制字符）
  * @param length - 需要输出的 32 位密钥字数量
  * @returns 32 位密钥字数组
+ * @throws key/IV 无效、length 不是非负安全整数或超出宿主数组容量时抛出错误
  */
 export function generateKeystream(
   key: string | Uint8Array,

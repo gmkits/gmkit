@@ -17,6 +17,8 @@ tag:
 
 # TypeScript ZUC API
 
+命名空间 `zuc.getKeystream` 与顶层 `zucKeystream` 是同一函数，长度单位为字节；`zuc.getKeystreamWords` 与 `zucKeystreamWords` 是同一函数，长度单位为 32-bit 字。二者的参数、返回值与异常边界分别见下面的密钥流说明。
+
 `gmkitx` 当前实现 ZUC-128、3GPP 128-EEA3 和 128-EIA3，不实现 ZUC-256。ZUC-128 的 key 与 IV 都固定为 128 bit（16 字节），底层每次产生一个 32 bit 密钥流字。
 
 普通 `zucEncrypt` 只是把明文与密钥流异或，不提供完整性保护。EEA3/EIA3 则面向已经采用相应 3GPP 参数的通信协议。一般业务若只需要认证加密，优先选择 SM4-GCM/CCM，不要自行设计 ZUC + MAC 组合。

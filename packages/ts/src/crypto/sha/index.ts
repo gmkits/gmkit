@@ -51,6 +51,7 @@ function formatOutput(bytes: Uint8Array, format: OutputFormatType = OutputFormat
  * @param data - 输入数据（字符串或 Uint8Array）
  * @param options - 哈希选项
  * @returns 哈希摘要（默认十六进制字符串，64 个字符）
+ * @throws 输出格式无效、输入类型不受支持或宿主文本编码器失败时抛出错误
  *
  * @example
  * ```typescript
@@ -72,6 +73,7 @@ export function sha256(data: string | Uint8Array, options?: SHAOptions): string 
  * @param data - 输入数据（字符串或 Uint8Array）
  * @param options - 哈希选项
  * @returns 哈希摘要（默认十六进制字符串，96 个字符）
+ * @throws 输出格式无效、输入类型不受支持或宿主文本编码器失败时抛出错误
  *
  * @example
  * ```typescript
@@ -90,6 +92,7 @@ export function sha384(data: string | Uint8Array, options?: SHAOptions): string 
  * @param data - 输入数据（字符串或 Uint8Array）
  * @param options - 哈希选项
  * @returns 哈希摘要（默认十六进制字符串，128 个字符）
+ * @throws 输出格式无效、输入类型不受支持或宿主文本编码器失败时抛出错误
  *
  * @example
  * ```typescript
@@ -114,6 +117,7 @@ export function sha512(data: string | Uint8Array, options?: SHAOptions): string 
  * @param data - 输入数据（字符串或 Uint8Array）
  * @param options - 哈希选项
  * @returns 哈希摘要（默认十六进制字符串，40 个字符）
+ * @throws 输出格式无效、输入类型不受支持或宿主文本编码器失败时抛出错误
  *
  * @example
  * ```typescript
@@ -135,6 +139,7 @@ export function sha1(data: string | Uint8Array, options?: SHAOptions): string {
  * @param data - 要认证的数据（字符串或 Uint8Array）
  * @param options - 哈希选项
  * @returns HMAC 值（默认十六进制字符串，64 个字符）
+ * @throws 输出格式无效、key/data 类型不受支持或宿主文本编码器失败时抛出错误
  *
  * @example
  * ```typescript
@@ -159,6 +164,7 @@ export function hmacSha256(
  * @param data - 要认证的数据（字符串或 Uint8Array）
  * @param options - 哈希选项
  * @returns HMAC 值（默认十六进制字符串，96 个字符）
+ * @throws 输出格式无效、key/data 类型不受支持或宿主文本编码器失败时抛出错误
  */
 export function hmacSha384(
   key: string | Uint8Array,
@@ -177,6 +183,7 @@ export function hmacSha384(
  * @param data - 要认证的数据（字符串或 Uint8Array）
  * @param options - 哈希选项
  * @returns HMAC 值（默认十六进制字符串，128 个字符）
+ * @throws 输出格式无效、key/data 类型不受支持或宿主文本编码器失败时抛出错误
  */
 export function hmacSha512(
   key: string | Uint8Array,

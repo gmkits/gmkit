@@ -113,4 +113,4 @@ C3 不匹配、点编码无效、DER 非最短编码或尾随数据都属于失�
 - [GM/T 0009 快速参考](/standards/GMT-0009-快速参考)
 - [共享互操作向量](/standards/interop-vectors)
 - [TypeScript SM2 API 的可执行案例](/manual/typescript/api/sm2.html#可执行案例)
-- [Java SM2 API 的 BC 互操作与 no-z 边界](/manual/java/api/sm2.html#标准-z、旧-no-z-与预计算-e)
+- [Java SM2 API 的 BC 互操作与 no-z 边界](/manual/java/api/sm2.html#z-与预计算-e)

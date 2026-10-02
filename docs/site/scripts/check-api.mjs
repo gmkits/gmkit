@@ -245,7 +245,9 @@ for (const [relativePage, symbols] of Object.entries(manualCoverage.typescript ?
   for (const symbol of symbols) tsManualPage.set(symbol, relativePage);
 }
 for (const reflection of tsReflection.children ?? []) {
-  const relativePage = tsManualPage.get(reflection.name);
+  // 命名空间入口在总览，成员说明在对应算法页；不能因为入口页没有详情而跳过成员门禁。
+  const relativePage = manualCoverage.typescriptNamespacePages?.[reflection.name]
+    ?? tsManualPage.get(reflection.name);
   const content = tsManualContents.get(relativePage);
   if (!relativePage || !content) continue;
   for (const member of reflection.children ?? []) {

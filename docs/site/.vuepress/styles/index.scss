@@ -646,10 +646,24 @@ html.dark :not(pre) > code {
 
 // 页内目录随正文滚走，避免吸顶层覆盖标题、表格和代码块。
 .vp-toc-placeholder {
-  position: static;
+  // 桌面目录绝对定位需要局部包含块，不能退回视口后偏移到屏幕外。
+  position: relative;
   z-index: auto;
   top: auto;
   margin-bottom: 0.75rem;
+}
+
+@media (min-width: 1440px) {
+  .theme-container.has-toc .vp-page {
+    padding-inline-end: 16rem;
+  }
+
+  #toc {
+    box-sizing: border-box;
+    min-width: 0;
+    width: 14rem;
+    max-width: 14rem;
+  }
 }
 
 // 提示框样式优化
