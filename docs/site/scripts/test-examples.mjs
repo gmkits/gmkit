@@ -43,13 +43,13 @@ const examples = [
     cwd: path.join(repoRoot, 'packages', 'java'),
   },
   {
-    name: 'api-java-sm9-boundary',
+    name: 'api-java-sm9-diagnostics',
     ...mavenExample([
       '-pl',
       'gmkit-sm9',
-      // 普通文档 CI 只验证 SM9 测试源码可编译、平台诊断和不可用时的失败边界。
-      // 五平台真实签名/IBE 运行由 sm9-native.yml 强制执行，不能在这里用 skip 冒充成功。
-      '-Dtest=SM9NativeAvailableTest,SM9ManualExamplesTest,SM9KeyPemTest,ManualJavaSm9UserGuideTest',
+      // 文档 lane 只执行始终会运行的诊断和 native 缺失失败边界。
+      // 签名、IBE、PEM 和句柄生命周期由五平台 native lane 强制执行，不能用 skipped 测试代替。
+      '-Dtest=SM9NativeAvailableTest',
       'test',
     ]),
     cwd: path.join(repoRoot, 'packages', 'java'),
@@ -71,6 +71,10 @@ const examples = [
     cwd: path.join(examplesRoot, 'hutool'),
   },
 ].filter(({ name }) => !only || only.includes(name));
+
+if (only && (examples.length === 0 || only.some((name) => !examples.some((entry) => entry.name === name)))) {
+  throw new Error(`DOC_EXAMPLE_ONLY 包含未知示例名称: ${only.join(', ')}`);
+}
 
 function runCommand(command, args, options) {
   return new Promise((resolve, reject) => {
@@ -108,7 +112,11 @@ async function runPythonExample() {
 
 async function runRustExample() {
   const cwd = path.join(examplesRoot, 'rust');
-  const cargoHome = await mkdtemp(path.join(os.tmpdir(), 'gmkit-docs-cargo-'));
+  // 显式 CARGO_HOME 可用于受控缓存/离线验收；默认仍验证全新依赖环境。
+  const reuseCargoHome = Boolean(process.env.CARGO_HOME);
+  const cargoHome = reuseCargoHome
+    ? path.resolve(process.env.CARGO_HOME)
+    : await mkdtemp(path.join(os.tmpdir(), 'gmkit-docs-cargo-'));
   await mkdir(cargoHome, { recursive: true });
   try {
     await runCommand('cargo', ['test', '--locked'], {
@@ -120,7 +128,8 @@ async function runRustExample() {
       },
     });
   } finally {
-    await rm(cargoHome, { recursive: true, force: true });
+    // 外部指定的缓存不属于本次任务，禁止清理。
+    if (!reuseCargoHome) await rm(cargoHome, { recursive: true, force: true });
   }
 }
 
@@ -130,4 +139,4 @@ for (const example of examples) {
   else await runCommand(example.command, example.args, { cwd: example.cwd });
 }
 console.log(`\n[docs-examples] PASS: ${examples.map(({ name }) => name).join(', ')}`);
-console.log('[docs-examples] SM9 runtime evidence: boundary lane only; full native behavior is required in sm9-native.yml');
+console.log('[docs-examples] SM9 runtime evidence: diagnostics and unavailable boundary only; full native behavior is required in sm9-native.yml');

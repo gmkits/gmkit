@@ -17,9 +17,12 @@
     "generate:api:versions": "node scripts/generate-api-versions.mjs",
     "generate:api": "npm run generate:api:typescript && npm run generate:api:java && npm run generate:api:manifest && npm run generate:api:versions",
     "check:api": "node scripts/check-api.mjs",
-    "check:links": "linkinator .vuepress/dist/index.html --recurse --skip \"^https?://(?!127\\.0\\.0\\.1)(?!localhost)\" --skip \"^mailto:\" --check-fragments --verbosity error",
+    "docs:check-api": "node scripts/check-api.mjs",
+    "check:links": "node scripts/check-links.mjs",
     "clean": "node scripts/clean.mjs",
-    "check": "node --test scripts/code-sample-audit.test.mjs && node scripts/check-docs.mjs",
+    "check": "node --test scripts/*.test.mjs && node scripts/check-docs.mjs",
+    "docs:check": "npm run check",
+    "docs:check-deploy": "node ../../.github/scripts/test-deploy-docs-origin.mjs",
     "test:examples": "node scripts/test-examples.mjs"
   },
   "devDependencies": {

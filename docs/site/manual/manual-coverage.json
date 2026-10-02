@@ -222,7 +222,8 @@
         {
           "path": "../../packages/java/gmkit-sm9/src/test/java/cn/gmkit/sm9/ManualJavaSm9UserGuideTest.java",
           "region": "manual-java-sm9",
-          "runner": "api-java-sm9-boundary"
+          "runner": "sm9-native",
+          "evidence": "native"
         }
       ]
     },

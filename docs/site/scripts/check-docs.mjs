@@ -392,6 +392,17 @@ const requiredOutcomePages = [
   'manual/java/api/integration.md',
 ];
 const exampleRunner = await readFile(path.join(docsRoot, 'scripts', 'test-examples.mjs'), 'utf8');
+const nativeWorkflow = await readFile(path.join(repoRoot, '.github', 'workflows', 'sm9-native.yml'), 'utf8');
+const nativeScript = await readFile(path.join(repoRoot, 'scripts', 'sm9-native.ps1'), 'utf8');
+const nativeExampleSources = new Set([
+  '../../packages/java/gmkit-sm9/src/test/java/cn/gmkit/sm9/SM9ManualExamplesTest.java',
+  '../../packages/java/gmkit-sm9/src/test/java/cn/gmkit/sm9/SM9KeyPemTest.java',
+  '../../packages/java/gmkit-sm9/src/test/java/cn/gmkit/sm9/ManualJavaSm9UserGuideTest.java',
+]);
+// 只允许已登记的 SM9 测试绑定 native lane，不能靠随意添加 evidence 绕过示例执行检查。
+const nativeLaneConfigured = nativeWorkflow.includes('sm9-native.ps1')
+  && nativeWorkflow.includes('Test = $true')
+  && nativeScript.includes('gmkit.sm9.requireNative=true');
 
 const userManualCoveragePath = path.join(docsRoot, 'manual', 'manual-coverage.json');
 const userManualCoverage = JSON.parse(await readFile(userManualCoveragePath, 'utf8'));
@@ -553,6 +564,21 @@ for (const chapter of userManualCoverage.chapters ?? []) {
           + ` ${sourceRegion.path}#${sourceRegion.region}`,
       );
     }
+    const nativeEvidence = sourceRegion.evidence === 'native';
+    if (sourceRegion.evidence !== undefined && !nativeEvidence) {
+      failures.push(`manual/manual-coverage.json ${label} 包含未知 evidence: ${sourceRegion.evidence}`);
+    }
+    if (nativeEvidence) {
+      if (sourceRegion.runner !== 'sm9-native'
+          || !nativeExampleSources.has(sourceRegion.path)
+          || !nativeLaneConfigured) {
+        failures.push(
+          `manual/manual-coverage.json ${label} 的 native 源码区域未绑定强制 SM9 lane:`
+            + ` ${sourceRegion.path}`,
+        );
+      }
+      continue;
+    }
     const runnerName = `name: '${sourceRegion.runner}'`;
     const sourceToken = path.basename(sourceRegion.path).replace(/\.(?:mjs|java)$/, '');
     if (!exampleRunner.includes(runnerName) || !exampleRunner.includes(sourceToken)) {
@@ -625,7 +651,9 @@ for (const [relativePage, requiredRegions] of requiredExamplePages) {
     }
     const sourceFromDocs = path.relative(docsRoot, source).replaceAll('\\', '/');
     const runnerToken = executedSources.get(sourceFromDocs);
-    if (!runnerToken || !exampleRunner.includes(runnerToken)) {
+    const executedByDocs = runnerToken && exampleRunner.includes(runnerToken);
+    const executedByNative = nativeExampleSources.has(sourceFromDocs) && nativeLaneConfigured;
+    if (!executedByDocs && !executedByNative) {
       failures.push(`${relativePage}: 示例源文件未进入 docs:test-examples ${includePath}`);
     }
   }

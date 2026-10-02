@@ -23,6 +23,14 @@ export default defineUserConfig({
 
   bundler: viteBundler({
     viteOptions: {
+      build: {
+        rolldownOptions: {
+          // 构建警告必须处理后再发布，不能靠日志过滤掩盖缺失导出或打包异常。
+          onwarn(warning) {
+            throw new Error(`[docs-build] ${warning.code ?? 'WARNING'}: ${warning.message}`);
+          },
+        },
+      },
       plugins: [
         compression({
           include: /\.(js|mjs|css|html|json|svg|map)$/i,
