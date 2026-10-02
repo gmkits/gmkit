@@ -1,0 +1,1505 @@
+{
+  "description": "Shared Java/TypeScript validation cases. Each mutation starts from interop.json and interop.schema.json; no cryptographic outputs are regenerated.",
+  "tests": [
+    {
+      "name": "baseline",
+      "valid": true,
+      "changes": []
+    },
+    {
+      "name": "root-null",
+      "valid": false,
+      "changes": [
+        {
+          "path": [],
+          "value": null
+        }
+      ]
+    },
+    {
+      "name": "root-array",
+      "valid": false,
+      "changes": [
+        {
+          "path": [],
+          "value": []
+        }
+      ]
+    },
+    {
+      "name": "schema-version-missing",
+      "valid": false,
+      "changes": [
+        {
+          "path": [
+            "schemaVersion"
+          ],
+          "remove": true
+        }
+      ]
+    },
+    {
+      "name": "schema-version-string",
+      "valid": false,
+      "changes": [
+        {
+          "path": [
+            "schemaVersion"
+          ],
+          "value": "2"
+        }
+      ]
+    },
+    {
+      "name": "schema-version-fraction",
+      "valid": false,
+      "changes": [
+        {
+          "path": [
+            "schemaVersion"
+          ],
+          "value": 2.5
+        }
+      ]
+    },
+    {
+      "name": "meta-missing",
+      "valid": false,
+      "changes": [
+        {
+          "path": [
+            "meta"
+          ],
+          "remove": true
+        }
+      ]
+    },
+    {
+      "name": "meta-null",
+      "valid": false,
+      "changes": [
+        {
+          "path": [
+            "meta"
+          ],
+          "value": null
+        }
+      ]
+    },
+    {
+      "name": "meta-[]",
+      "valid": false,
+      "changes": [
+        {
+          "path": [
+            "meta"
+          ],
+          "value": []
+        }
+      ]
+    },
+    {
+      "name": "meta-true",
+      "valid": false,
+      "changes": [
+        {
+          "path": [
+            "meta"
+          ],
+          "value": true
+        }
+      ]
+    },
+    {
+      "name": "defaults-missing",
+      "valid": false,
+      "changes": [
+        {
+          "path": [
+            "defaults"
+          ],
+          "remove": true
+        }
+      ]
+    },
+    {
+      "name": "defaults-null",
+      "valid": false,
+      "changes": [
+        {
+          "path": [
+            "defaults"
+          ],
+          "value": null
+        }
+      ]
+    },
+    {
+      "name": "defaults-[]",
+      "valid": false,
+      "changes": [
+        {
+          "path": [
+            "defaults"
+          ],
+          "value": []
+        }
+      ]
+    },
+    {
+      "name": "defaults-true",
+      "valid": false,
+      "changes": [
+        {
+          "path": [
+            "defaults"
+          ],
+          "value": true
+        }
+      ]
+    },
+    {
+      "name": "meta-version-missing",
+      "valid": false,
+      "changes": [
+        {
+          "path": [
+            "meta",
+            "version"
+          ],
+          "remove": true
+        }
+      ]
+    },
+    {
+      "name": "meta-encoding-missing",
+      "valid": false,
+      "changes": [
+        {
+          "path": [
+            "meta",
+            "encoding"
+          ],
+          "remove": true
+        }
+      ]
+    },
+    {
+      "name": "meta-note-missing",
+      "valid": false,
+      "changes": [
+        {
+          "path": [
+            "meta",
+            "note"
+          ],
+          "remove": true
+        }
+      ]
+    },
+    {
+      "name": "encoding-base64",
+      "valid": false,
+      "changes": [
+        {
+          "path": [
+            "meta",
+            "encoding"
+          ],
+          "value": "base64"
+        }
+      ]
+    },
+    {
+      "name": "encoding-null",
+      "valid": false,
+      "changes": [
+        {
+          "path": [
+            "meta",
+            "encoding"
+          ],
+          "value": null
+        }
+      ]
+    },
+    {
+      "name": "encoding-HEX",
+      "valid": false,
+      "changes": [
+        {
+          "path": [
+            "meta",
+            "encoding"
+          ],
+          "value": "HEX"
+        }
+      ]
+    },
+    {
+      "name": "meta-version-empty",
+      "valid": false,
+      "changes": [
+        {
+          "path": [
+            "meta",
+            "version"
+          ],
+          "value": ""
+        }
+      ]
+    },
+    {
+      "name": "meta-note-blank",
+      "valid": false,
+      "changes": [
+        {
+          "path": [
+            "meta",
+            "note"
+          ],
+          "value": " \t"
+        }
+      ]
+    },
+    {
+      "name": "meta-note-array",
+      "valid": false,
+      "changes": [
+        {
+          "path": [
+            "meta",
+            "note"
+          ],
+          "value": []
+        }
+      ]
+    },
+    {
+      "name": "cases-missing",
+      "valid": false,
+      "changes": [
+        {
+          "path": [
+            "cases"
+          ],
+          "remove": true
+        }
+      ]
+    },
+    {
+      "name": "cases-empty",
+      "valid": false,
+      "changes": [
+        {
+          "path": [
+            "cases"
+          ],
+          "value": []
+        }
+      ]
+    },
+    {
+      "name": "cases-object",
+      "valid": false,
+      "changes": [
+        {
+          "path": [
+            "cases"
+          ],
+          "value": {}
+        }
+      ]
+    },
+    {
+      "name": "case-null",
+      "valid": false,
+      "changes": [
+        {
+          "path": [
+            "cases",
+            0
+          ],
+          "value": null
+        }
+      ]
+    },
+    {
+      "name": "case-array",
+      "valid": false,
+      "changes": [
+        {
+          "path": [
+            "cases",
+            0
+          ],
+          "value": []
+        }
+      ]
+    },
+    {
+      "name": "case-id-missing",
+      "valid": false,
+      "changes": [
+        {
+          "caseId": "sm3-hello",
+          "path": [
+            "id"
+          ],
+          "remove": true
+        }
+      ]
+    },
+    {
+      "name": "case-algo-missing",
+      "valid": false,
+      "changes": [
+        {
+          "caseId": "sm3-hello",
+          "path": [
+            "algo"
+          ],
+          "remove": true
+        }
+      ]
+    },
+    {
+      "name": "case-op-missing",
+      "valid": false,
+      "changes": [
+        {
+          "caseId": "sm3-hello",
+          "path": [
+            "op"
+          ],
+          "remove": true
+        }
+      ]
+    },
+    {
+      "name": "case-sourceId-missing",
+      "valid": false,
+      "changes": [
+        {
+          "caseId": "sm3-hello",
+          "path": [
+            "sourceId"
+          ],
+          "remove": true
+        }
+      ]
+    },
+    {
+      "name": "case-sourceType-missing",
+      "valid": false,
+      "changes": [
+        {
+          "caseId": "sm3-hello",
+          "path": [
+            "sourceType"
+          ],
+          "remove": true
+        }
+      ]
+    },
+    {
+      "name": "case-sourceRef-missing",
+      "valid": false,
+      "changes": [
+        {
+          "caseId": "sm3-hello",
+          "path": [
+            "sourceRef"
+          ],
+          "remove": true
+        }
+      ]
+    },
+    {
+      "name": "case-description-missing",
+      "valid": false,
+      "changes": [
+        {
+          "caseId": "sm3-hello",
+          "path": [
+            "description"
+          ],
+          "remove": true
+        }
+      ]
+    },
+    {
+      "name": "case-expected-missing",
+      "valid": false,
+      "changes": [
+        {
+          "caseId": "sm3-hello",
+          "path": [
+            "expected"
+          ],
+          "remove": true
+        }
+      ]
+    },
+    {
+      "name": "id-blank",
+      "valid": false,
+      "changes": [
+        {
+          "caseId": "sm3-hello",
+          "path": [
+            "id"
+          ],
+          "value": "  "
+        }
+      ]
+    },
+    {
+      "name": "id-trailing-newline",
+      "valid": false,
+      "changes": [
+        {
+          "caseId": "sm3-hello",
+          "path": [
+            "id"
+          ],
+          "value": "sm3-hello\n"
+        }
+      ]
+    },
+    {
+      "name": "id-duplicate",
+      "valid": false,
+      "changes": [
+        {
+          "caseId": "sm3-hello",
+          "path": [
+            "id"
+          ],
+          "value": "sm3-zh"
+        }
+      ]
+    },
+    {
+      "name": "source-id-duplicate",
+      "valid": false,
+      "changes": [
+        {
+          "caseId": "sm3-hello",
+          "path": [
+            "sourceId"
+          ],
+          "value": "sm3-zh"
+        }
+      ]
+    },
+    {
+      "name": "source-id-leading-space",
+      "valid": false,
+      "changes": [
+        {
+          "caseId": "sm3-hello",
+          "path": [
+            "sourceId"
+          ],
+          "value": " sm3-hello"
+        }
+      ]
+    },
+    {
+      "name": "source-id-number",
+      "valid": false,
+      "changes": [
+        {
+          "caseId": "sm3-hello",
+          "path": [
+            "sourceId"
+          ],
+          "value": 42
+        }
+      ]
+    },
+    {
+      "name": "source-ref-trailing-space",
+      "valid": false,
+      "changes": [
+        {
+          "caseId": "sm3-hello",
+          "path": [
+            "sourceRef"
+          ],
+          "value": "vectors/interop.json "
+        }
+      ]
+    },
+    {
+      "name": "description-empty",
+      "valid": false,
+      "changes": [
+        {
+          "caseId": "sm3-hello",
+          "path": [
+            "description"
+          ],
+          "value": ""
+        }
+      ]
+    },
+    {
+      "name": "description-blank",
+      "valid": false,
+      "changes": [
+        {
+          "caseId": "sm3-hello",
+          "path": [
+            "description"
+          ],
+          "value": "\t "
+        }
+      ]
+    },
+    {
+      "name": "description-nbsp",
+      "valid": false,
+      "changes": [
+        {
+          "caseId": "sm3-hello",
+          "path": [
+            "description"
+          ],
+          "value": "\u00a0"
+        }
+      ]
+    },
+    {
+      "name": "description-leading-ideographic-space",
+      "valid": false,
+      "changes": [
+        {
+          "caseId": "sm3-hello",
+          "path": [
+            "description"
+          ],
+          "value": "\u3000text"
+        }
+      ]
+    },
+    {
+      "name": "description-trailing-newline",
+      "valid": false,
+      "changes": [
+        {
+          "caseId": "sm3-hello",
+          "path": [
+            "description"
+          ],
+          "value": "text\n"
+        }
+      ]
+    },
+    {
+      "name": "description-null",
+      "valid": false,
+      "changes": [
+        {
+          "caseId": "sm3-hello",
+          "path": [
+            "description"
+          ],
+          "value": null
+        }
+      ]
+    },
+    {
+      "name": "expected-missing-object",
+      "valid": false,
+      "changes": [
+        {
+          "caseId": "sm3-hello",
+          "path": [
+            "expected"
+          ],
+          "value": []
+        }
+      ]
+    },
+    {
+      "name": "expected-null",
+      "valid": false,
+      "changes": [
+        {
+          "caseId": "sm3-hello",
+          "path": [
+            "expected"
+          ],
+          "value": null
+        }
+      ]
+    },
+    {
+      "name": "source-type-unknown",
+      "valid": false,
+      "changes": [
+        {
+          "caseId": "sm3-hello",
+          "path": [
+            "sourceType"
+          ],
+          "value": "reference"
+        }
+      ]
+    },
+    {
+      "name": "source-type-null",
+      "valid": false,
+      "changes": [
+        {
+          "caseId": "sm3-hello",
+          "path": [
+            "sourceType"
+          ],
+          "value": null
+        }
+      ]
+    },
+    {
+      "name": "algorithm-unknown",
+      "valid": false,
+      "changes": [
+        {
+          "caseId": "sm3-hello",
+          "path": [
+            "algo"
+          ],
+          "value": "AES"
+        }
+      ]
+    },
+    {
+      "name": "operation-unknown",
+      "valid": false,
+      "changes": [
+        {
+          "caseId": "sm3-hello",
+          "path": [
+            "op"
+          ],
+          "value": "verify"
+        }
+      ]
+    },
+    {
+      "name": "invalid-pair-SM2-digest",
+      "valid": false,
+      "changes": [
+        {
+          "caseId": "sm3-hello",
+          "path": [
+            "algo"
+          ],
+          "value": "SM2"
+        },
+        {
+          "caseId": "sm3-hello",
+          "path": [
+            "op"
+          ],
+          "value": "digest"
+        }
+      ]
+    },
+    {
+      "name": "invalid-pair-SM3-encrypt",
+      "valid": false,
+      "changes": [
+        {
+          "caseId": "sm3-hello",
+          "path": [
+            "algo"
+          ],
+          "value": "SM3"
+        },
+        {
+          "caseId": "sm3-hello",
+          "path": [
+            "op"
+          ],
+          "value": "encrypt"
+        }
+      ]
+    },
+    {
+      "name": "invalid-pair-SM4-sign",
+      "valid": false,
+      "changes": [
+        {
+          "caseId": "sm3-hello",
+          "path": [
+            "algo"
+          ],
+          "value": "SM4"
+        },
+        {
+          "caseId": "sm3-hello",
+          "path": [
+            "op"
+          ],
+          "value": "sign"
+        }
+      ]
+    },
+    {
+      "name": "invalid-pair-ZUC-key-exchange",
+      "valid": false,
+      "changes": [
+        {
+          "caseId": "sm3-hello",
+          "path": [
+            "algo"
+          ],
+          "value": "ZUC"
+        },
+        {
+          "caseId": "sm3-hello",
+          "path": [
+            "op"
+          ],
+          "value": "key-exchange"
+        }
+      ]
+    },
+    {
+      "name": "fixture-with-standard-ref",
+      "valid": false,
+      "changes": [
+        {
+          "caseId": "sm3-hello",
+          "path": [
+            "sourceRef"
+          ],
+          "value": "3GPP TS 35.222"
+        }
+      ]
+    },
+    {
+      "name": "fixture-with-url",
+      "valid": false,
+      "changes": [
+        {
+          "caseId": "sm3-hello",
+          "path": [
+            "sourceRef"
+          ],
+          "value": "https://example.com/test-vectors"
+        }
+      ]
+    },
+    {
+      "name": "fixture-with-legacy-standard-source",
+      "valid": false,
+      "changes": [
+        {
+          "caseId": "sm3-hello",
+          "path": [
+            "source"
+          ],
+          "value": "3GPP TS 35.222"
+        }
+      ]
+    },
+    {
+      "name": "fixture-with-standard-source-id",
+      "valid": false,
+      "changes": [
+        {
+          "caseId": "sm3-hello",
+          "path": [
+            "sourceId"
+          ],
+          "value": "3gpp-test-set-1"
+        }
+      ]
+    },
+    {
+      "name": "standard-with-project-ref",
+      "valid": false,
+      "changes": [
+        {
+          "caseId": "sm3-hello",
+          "path": [
+            "sourceType"
+          ],
+          "value": "standard"
+        }
+      ]
+    },
+    {
+      "name": "standard-with-unreviewed-url",
+      "valid": false,
+      "changes": [
+        {
+          "caseId": "sm3-hello",
+          "path": [
+            "sourceType"
+          ],
+          "value": "standard"
+        },
+        {
+          "caseId": "sm3-hello",
+          "path": [
+            "sourceRef"
+          ],
+          "value": "https://example.com/test-vectors"
+        }
+      ]
+    },
+    {
+      "name": "cannot-promote-zuc-eia3-3gpp-64-bit",
+      "valid": false,
+      "changes": [
+        {
+          "caseId": "zuc-eia3-3gpp-64-bit",
+          "path": [
+            "sourceType"
+          ],
+          "value": "standard"
+        },
+        {
+          "caseId": "zuc-eia3-3gpp-64-bit",
+          "path": [
+            "sourceRef"
+          ],
+          "value": "3GPP TS 35.222"
+        }
+      ]
+    },
+    {
+      "name": "cannot-promote-zuc-eia3-3gpp-direction-one",
+      "valid": false,
+      "changes": [
+        {
+          "caseId": "zuc-eia3-3gpp-direction-one",
+          "path": [
+            "sourceType"
+          ],
+          "value": "standard"
+        },
+        {
+          "caseId": "zuc-eia3-3gpp-direction-one",
+          "path": [
+            "sourceRef"
+          ],
+          "value": "3GPP TS 35.222"
+        }
+      ]
+    },
+    {
+      "name": "fixture-copies-reviewed-source-labels",
+      "valid": false,
+      "changes": [
+        {
+          "caseId": "sm3-hello",
+          "path": [
+            "sourceType"
+          ],
+          "value": "standard"
+        },
+        {
+          "caseId": "sm3-hello",
+          "path": [
+            "sourceId"
+          ],
+          "value": "bc-r1rv83-zuc128-test4-first-8-bytes"
+        },
+        {
+          "caseId": "sm3-hello",
+          "path": [
+            "sourceRef"
+          ],
+          "value": "https://github.com/bcgit/bc-java/blob/r1rv83/core/src/test/java/org/bouncycastle/crypto/test/ZucTest.java#L114-L116"
+        }
+      ]
+    },
+    {
+      "name": "standard-payload-changed",
+      "valid": false,
+      "changes": [
+        {
+          "caseId": "zuc-eea3-3gpp-800-bit",
+          "path": [
+            "bitLength"
+          ],
+          "value": 480
+        }
+      ]
+    },
+    {
+      "name": "standard-output-changed",
+      "valid": false,
+      "changes": [
+        {
+          "caseId": "zuc-keystream-zero",
+          "path": [
+            "expected"
+          ],
+          "value": {
+            "hex": "0000000000000000"
+          }
+        }
+      ]
+    },
+    {
+      "name": "standard-legacy-source-contradiction",
+      "valid": false,
+      "changes": [
+        {
+          "caseId": "zuc-eea3-3gpp-800-bit",
+          "path": [
+            "source"
+          ],
+          "value": "project"
+        }
+      ]
+    },
+    {
+      "name": "schema-file-encoding-constraint-is-read",
+      "valid": false,
+      "changes": [
+        {
+          "target": "schema",
+          "path": [
+            "properties",
+            "meta",
+            "properties",
+            "encoding",
+            "const"
+          ],
+          "value": "base64"
+        }
+      ]
+    },
+    {
+      "name": "schema-required-is-read",
+      "valid": false,
+      "changes": [
+        {
+          "target": "schema",
+          "path": [
+            "required"
+          ],
+          "value": [
+            "newRequiredField"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "schema-min-items-is-read",
+      "valid": false,
+      "changes": [
+        {
+          "target": "schema",
+          "path": [
+            "properties",
+            "cases",
+            "minItems"
+          ],
+          "value": 4096
+        }
+      ]
+    },
+    {
+      "name": "schema-ref-sibling-is-read",
+      "valid": false,
+      "changes": [
+        {
+          "target": "schema",
+          "path": [
+            "$defs",
+            "case",
+            "properties",
+            "description",
+            "minLength"
+          ],
+          "value": 4096
+        }
+      ]
+    },
+    {
+      "name": "unknown-schema-keyword",
+      "valid": false,
+      "changes": [
+        {
+          "target": "schema",
+          "path": [
+            "$defs",
+            "case",
+            "properties",
+            "sourceRef",
+            "gmkitUnknownKeyword"
+          ],
+          "value": true
+        }
+      ]
+    },
+    {
+      "name": "unknown-keyword-in-unused-definition",
+      "valid": false,
+      "changes": [
+        {
+          "target": "schema",
+          "path": [
+            "$defs",
+            "unused"
+          ],
+          "value": {
+            "gmkitUnknownKeyword": true
+          }
+        }
+      ]
+    },
+    {
+      "name": "integer-type-in-unused-definition",
+      "valid": true,
+      "changes": [
+        {
+          "target": "schema",
+          "path": [
+            "$defs",
+            "unused"
+          ],
+          "value": {
+            "type": "integer"
+          }
+        }
+      ]
+    },
+    {
+      "name": "unresolved-local-schema-ref",
+      "valid": false,
+      "changes": [
+        {
+          "target": "schema",
+          "path": [
+            "properties",
+            "meta",
+            "$ref"
+          ],
+          "value": "#/$defs/missing"
+        }
+      ]
+    },
+    {
+      "name": "oneof-must-match-exactly-once",
+      "valid": false,
+      "changes": [
+        {
+          "target": "schema",
+          "path": [
+            "oneOf"
+          ],
+          "value": [
+            {},
+            {}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "closed-object-is-enforced",
+      "valid": false,
+      "changes": [
+        {
+          "target": "schema",
+          "path": [
+            "additionalProperties"
+          ],
+          "value": false
+        },
+        {
+          "path": [
+            "extra"
+          ],
+          "value": "test"
+        }
+      ]
+    },
+    {
+      "name": "min-length-counts-code-points",
+      "valid": false,
+      "changes": [
+        {
+          "target": "schema",
+          "path": [
+            "properties",
+            "meta",
+            "properties",
+            "note",
+            "minLength"
+          ],
+          "value": 2
+        },
+        {
+          "path": [
+            "meta",
+            "note"
+          ],
+          "value": "\ud83d\ude00"
+        }
+      ]
+    },
+    {
+      "name": "optional-extra-metadata",
+      "valid": true,
+      "changes": [
+        {
+          "path": [
+            "meta",
+            "reviewNote"
+          ],
+          "value": "test only"
+        }
+      ]
+    },
+    {
+      "name": "fixture-legacy-project-source",
+      "valid": true,
+      "changes": [
+        {
+          "caseId": "sm3-hello",
+          "path": [
+            "source"
+          ],
+          "value": "project"
+        }
+      ]
+    },
+    {
+      "name": "unicode-description",
+      "valid": true,
+      "changes": [
+        {
+          "caseId": "sm3-hello",
+          "path": [
+            "description"
+          ],
+          "value": "\ud83d\ude00 test"
+        }
+      ]
+    },
+    {
+      "name": "integer-valued-schema-version",
+      "valid": true,
+      "changes": [
+        {
+          "path": [
+            "schemaVersion"
+          ],
+          "value": 2
+        }
+      ]
+    },
+    {
+      "name": "format-is-a-supported-annotation",
+      "valid": true,
+      "changes": [
+        {
+          "target": "schema",
+          "path": [
+            "$defs",
+            "case",
+            "properties",
+            "sourceRef",
+            "format"
+          ],
+          "value": "uri"
+        }
+      ]
+    },
+    {
+      "name": "unused-definition-with-format",
+      "valid": true,
+      "changes": [
+        {
+          "target": "schema",
+          "path": [
+            "$defs",
+            "unused"
+          ],
+          "value": {
+            "format": "uri"
+          }
+        }
+      ]
+    },
+    {
+      "name": "integer-and-bounds-valid",
+      "valid": true,
+      "changes": [
+        {
+          "target": "schema",
+          "path": [
+            "properties",
+            "defaults",
+            "properties"
+          ],
+          "value": {
+            "validationProbe": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 3
+            }
+          }
+        },
+        {
+          "path": [
+            "defaults",
+            "validationProbe"
+          ],
+          "value": 2
+        }
+      ]
+    },
+    {
+      "name": "integer-rejects-fraction",
+      "valid": false,
+      "changes": [
+        {
+          "target": "schema",
+          "path": [
+            "properties",
+            "defaults",
+            "properties"
+          ],
+          "value": {
+            "validationProbe": {
+              "type": "integer"
+            }
+          }
+        },
+        {
+          "path": [
+            "defaults",
+            "validationProbe"
+          ],
+          "value": 2.5
+        }
+      ]
+    },
+    {
+      "name": "minimum-is-enforced",
+      "valid": false,
+      "changes": [
+        {
+          "target": "schema",
+          "path": [
+            "properties",
+            "defaults",
+            "properties"
+          ],
+          "value": {
+            "validationProbe": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        },
+        {
+          "path": [
+            "defaults",
+            "validationProbe"
+          ],
+          "value": 0
+        }
+      ]
+    },
+    {
+      "name": "maximum-is-enforced",
+      "valid": false,
+      "changes": [
+        {
+          "target": "schema",
+          "path": [
+            "properties",
+            "defaults",
+            "properties"
+          ],
+          "value": {
+            "validationProbe": {
+              "type": "integer",
+              "maximum": 3
+            }
+          }
+        },
+        {
+          "path": [
+            "defaults",
+            "validationProbe"
+          ],
+          "value": 4
+        }
+      ]
+    },
+    {
+      "name": "anyof-and-null-valid",
+      "valid": true,
+      "changes": [
+        {
+          "target": "schema",
+          "path": [
+            "properties",
+            "defaults",
+            "properties"
+          ],
+          "value": {
+            "validationProbe": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "const": true
+                }
+              ]
+            }
+          }
+        },
+        {
+          "path": [
+            "defaults",
+            "validationProbe"
+          ],
+          "value": null
+        }
+      ]
+    },
+    {
+      "name": "anyof-is-enforced",
+      "valid": false,
+      "changes": [
+        {
+          "target": "schema",
+          "path": [
+            "properties",
+            "defaults",
+            "properties"
+          ],
+          "value": {
+            "validationProbe": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "const": true
+                }
+              ]
+            }
+          }
+        },
+        {
+          "path": [
+            "defaults",
+            "validationProbe"
+          ],
+          "value": false
+        }
+      ]
+    },
+    {
+      "name": "boolean-schema-valid",
+      "valid": true,
+      "changes": [
+        {
+          "target": "schema",
+          "path": [
+            "properties",
+            "defaults",
+            "properties"
+          ],
+          "value": {
+            "validationProbe": true
+          }
+        },
+        {
+          "path": [
+            "defaults",
+            "validationProbe"
+          ],
+          "value": "any value"
+        }
+      ]
+    },
+    {
+      "name": "boolean-schema-rejects",
+      "valid": false,
+      "changes": [
+        {
+          "target": "schema",
+          "path": [
+            "properties",
+            "defaults",
+            "properties"
+          ],
+          "value": {
+            "validationProbe": false
+          }
+        },
+        {
+          "path": [
+            "defaults",
+            "validationProbe"
+          ],
+          "value": "any value"
+        }
+      ]
+    },
+    {
+      "name": "unknown-keyword-in-inactive-branch",
+      "valid": false,
+      "changes": [
+        {
+          "target": "schema",
+          "path": [
+            "if"
+          ],
+          "value": {
+            "const": false
+          }
+        },
+        {
+          "target": "schema",
+          "path": [
+            "then"
+          ],
+          "value": {
+            "gmkitUnknownKeyword": true
+          }
+        },
+        {
+          "target": "schema",
+          "path": [
+            "else"
+          ],
+          "value": {}
+        }
+      ]
+    },
+    {
+      "name": "invalid-schema-type-is-rejected",
+      "valid": false,
+      "changes": [
+        {
+          "target": "schema",
+          "path": [
+            "$defs",
+            "unused"
+          ],
+          "value": {
+            "type": "not-a-json-type"
+          }
+        }
+      ]
+    }
+  ]
+}

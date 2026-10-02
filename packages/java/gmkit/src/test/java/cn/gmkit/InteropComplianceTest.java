@@ -11,6 +11,7 @@ import cn.gmkit.sm3.SM3Util;
 import cn.gmkit.sm4.SM4Options;
 import cn.gmkit.sm4.SM4Util;
 import cn.gmkit.test.Vectors;
+import cn.gmkit.test.InteropSchema;
 import cn.gmkit.zuc.ZUC;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
@@ -18,17 +19,15 @@ import org.junit.jupiter.api.TestFactory;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 /**
@@ -42,46 +41,69 @@ class InteropComplianceTest {
 
     @Test
     void sharedVectorSetIsNonEmptyUniqueAndSupported() throws Exception {
-        Map<String, Object> root = loadRoot();
-        Object schemaVersion = root.get("schemaVersion");
-        assertTrue(schemaVersion instanceof Number, "共享向量缺少 schemaVersion");
-        assertEquals(2, ((Number) schemaVersion).intValue(), "共享向量 schemaVersion 不受支持");
-        List<Map<String, Object>> cases = cases(root);
-        assertFalse(cases.isEmpty(), "共享互操作向量不能为空");
+        assertFalse(cases(loadRoot()).isEmpty(), "Shared vectors must not be empty");
+    }
 
-        Set<String> supported = new HashSet<>(Arrays.asList(
-            "SM2/encrypt",
-            "SM2/sign",
-            "SM2/key-exchange",
-            "SM3/digest",
-            "SM4/encrypt",
-            "ZUC/keystream",
-            "ZUC/encrypt",
-            "ZUC/eea3",
-            "ZUC/eea3-encrypt",
-            "ZUC/eia3"));
-        Set<String> ids = new HashSet<>();
-        Set<String> sourceIds = new HashSet<>();
-        for (Map<String, Object> vector : cases) {
-            String id = requiredString(vector, "id");
-            assertTrue(ids.add(id), "共享向量 ID 重复: " + id);
-            String operation = requiredString(vector, "algo") + "/" + requiredString(vector, "op");
-            assertTrue(supported.contains(operation), "共享向量操作不受支持: " + operation);
-            String sourceId = requiredString(vector, "sourceId");
-            String sourceType = requiredString(vector, "sourceType");
-            String sourceRef = requiredString(vector, "sourceRef");
-            requiredString(vector, "description");
-            assertTrue(sourceIds.add(sourceId), "共享向量 sourceId 重复: " + sourceId);
-            assertTrue("standard".equals(sourceType) || "project-fixture".equals(sourceType),
-                "共享向量 sourceType 不受支持: " + sourceType);
-            if ("standard".equals(sourceType)) {
-                assertTrue(sourceRef.matches("^(GM/T|3GPP|NIST|ISO|RFC|https?://).*"),
-                    "标准向量必须包含可核对的标准来源: " + id);
-            } else {
-                assertEquals("vectors/interop.json", sourceRef,
-                    "项目 fixture 的 sourceRef 必须指向共享文件: " + id);
-            }
+    @TestFactory
+    Collection<DynamicTest> sharedValidationRegressions() throws Exception {
+        Map<String, Object> corpus = loadObject("/vectors/interop-validation.json");
+        List<?> regressions = (List<?>) corpus.get("tests");
+        assertFalse(regressions.isEmpty(), "Shared validation regressions must not be empty");
+        List<DynamicTest> tests = new ArrayList<>();
+        for (Object item : regressions) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> regression = (Map<String, Object>) item;
+            tests.add(dynamicTest("shared validation: " + requiredString(regression, "name"), () -> {
+                Object vectors = Vectors.load("/vectors/interop.json");
+                Object schema = Vectors.load("/vectors/interop.schema.json");
+                for (Object entry : (List<?>) regression.get("changes")) {
+                    @SuppressWarnings("unchecked")
+                    Map<String, Object> change = (Map<String, Object>) entry;
+                    if ("schema".equals(change.get("target"))) schema = applyValidationChange(schema, change);
+                    else vectors = applyValidationChange(vectors, change);
+                }
+                final Object candidate = vectors;
+                @SuppressWarnings("unchecked")
+                final Map<String, Object> constraints = (Map<String, Object>) schema;
+                if (Boolean.TRUE.equals(regression.get("valid"))) {
+                    assertDoesNotThrow(() -> InteropSchema.validate(candidate, constraints),
+                        requiredString(regression, "name"));
+                } else {
+                    assertThrows(RuntimeException.class, () -> InteropSchema.validate(candidate, constraints),
+                        requiredString(regression, "name"));
+                }
+            }));
         }
+        return tests;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Object applyValidationChange(Object root, Map<String, Object> change) {
+        Object parent = root;
+        if (change.containsKey("caseId")) {
+            parent = null;
+            for (Map<String, Object> vector : cases((Map<String, Object>) root)) {
+                if (change.get("caseId").equals(vector.get("id"))) parent = vector;
+            }
+            if (parent == null) throw new IllegalStateException("Unknown regression case: " + change.get("caseId"));
+        }
+        List<?> path = (List<?>) change.get("path");
+        if (path.isEmpty()) return change.get("value");
+        for (Object field : path.subList(0, path.size() - 1)) {
+            parent = parent instanceof List
+                ? ((List<?>) parent).get(((Number) field).intValue())
+                : ((Map<String, Object>) parent).get((String) field);
+            if (parent == null) throw new IllegalStateException("Invalid regression path: " + path);
+        }
+        Object field = path.get(path.size() - 1);
+        if (parent instanceof List) {
+            ((List<Object>) parent).set(((Number) field).intValue(), change.get("value"));
+        } else if (Boolean.TRUE.equals(change.get("remove"))) {
+            ((Map<String, Object>) parent).remove((String) field);
+        } else {
+            ((Map<String, Object>) parent).put((String) field, change.get("value"));
+        }
+        return root;
     }
 
     @TestFactory
@@ -311,9 +333,15 @@ class InteropComplianceTest {
         return tests;
     }
 
-    @SuppressWarnings("unchecked")
     private static Map<String, Object> loadRoot() throws Exception {
-        Object root = Vectors.load("/vectors/interop.json");
+        Map<String, Object> root = loadObject("/vectors/interop.json");
+        InteropSchema.validate(root, loadObject("/vectors/interop.schema.json"));
+        return root;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Map<String, Object> loadObject(String resource) throws Exception {
+        Object root = Vectors.load(resource);
         if (!(root instanceof Map)) {
             throw new IllegalStateException("共享向量根节点必须是 JSON object");
         }

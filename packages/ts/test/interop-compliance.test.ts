@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
+import { validateInterop } from './helpers/interop-schema';
 import { digest as sm3Digest, hmac as sm3Hmac } from '../src/crypto/sm3';
 import { sha256, sha384, sha512 } from '../src/crypto/sha';
 import { encrypt as sm4Encrypt, decrypt as sm4Decrypt } from '../src/crypto/sm4';
@@ -24,90 +25,64 @@ import {
 } from '../src/crypto/sm2';
 import { CipherMode, InputFormat, OutputFormat, PaddingMode, SM2CipherMode } from '../src/types/constants';
 
+function applyValidationChange(root: any, change: any): any {
+  let parent = root;
+  if (change.caseId) {
+    parent = root.cases.find((vector: any) => vector.id === change.caseId);
+    if (!parent) throw new Error(`Unknown regression case: ${change.caseId}`);
+  }
+  const path = change.path as Array<string | number>;
+  if (path.length === 0) return change.value;
+  for (const field of path.slice(0, -1)) {
+    if (parent === null || typeof parent !== 'object' || !(field in parent)) {
+      throw new Error(`Invalid regression path: ${path.join('.')}`);
+    }
+    parent = parent[field];
+  }
+  const field = path[path.length - 1];
+  if (change.remove) delete parent[field];
+  else parent[field] = change.value;
+  return root;
+}
+
 /**
  * 互操作性和标准符合性测试
- * 使用标准测试向量验证实现的正确性
+ * 区分外部证据与项目 fixture；共同验证来源约束和跨语言输出。
  */
 describe('互操作性和标准测试向量', () => {
   let interopVectors: any;
 
+  const schema = JSON.parse(readFileSync(resolve(__dirname, '../../../vectors/interop.schema.json'), 'utf-8'));
+  const regressions = JSON.parse(readFileSync(resolve(__dirname, '../../../vectors/interop-validation.json'), 'utf-8'));
+
   beforeAll(() => {
-    const vectorPath = resolve(__dirname, '../../../vectors/interop.json');
-    const vectorData = readFileSync(vectorPath, 'utf-8');
-    const parsed = JSON.parse(vectorData);
-    if (!parsed || typeof parsed !== 'object' || !Array.isArray(parsed.cases)) {
-      throw new Error('Invalid interop vectors: root.cases must be an array');
-    }
-    if (parsed.schemaVersion !== 2) {
-      throw new Error(`Invalid interop vectors: unsupported schemaVersion ${parsed.schemaVersion}`);
-    }
-    if (!parsed.defaults || typeof parsed.defaults !== 'object') {
-      throw new Error('Invalid interop vectors: root.defaults must be an object');
-    }
-    const sourceIds = new Set<string>();
-    for (const testCase of parsed.cases) {
-      if (!testCase || typeof testCase !== 'object') {
-        throw new Error('Invalid interop vectors: every case must be an object');
-      }
-      for (const field of ['sourceId', 'sourceType', 'sourceRef', 'description']) {
-        if (typeof testCase[field] !== 'string' || testCase[field].trim().length === 0) {
-          throw new Error(`Invalid interop vectors: case ${testCase.id ?? '<unknown>'} missing ${field}`);
-        }
-      }
-      if (sourceIds.has(testCase.sourceId)) {
-        throw new Error(`Invalid interop vectors: duplicate sourceId ${testCase.sourceId}`);
-      }
-      sourceIds.add(testCase.sourceId);
-      if (!['standard', 'project-fixture'].includes(testCase.sourceType)) {
-        throw new Error(`Invalid interop vectors: invalid sourceType ${testCase.sourceType}`);
-      }
-      if (testCase.sourceType === 'standard'
-        && !/^(GM\/T|3GPP|NIST|ISO|RFC|https?:\/\/)/.test(testCase.sourceRef)) {
-        throw new Error(`Invalid interop vectors: standard case ${testCase.id} has no standard sourceRef`);
-      }
-    }
-    interopVectors = parsed;
+    interopVectors = JSON.parse(readFileSync(resolve(__dirname, '../../../vectors/interop.json'), 'utf-8'));
+    validateInterop(interopVectors, schema);
   });
 
-  it('共享向量必须非空、ID 唯一且操作全部受支持', () => {
-    const supported = new Set([
-      'SM2/encrypt',
-      'SM2/sign',
-      'SM2/key-exchange',
-      'SM3/digest',
-      'SM4/encrypt',
-      'ZUC/keystream',
-      'ZUC/encrypt',
-      'ZUC/eea3',
-      'ZUC/eea3-encrypt',
-      'ZUC/eia3',
-    ]);
-    expect(interopVectors.cases.length).toBeGreaterThan(0);
-
-    const ids = new Set<string>();
-    for (const testCase of interopVectors.cases) {
-      expect(testCase.id, 'vector id must be a non-empty string').toBeTypeOf('string');
-      expect(testCase.id.length, 'vector id must not be empty').toBeGreaterThan(0);
-      expect(ids.has(testCase.id), `duplicate vector id: ${testCase.id}`).toBe(false);
-      ids.add(testCase.id);
-      expect(supported.has(`${testCase.algo}/${testCase.op}`),
-        `unsupported vector operation: ${testCase.algo}/${testCase.op}`).toBe(true);
-    }
+  it('共享向量必须通过 Draft 2020-12 schema 及唯一性校验', () => {
+    validateInterop(interopVectors, schema);
+    expect(Array.isArray(regressions.tests)).toBe(true);
+    expect(regressions.tests.length).toBeGreaterThan(0);
   });
 
-  it('共享向量来源必须区分标准证据和项目 fixture', () => {
-    for (const testCase of interopVectors.cases) {
-      expect(testCase.sourceId).toBe(testCase.sourceId.trim());
-      expect(testCase.sourceRef).toBe(testCase.sourceRef.trim());
-      if (testCase.sourceType === 'project-fixture') {
-        expect(testCase.sourceRef).toBe('vectors/interop.json');
-      }
+  it.each(regressions.tests)('shared validation: $name', (regression: any) => {
+    let vectors = JSON.parse(JSON.stringify(interopVectors));
+    let constraints = JSON.parse(JSON.stringify(schema));
+    for (const change of regression.changes) {
+      const target = change.target === 'schema' ? constraints : vectors;
+      const changed = applyValidationChange(target, change);
+      if (change.target === 'schema') constraints = changed;
+      else vectors = changed;
     }
+    const validate = () => validateInterop(vectors, constraints);
+    if (regression.valid) expect(validate, regression.name).not.toThrow();
+    else expect(validate, regression.name).toThrow();
   });
 
-  describe('SM3 标准测试向量符合性', () => {
-    // GM/T 0004-2012 官方测试向量
-    const officialVectors = [
+  describe('SM3 固定输出与互操作性', () => {
+    // 固定回归输出；空消息不宣称为 GM/T 0004-2012 附录测试向量。
+    const referenceVectors = [
       {
         name: '空字符串',
         input: '',
@@ -125,8 +100,8 @@ describe('互操作性和标准测试向量', () => {
       },
     ];
 
-    officialVectors.forEach((vector) => {
-      it(`应该符合GM/T 0004-2012标准 - ${vector.name}`, () => {
+    referenceVectors.forEach((vector) => {
+      it(`应该匹配 SM3 固定输出 - ${vector.name}`, () => {
         const result = sm3Digest(vector.input);
         expect(result).toBe(vector.expected);
       });
@@ -143,8 +118,8 @@ describe('互操作性和标准测试向量', () => {
     });
   });
 
-  describe('SM4 标准测试向量符合性', () => {
-    // GM/T 0002-2012 参考测试向量
+  describe('SM4 互操作性与项目回归', () => {
+    // 项目往返 fixture，不是 GM/T 0002-2012 附录向量。
     const testVectors = [
       {
         name: 'ECB基础测试',
@@ -216,7 +191,7 @@ describe('互操作性和标准测试向量', () => {
     });
   });
 
-  describe('ZUC 项目固定向量', () => {
+  describe('ZUC 共享向量（来源逐条标注）', () => {
     it('应该符合互操作向量 - ZUC', () => {
       const zucCases = interopVectors.cases?.filter((c: any) => c.algo === 'ZUC') || [];
       expect(zucCases.length).toBeGreaterThan(0);
