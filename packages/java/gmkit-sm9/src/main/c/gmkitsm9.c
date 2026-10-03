@@ -12,6 +12,11 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <jni.h>
+#include <gmssl/asn1.h>
+#include <gmssl/oid.h>
+#include <gmssl/pbkdf2.h>
+#include <gmssl/pkcs8.h>
+#include <gmssl/sm4.h>
 #include <gmssl/sm9.h>
 #include <gmssl/error.h>
 
@@ -106,6 +111,92 @@ static FILE *open_file(JNIEnv *env, jbyteArray jfile, const char *mode)
 	return fp;
 }
 
+/* 固定 GmSSL d655c06 的 sm9_key.c 要求 INTEGER 解码后恰好 32 字节，但 DER 会省略前导零。
+ * 保留原 PEM/PBES2 格式和密码原语，仅在这里将合法主密钥标量左补零到 32 字节。
+ * 上游加密主密钥解码失败时还会误返回 1，因此两种主密钥导入统一走此检查路径。 */
+static int master_key_info_decrypt_from_pem(void *master, int sign, const char *pass, FILE *fp)
+{
+	static const uint8_t order[32] = {
+		0xb6,0x40,0x00,0x00,0x02,0xa3,0xa6,0xf1,0xd6,0x03,0xab,0x4f,0xf5,0x8e,0xc7,0x44,
+		0x49,0xf2,0x93,0x4b,0x18,0xea,0x8b,0xee,0xe5,0x6e,0xe1,0x9c,0xd6,0x9e,0xcf,0x25
+	};
+	uint8_t encrypted[SM9_MAX_ENCED_PRIVATE_KEY_INFO_SIZE];
+	uint8_t info[SM9_MAX_PRIVATE_KEY_INFO_SIZE];
+	uint8_t key[SM4_KEY_SIZE];
+	uint8_t scalar[32] = {0};
+	SM4_KEY sm4_key;
+	const uint8_t *cp = encrypted;
+	const uint8_t *salt, *iv, *ciphertext, *sequence, *private_key, *integer, *point;
+	size_t len, saltlen, ivlen, ciphertextlen, infolen, seqlen, privatelen, integerlen, pointlen;
+	int iter, keylen, prf, cipher, version, alg, params;
+	int ret = -1;
+
+	/* PRF 省略时保留上游以 SM3 派生的兼容行为，不将其解释为通用 PBKDF2 的 SHA-1 默认值。 */
+	if (pem_read(fp, sign ? PEM_SM9_SIGN_MASTER_KEY : PEM_SM9_ENC_MASTER_KEY,
+			encrypted, &len, sizeof(encrypted)) != 1
+		|| pkcs8_enced_private_key_info_from_der(&salt, &saltlen, &iter, &keylen, &prf,
+			&cipher, &iv, &ivlen, &ciphertext, &ciphertextlen, &cp, &len) != 1
+		|| len != 0 || iter <= 0 || (keylen != -1 && keylen != SM4_KEY_SIZE)
+		|| (prf != -1 && prf != OID_hmac_sm3) || cipher != OID_sm4_cbc
+		|| ivlen != SM4_BLOCK_SIZE || ciphertextlen == 0 || ciphertextlen % SM4_BLOCK_SIZE != 0
+		|| ciphertextlen > sizeof(info)) {
+		goto end;
+	}
+	if (pbkdf2_genkey(DIGEST_sm3(), pass, strlen(pass), salt, saltlen,
+			(size_t)iter, sizeof(key), key) != 1) {
+		goto end;
+	}
+	sm4_set_decrypt_key(&sm4_key, key);
+	if (sm4_cbc_padding_decrypt(&sm4_key, iv, ciphertext, ciphertextlen, info, &infolen) != 1) {
+		goto end;
+	}
+	cp = info;
+	if (asn1_sequence_from_der(&sequence, &seqlen, &cp, &infolen) != 1 || infolen != 0
+		|| asn1_int_from_der(&version, &sequence, &seqlen) != 1 || version != 0
+		|| sm9_algor_from_der(&alg, &params, &sequence, &seqlen) != 1
+		|| alg != OID_sm9 || params != (sign ? OID_sm9sign : OID_sm9encrypt)
+		|| asn1_octet_string_from_der(&private_key, &privatelen, &sequence, &seqlen) != 1
+		|| seqlen != 0 || privatelen > SM9_MAX_PRIVATE_KEY_SIZE
+		|| asn1_sequence_from_der(&sequence, &seqlen, &private_key, &privatelen) != 1
+		|| privatelen != 0
+		|| asn1_integer_from_der(&integer, &integerlen, &sequence, &seqlen) != 1
+		|| integerlen == 0 || integerlen > sizeof(scalar)
+		|| (integerlen == 1 && integer[0] == 0)
+		|| asn1_bit_octets_from_der(&point, &pointlen, &sequence, &seqlen) != 1
+		|| seqlen != 0 || pointlen != (sign ? 129 : 65) || point[0] != 0x04) {
+		goto end;
+	}
+	memcpy(scalar + sizeof(scalar) - integerlen, integer, integerlen);
+	/* sm9_fn_from_bytes 只转换字节，不校验范围；零值已在上面拒绝，这里要求标量小于群阶。 */
+	if (memcmp(scalar, order, sizeof(scalar)) >= 0) {
+		goto end;
+	}
+	if (sign) {
+		SM9_SIGN_MASTER_KEY *msk = (SM9_SIGN_MASTER_KEY *)master;
+		if (sm9_fn_from_bytes(msk->ks, scalar) != 1
+			|| sm9_twist_point_from_uncompressed_octets(&msk->Ppubs, point) != 1) {
+			goto end;
+		}
+	} else {
+		SM9_ENC_MASTER_KEY *msk = (SM9_ENC_MASTER_KEY *)master;
+		if (sm9_fn_from_bytes(msk->ke, scalar) != 1
+			|| sm9_point_from_uncompressed_octets(&msk->Ppube, point) != 1) {
+			goto end;
+		}
+	}
+	ret = 1;
+end:
+	secure_clear(info, sizeof(info));
+	secure_clear(key, sizeof(key));
+	secure_clear(scalar, sizeof(scalar));
+	secure_clear(&sm4_key, sizeof(sm4_key));
+	if (ret != 1) {
+		secure_clear(master, sign ? sizeof(SM9_SIGN_MASTER_KEY) : sizeof(SM9_ENC_MASTER_KEY));
+		error_print();
+	}
+	return ret;
+}
+
 /* ------------------------------------------------------------------ */
 /* 签名主密钥                                                          */
 /* ------------------------------------------------------------------ */
@@ -192,7 +283,7 @@ Java_cn_gmkit_sm9_SM9NativeBridge_sm9SignMasterKeyInfoDecryptFromPem0(JNIEnv *en
 		free(msk);
 		return 0;
 	}
-	ret = sm9_sign_master_key_info_decrypt_from_pem(msk, pass, fp);
+	ret = master_key_info_decrypt_from_pem(msk, 1, pass, fp);
 	secure_free(pass, pass_length);
 	fclose(fp);
 	if (ret != 1) {
@@ -610,7 +701,7 @@ Java_cn_gmkit_sm9_SM9NativeBridge_sm9EncMasterKeyInfoDecryptFromPem0(JNIEnv *env
 		free(msk);
 		return 0;
 	}
-	ret = sm9_enc_master_key_info_decrypt_from_pem(msk, pass, fp);
+	ret = master_key_info_decrypt_from_pem(msk, 0, pass, fp);
 	secure_free(pass, pass_length);
 	fclose(fp);
 	if (ret != 1) {
