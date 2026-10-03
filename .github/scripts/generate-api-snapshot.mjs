@@ -139,7 +139,9 @@ if (target === 'typescript') {
     tsconfig: cliPath(snapshotTsconfig),
     out: cliPath(output),
     json: cliPath(reflection),
-    readme: cliPath(path.join(docsRoot, 'typescript', 'README.md')),
+    // 快照与主站使用同一份 TypeScript 手册入口，避免 tag 构建因旧目录路径失败。
+    readme: cliPath(path.join(docsRoot, 'manual', 'typescript', 'README.md')),
+    customCss: cliPath(path.join(docsRoot, '.vuepress', 'styles', 'typedoc.css')),
     hostedBaseUrl,
     // 历史 tag 的注释不能回写；当前 main 仍由 docs:verify 以 warning-as-error 门禁。
     treatWarningsAsErrors: false,

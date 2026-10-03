@@ -100,4 +100,4 @@ tag: [编码, Uint8Array, RNG]
 
 JavaScript/JIT 不保证严格恒时；`constantTimeEqual` 只避免相同长度数据按首个不同字节提前返回。
 
-完整参数见 [TypeScript 通用 API](/api/typescript/common.html)。
+完整参数见 [TypeScript 通用 API](/manual/typescript/api/common.html)。

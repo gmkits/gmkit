@@ -289,3 +289,16 @@ jobs:
               | jq -e --arg target "$TARGET" --arg version "$VERSION" \
                 '.packages[] | select(.id == $target) | .versions[] | select(.version == $version)' >/dev/null
           fi
+          if [[ "$MODE" == "latest" ]]; then
+            www_url="https://www.gmkit.cn/api/$TARGET/latest/"
+            canonical_url="https://gmkit.cn/api/$TARGET/latest/"
+          else
+            www_url="https://www.gmkit.cn/api/$TARGET/versions/$VERSION/"
+            canonical_url="https://gmkit.cn/api/$TARGET/versions/$VERSION/"
+          fi
+          www_redirect=$(curl --fail --silent --show-error --max-time 20 \
+            --output /dev/null --write-out '%{redirect_url}' "$www_url")
+          if [[ "$www_redirect" != "$canonical_url" ]]; then
+            echo "www HTTPS redirect mismatch: expected=$canonical_url actual=$www_redirect" >&2
+            exit 1
+          fi

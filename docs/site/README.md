@@ -81,3 +81,23 @@ GMKit 当前发布包尚未完成独立第三方安全审计。固定向量和�
 ## 文档源码位置
 
 站点源码固定在 `docs/site`；根目录 `docs` 还保存不依赖站点构建的项目级策略文件。算法包只放在 `packages`，应用只放在 `apps`，文档门户不是 npm 或 Maven 发布包。移动源码目录不会改变 `gmkit.cn` 上的页面 URL。
+
+```text
+docs/site/
+├── guide/                  安装、环境检查和首次运行
+├── manual/typescript/      TypeScript 任务手册
+│   └── api/                TypeScript 中文 API 详解
+├── manual/java/            Java 任务手册
+│   └── api/                Java 中文 API 详解
+├── algorithms/             算法输入输出、标准来源和未覆盖边界
+├── api/                    API 门户入口、公共协议和覆盖清单
+├── integrations/           Go/Python/Rust/Hutool 等第三方集成示例
+├── extensions/             未来扩展包的登记和交付契约
+├── maintenance/            发布、部署、验证和架构维护
+├── examples/               被 CI 执行的示例源码
+└── catalog/                发布包和文档入口注册表
+```
+
+`manual/<language>/api/` 是需要人阅读的中文 API 说明，负责参数编码、默认值、错误条件、状态变化、生命周期和安全边界。`api/<language>/` 只作为自动生成签名索引入口；TypeDoc 与 Javadoc 的 HTML 由构建任务写入站点产物，不提交到源码目录。旧的 `/api/typescript/<algorithm>.html` 和 `/api/java/<algorithm>.html` 链接由站点重定向到新的中文说明路径。
+
+新增语言或扩展包时，先在 `catalog/packages.json` 登记包坐标、版本、手册入口、生成器和测试命令，再新增对应 `manual`、`api` 或 `integrations` 页面。目录登记本身不代表实现已发布，也不代表标准或安全结论已经成立。

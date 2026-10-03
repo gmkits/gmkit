@@ -12,7 +12,7 @@ tag: [SHA-1, SHA-256, SHA-384, SHA-512, HMAC]
 `gmkitx` 提供 SHA-1、SHA-256、SHA-384、SHA-512，以及 HMAC-SHA-256/384/512。Java 主包没有 `cn.gmkit.sha` 封装，Java 项目应直接使用 JDK `MessageDigest` 和 `Mac`。
 
 <div class="doc-path-grid doc-path-grid-compact">
-  <a class="doc-path-card" href="/api/typescript/sha.html">
+  <a class="doc-path-card" href="/manual/typescript/api/sha.html">
     <span class="doc-path-label">gmkitx</span>
     <strong>TypeScript SHA API</strong>
     <small>一次性函数、四个增量类、HMAC、输出编码、状态和失败案例。</small>
@@ -73,5 +73,5 @@ HMAC-SHA-256 的 RFC 4231 test case 1 使用 20 个 `0x0b` 字节作为 key、AS
 
 - FIPS PUB 180-4
 - RFC 4231
-- [TypeScript SHA 可执行案例](/api/typescript/sha.html#可执行案例)
+- [TypeScript SHA 可执行案例](/manual/typescript/api/sha.html#可执行案例)
 - Java 示例由 JDK 标准 Provider 执行，不属于 `cn.gmkit:gmkit` API

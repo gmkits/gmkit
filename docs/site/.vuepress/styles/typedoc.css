@@ -1,0 +1,18 @@
+/* TypeDoc 独立于 VuePress；长签名可换行，表格只在自身容器内滚动。 */
+body, h1, h2, h3, h4, h5, h6, code {
+  letter-spacing: 0;
+}
+
+.col-content {
+  min-width: 0;
+}
+
+.tsd-typography table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.tsd-signature, .tsd-typography a, .tsd-typography :not(pre) > code {
+  overflow-wrap: anywhere;
+}

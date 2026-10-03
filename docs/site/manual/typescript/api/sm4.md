@@ -557,12 +557,12 @@ if (decrypted !== message) {
 ::: details 查看测试源码
 <!-- code-sample id="api-typescript-sm4-14" steps="准备输入|SM4-GCM 加密|加密结果断言|SM4-GCM 解密|失败断言" -->
 ```js
-<!-- @include: ../../examples/node/public-api-manual.mjs#ts-sm4-example -->
+<!-- @include: ../../../examples/node/public-api-manual.mjs#ts-sm4-example -->
 ```
 :::
 
 ## 相关页面
 
 - [跨语言 SM4 模式、填充与字段约定](/algorithms/SM4.html)
-- [TypeScript 公共编码与随机数 API](/api/typescript/common.html)
-- [Java SM4 API](/api/java/sm4.html)
+- [TypeScript 公共编码与随机数 API](./common.html)
+- [Java SM4 API](/manual/java/api/sm4.html)

@@ -1,0 +1,306 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gmkit.cn/schemas/interop-v2.json",
+  "title": "GMKit cross-language interoperability vectors",
+  "$comment": "Test consumers use Draft 2020-12 validators, reject unknown schema keywords, and separately enforce unique id/sourceId. Reviewed standard cases are pinned to their evidence; arbitrary URLs are not evidence. Payload validation for project fixtures remains in algorithm tests.",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "meta",
+    "defaults",
+    "cases"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 2
+    },
+    "meta": {
+      "type": "object",
+      "required": [
+        "version",
+        "encoding",
+        "note"
+      ],
+      "properties": {
+        "version": {
+          "$ref": "#/$defs/label"
+        },
+        "encoding": {
+          "const": "hex"
+        },
+        "note": {
+          "$ref": "#/$defs/label"
+        }
+      },
+      "additionalProperties": true
+    },
+    "defaults": {
+      "type": "object"
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/case"
+      }
+    }
+  },
+  "$defs": {
+    "label": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[^\\u0009-\\u000d\\u0020\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff](?:[\\s\\S]*[^\\u0009-\\u000d\\u0020\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff])?$(?![\\s\\S])"
+    },
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:[.-][a-z0-9]+)*$(?![\\s\\S])"
+    },
+    "case": {
+      "type": "object",
+      "required": [
+        "id",
+        "algo",
+        "op",
+        "sourceId",
+        "sourceType",
+        "sourceRef",
+        "description",
+        "expected"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "algo": {
+          "enum": [
+            "SM2",
+            "SM3",
+            "SM4",
+            "ZUC"
+          ]
+        },
+        "op": {
+          "enum": [
+            "digest",
+            "encrypt",
+            "sign",
+            "key-exchange",
+            "keystream",
+            "eea3",
+            "eea3-encrypt",
+            "eia3"
+          ]
+        },
+        "sourceId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "sourceType": {
+          "enum": [
+            "standard",
+            "project-fixture"
+          ]
+        },
+        "sourceRef": {
+          "$ref": "#/$defs/label"
+        },
+        "description": {
+          "$ref": "#/$defs/label"
+        },
+        "expected": {
+          "type": "object"
+        }
+      },
+      "allOf": [
+        {
+          "oneOf": [
+            {
+              "properties": {
+                "algo": {
+                  "const": "SM2"
+                },
+                "op": {
+                  "enum": [
+                    "encrypt",
+                    "sign",
+                    "key-exchange"
+                  ]
+                }
+              }
+            },
+            {
+              "properties": {
+                "algo": {
+                  "const": "SM3"
+                },
+                "op": {
+                  "enum": [
+                    "digest"
+                  ]
+                }
+              }
+            },
+            {
+              "properties": {
+                "algo": {
+                  "const": "SM4"
+                },
+                "op": {
+                  "enum": [
+                    "encrypt"
+                  ]
+                }
+              }
+            },
+            {
+              "properties": {
+                "algo": {
+                  "const": "ZUC"
+                },
+                "op": {
+                  "enum": [
+                    "keystream",
+                    "encrypt",
+                    "eea3",
+                    "eea3-encrypt",
+                    "eia3"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "if": {
+            "properties": {
+              "sourceType": {
+                "const": "project-fixture"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "sourceRef": {
+                "const": "vectors/interop.json"
+              },
+              "source": {
+                "const": "project"
+              },
+              "sourceId": {
+                "not": {
+                  "pattern": "^(3gpp-|bc-|nist-|iso-|rfc-|gm-t-)"
+                }
+              }
+            }
+          },
+          "else": {
+            "$ref": "#/$defs/reviewedStandard"
+          }
+        }
+      ],
+      "additionalProperties": true
+    },
+    "reviewedStandard": {
+      "$comment": "Closed evidence list, not automatic standards certification. Add a reviewed primary source and exact payload together before promoting a fixture.",
+      "oneOf": [
+        {
+          "required": [
+            "sourceId",
+            "sourceRef",
+            "algo",
+            "op",
+            "keyHex",
+            "ivHex",
+            "lengthBytes",
+            "expected"
+          ],
+          "properties": {
+            "sourceId": {
+              "const": "bc-r1rv83-zuc128-test4-first-8-bytes"
+            },
+            "sourceRef": {
+              "const": "https://github.com/bcgit/bc-java/blob/r1rv83/core/src/test/java/org/bouncycastle/crypto/test/ZucTest.java#L114-L116"
+            },
+            "algo": {
+              "const": "ZUC"
+            },
+            "op": {
+              "const": "keystream"
+            },
+            "keyHex": {
+              "const": "00000000000000000000000000000000"
+            },
+            "ivHex": {
+              "const": "00000000000000000000000000000000"
+            },
+            "lengthBytes": {
+              "const": 8
+            },
+            "expected": {
+              "const": {
+                "hex": "27bede74018082da"
+              }
+            },
+            "source": {
+              "const": "https://github.com/bcgit/bc-java/blob/r1rv83/core/src/test/java/org/bouncycastle/crypto/test/ZucTest.java#L114-L116"
+            }
+          }
+        },
+        {
+          "required": [
+            "sourceId",
+            "sourceRef",
+            "algo",
+            "op",
+            "keyHex",
+            "count",
+            "bearer",
+            "direction",
+            "bitLength",
+            "inputHex",
+            "expected"
+          ],
+          "properties": {
+            "sourceId": {
+              "const": "3gpp-ts-35.223-eea3-test-set-2"
+            },
+            "sourceRef": {
+              "const": "https://www.gsma.com/solutions-and-impact/technologies/security/wp-content/uploads/2019/05/eea3eia3testdatav11.pdf#page=16"
+            },
+            "algo": {
+              "const": "ZUC"
+            },
+            "op": {
+              "const": "eea3-encrypt"
+            },
+            "keyHex": {
+              "const": "e5bd3ea0eb55ade866c6ac58bd54302a"
+            },
+            "count": {
+              "const": 354339
+            },
+            "bearer": {
+              "const": 24
+            },
+            "direction": {
+              "const": 1
+            },
+            "bitLength": {
+              "const": 800
+            },
+            "inputHex": {
+              "const": "14a8ef693d678507bbe7270a7f67ff5006c3525b9807e467c4e56000ba338f5d429559036751822246c80d3b38f07f4be2d8ff5805f5132229bde93bbbdcaf382bf1ee972fbf9977bada8945847a2a6c9ad34a667554e04d1f7fa2c33241bd8f01ba220d"
+            },
+            "expected": {
+              "const": {
+                "cipherHex": "131d43e0dea1be5c5a1bfd971d852cbf712d7b4f57961fea3208afa8bca433f456ad09c7417e58bc69cf8866d1353f74865e80781d202dfb3ecff7fcbc3b190fe82a204ed0e350fc0f6f2613b2f2bca6df5a473a57a4a00d985ebad880d6f23864a07b01"
+              }
+            },
+            "source": {
+              "const": "3GPP TS 35.223 / ETSI-SAGE Document 3 v1.1 section 4.4 test set 2"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

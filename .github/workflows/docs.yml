@@ -16,6 +16,9 @@ on:
       - '.github/scripts/generate-api-snapshot.mjs'
       - '.github/scripts/purge_edgeone.py'
       - '.github/scripts/test_purge_edgeone.py'
+      - '.github/scripts/test-deploy-docs-origin.mjs'
+      - 'scripts/sm9-native.ps1'
+      - '.github/workflows/sm9-native.yml'
   pull_request:
     paths:
       - 'docs/**'
@@ -30,6 +33,9 @@ on:
       - '.github/scripts/generate-api-snapshot.mjs'
       - '.github/scripts/purge_edgeone.py'
       - '.github/scripts/test_purge_edgeone.py'
+      - '.github/scripts/test-deploy-docs-origin.mjs'
+      - 'scripts/sm9-native.ps1'
+      - '.github/workflows/sm9-native.yml'
   workflow_dispatch:
     inputs:
       deploy:

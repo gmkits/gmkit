@@ -12,12 +12,12 @@ tag: [ZUC, EEA3, EIA3]
 GMKit 两端实现 ZUC-128 密钥流、3GPP 128-EEA3 机密性算法和 128-EIA3 完整性算法；当前不提供 ZUC-256。ZUC 相关接口同时使用 byte、32-bit word 和 bit 三种单位，协议中必须逐字段标明。
 
 <div class="doc-path-grid doc-path-grid-compact">
-  <a class="doc-path-card" href="/api/typescript/zuc.html">
+  <a class="doc-path-card" href="/manual/typescript/api/zuc.html">
     <span class="doc-path-label">gmkitx</span>
     <strong>TypeScript ZUC API</strong>
     <small>高层函数、ZUC 类、ZUCState、长度单位和 EEA3/EIA3 案例。</small>
   </a>
-  <a class="doc-path-card" href="/api/java/zuc.html">
+  <a class="doc-path-card" href="/manual/java/api/zuc.html">
     <span class="doc-path-label">cn.gmkit:gmkit</span>
     <strong>Java ZUC API</strong>
     <small>ZUC、ZUCUtil、全部重载、字数组结果和参数失败行为。</small>
@@ -83,5 +83,5 @@ TypeScript 与 Java 使用同一份共享向量验证长 EEA3 输出，页面不
 - [3GPP TS 35.221 - 128-EEA3](https://www.3gpp.org/DynaReport/35221.htm)
 - [3GPP TS 35.222 - 128-EIA3](https://www.3gpp.org/DynaReport/35222.htm)
 - [共享互操作向量](/standards/interop-vectors)
-- [TypeScript ZUC 可执行案例](/api/typescript/zuc.html#可执行案例)
-- [Java ZUC 可执行案例](/api/java/zuc.html#可执行案例)
+- [TypeScript ZUC 可执行案例](/manual/typescript/api/zuc.html#可执行案例)
+- [Java ZUC 可执行案例](/manual/java/api/zuc.html#可执行案例)

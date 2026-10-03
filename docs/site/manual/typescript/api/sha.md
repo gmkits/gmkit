@@ -393,12 +393,12 @@ SHA1.digest(data: string | Uint8Array, outputFormat?: 'hex' | 'base64'): string
 ::: details 查看测试源码
 <!-- code-sample id="api-typescript-sha-08" steps="准备输入|计算 SM3 摘要|SM3 重置断言|计算 SM3 HMAC|计算 SHA-256 摘要|SHA-256 重置断言|计算 SHA-256 HMAC" -->
 ```js
-<!-- @include: ../../examples/node/public-api-manual.mjs#ts-sm3-sha-example -->
+<!-- @include: ../../../examples/node/public-api-manual.mjs#ts-sm3-sha-example -->
 ```
 :::
 
 ## 相关页面
 
 - [SHA 算法与 Java JDK 对照](/algorithms/SHA.html)
-- [编码、随机数与敏感值比较](/api/typescript/common.html)
-- [TypeScript SM3 API](/api/typescript/sm3.html)：国密摘要与 HMAC-SM3
+- [编码、随机数与敏感值比较](./common.html)
+- [TypeScript SM3 API](./sm3.html)：国密摘要与 HMAC-SM3

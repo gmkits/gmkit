@@ -94,4 +94,4 @@ tag: [SM2, 签名, 加密]
 
 空 `userId` 会被 Builder 改成 `SM2.DEFAULT_USER_ID`，不能表达独立的空身份。已发布兼容成员见[旧系统迁移](/manual/migration.html)；C1C2C3 只在对端协议明确要求时使用。
 
-全部构造器、重载、Builder 和转换成员见 [Java SM2 API](/api/java/sm2.html)。
+全部构造器、重载、Builder 和转换成员见 [Java SM2 API](/manual/java/api/sm2.html)。

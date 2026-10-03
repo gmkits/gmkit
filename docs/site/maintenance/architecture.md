@@ -32,6 +32,26 @@ gmkit/
 
 `packages/ts` 和 `packages/java` 是可发布算法实现；`docs/site`、`apps/gmkit-studio` 和仓库脚本不进入 npm 或 Maven 主包。根级 `vectors` 是测试协议，不是运行时依赖。
 
+## 文档源码边界
+
+```text
+docs/site/
+├── guide/                  快速入门和环境排查
+├── manual/typescript/      TypeScript 任务手册
+│   └── api/                TypeScript 中文 API 详解
+├── manual/java/            Java 任务手册
+│   └── api/                Java 中文 API 详解
+├── algorithms/             算法、协议字段和标准证据
+├── api/                    API 门户、公共约定和覆盖清单
+├── integrations/           第三方语言或框架集成示例
+├── extensions/             可独立发布的未来扩展包契约
+├── maintenance/            项目维护和发布说明
+├── examples/               由文档 CI 实际执行的示例源码
+└── catalog/                制品、版本和文档入口注册表
+```
+
+`manual/<language>/api/` 是面向开发者的中文逐成员说明；`api/<language>/` 是自动生成签名索引的稳定入口。TypeDoc 和 Javadoc 的 HTML 只在构建时写入 `.vuepress/public/api/`，不会与手写 Markdown 混放。旧 API 说明 URL 通过 redirect 配置迁移到 `manual/<language>/api/`，生成索引 URL 和历史版本 URL 保持独立。
+
 ## TypeScript 包
 
 ```text

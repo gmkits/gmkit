@@ -35,6 +35,16 @@ class SM9EncTest {
     }
 
     @Test
+    void oneBytePlaintextShouldRoundTrip() {
+        try (SM9EncMasterKey master = SM9.generateEncMasterKey();
+             SM9EncKey encKey = master.extractKey("bob@example.com")) {
+            byte[] plaintext = new byte[] {0x01};
+            byte[] ciphertext = SM9.encrypt(master, "bob@example.com", plaintext);
+            assertArrayEquals(plaintext, SM9.decrypt(encKey, ciphertext));
+        }
+    }
+
+    @Test
     void decryptWithWrongUserKeyShouldFail() {
         try (SM9EncMasterKey master = SM9.generateEncMasterKey();
              SM9EncKey wrongKey = master.extractKey("carol@example.com")) {

@@ -7,11 +7,12 @@ package cn.gmkit.sm9;
  * 对大数据流式处理或需要复用上下文的场景，请直接使用 {@link SM9Signature}。
  *
  * <h2>能力范围</h2>
- * 与 GmSSL 一致，SM9 仅支持 <b>签名 / 验签</b> 与 <b>加密 / 解密（IBE）</b>，
- * <b>不支持密钥交换</b>。
+ * 当前 Java API 提供 <b>签名 / 验签</b> 与 <b>加密 / 解密（IBE）</b>，
+ * <b>未提供 SM9 密钥交换入口</b>。这是本模块的封装范围，不是 SM9 标准的能力限制。
  *
  * <h2>可用性</h2>
- * 所有方法都依赖 native 库；可先通过 {@link #isAvailable()} 判断当前平台是否支持。
+ * 密码操作依赖 native 库；诊断方法在加载失败时仍可调用，
+ * 可先通过 {@link #isAvailable()} 判断当前平台是否可用。
  */
 public final class SM9 {
 
@@ -75,6 +76,7 @@ public final class SM9 {
      * 生成 SM9 加密主密钥。
      *
      * @return 加密主密钥
+     * @throws SM9Exception native 不可用或生成操作失败时抛出
      */
     public static SM9EncMasterKey generateEncMasterKey() {
         return SM9EncMasterKey.generate();
@@ -134,7 +136,7 @@ public final class SM9 {
      * @param id              签名者用户标识
      * @param data            原始数据
      * @param signature       待验证签名值
-     * @return 验证通过返回 {@code true}
+     * @return GmSSL 验证通过返回 {@code true}；非成功返回码统一为 {@code false}，不区分签名或 DER 错误
      * @throws SM9Exception 主公钥、数据或签名为空，或用户标识无效时抛出
      */
     public static boolean verify(SM9SignMasterKey masterPublicKey, String id, byte[] data, byte[] signature) {

@@ -1,8 +1,7 @@
 import { defineUserConfig } from 'vuepress';
 import { hopeTheme } from 'vuepress-theme-hope';
 import { viteBundler } from '@vuepress/bundler-vite';
-import { compression, defineAlgorithm } from 'vite-plugin-compression2';
-import { constants } from 'zlib';
+import { handleBuildWarning } from '../scripts/build-warnings.mjs';
 
 const hiddenContributors = new Set(['Copilot', 'copilot-swe-agent[bot]']);
 
@@ -23,23 +22,11 @@ export default defineUserConfig({
 
   bundler: viteBundler({
     viteOptions: {
-      plugins: [
-        compression({
-          include: /\.(js|mjs|css|html|json|svg|map)$/i,
-          threshold: 1024,
-          skipIfLargerOrEqual: true,
-          deleteOriginalAssets: false,
-          algorithms: [
-            defineAlgorithm('gzip', { level: 9 }),
-            defineAlgorithm('brotliCompress', {
-              params: {
-                [constants.BROTLI_PARAM_QUALITY]: 11,
-              },
-            }),
-            defineAlgorithm('zstandard', { level: 19 }),
-          ],
-        }),
-      ],
+      build: {
+        rolldownOptions: {
+          onwarn: handleBuildWarning,
+        },
+      },
     },
   }),
 
@@ -137,6 +124,19 @@ export default defineUserConfig({
             '/manual/typescript/sm4',
             '/manual/typescript/zuc',
             '/manual/typescript/advanced',
+            {
+              text: 'TypeScript API 详解',
+              collapsible: true,
+              children: [
+                '/manual/typescript/api/',
+                '/manual/typescript/api/common',
+                '/manual/typescript/api/sm2',
+                '/manual/typescript/api/sm3',
+                '/manual/typescript/api/sm4',
+                '/manual/typescript/api/zuc',
+                '/manual/typescript/api/sha',
+              ],
+            },
           ],
         },
         {
@@ -150,6 +150,20 @@ export default defineUserConfig({
             '/manual/java/zuc',
             '/manual/java/sm9',
             '/manual/java/hybrid',
+            {
+              text: 'Java API 详解',
+              collapsible: true,
+              children: [
+                '/manual/java/api/',
+                '/manual/java/api/core',
+                '/manual/java/api/sm2',
+                '/manual/java/api/sm3',
+                '/manual/java/api/sm4',
+                '/manual/java/api/zuc',
+                '/manual/java/api/sm9',
+                { text: 'SM2 + SM4 混合加密', link: '/manual/java/api/integration' },
+              ],
+            },
           ],
         },
       ],
@@ -166,30 +180,17 @@ export default defineUserConfig({
       ],
       '/api/typescript/': [
         {
-          text: 'TypeScript API 说明书',
+          text: 'TypeScript 生成参考',
           children: [
             '/api/typescript/',
-            '/api/typescript/common',
-            '/api/typescript/sm2',
-            '/api/typescript/sm3',
-            '/api/typescript/sm4',
-            '/api/typescript/zuc',
-            '/api/typescript/sha',
           ],
         },
       ],
       '/api/java/': [
         {
-          text: 'Java API 说明书',
+          text: 'Java 生成参考',
           children: [
             '/api/java/',
-            '/api/java/core',
-            '/api/java/sm2',
-            '/api/java/sm3',
-            '/api/java/sm4',
-            '/api/java/zuc',
-            '/api/java/sm9',
-            { text: 'SM2 + SM4 混合加密', link: '/api/java/integration' },
           ],
         },
       ],
@@ -285,6 +286,23 @@ export default defineUserConfig({
       },
       readingTime: { wordPerMinute: 200 },
       copyright: false,
+      redirect: {
+        config: {
+          '/api/typescript/common.html': '/manual/typescript/api/common.html',
+          '/api/typescript/sm2.html': '/manual/typescript/api/sm2.html',
+          '/api/typescript/sm3.html': '/manual/typescript/api/sm3.html',
+          '/api/typescript/sm4.html': '/manual/typescript/api/sm4.html',
+          '/api/typescript/zuc.html': '/manual/typescript/api/zuc.html',
+          '/api/typescript/sha.html': '/manual/typescript/api/sha.html',
+          '/api/java/core.html': '/manual/java/api/core.html',
+          '/api/java/sm2.html': '/manual/java/api/sm2.html',
+          '/api/java/sm3.html': '/manual/java/api/sm3.html',
+          '/api/java/sm4.html': '/manual/java/api/sm4.html',
+          '/api/java/zuc.html': '/manual/java/api/zuc.html',
+          '/api/java/sm9.html': '/manual/java/api/sm9.html',
+          '/api/java/integration.html': '/manual/java/api/integration.html',
+        },
+      },
     },
 
     markdown: {

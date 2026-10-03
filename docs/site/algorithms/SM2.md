@@ -12,12 +12,12 @@ tag: [SM2, 加密, 签名, 密钥交换]
 SM2 同时覆盖签名、公钥加密和密钥交换。GMKit 的 Java 与 TypeScript 包固定使用标准 SM2 曲线；算法名称相同并不代表身份、签名格式、密文排列或长度单位可以省略。
 
 <div class="doc-path-grid doc-path-grid-compact">
-  <a class="doc-path-card" href="/api/typescript/sm2.html">
+  <a class="doc-path-card" href="/manual/typescript/api/sm2.html">
     <span class="doc-path-label">gmkitx</span>
     <strong>TypeScript SM2 API</strong>
     <small>函数、选项、SM2 类、返回值、失败断言和密钥交换案例。</small>
   </a>
-  <a class="doc-path-card" href="/api/java/sm2.html">
+  <a class="doc-path-card" href="/manual/java/api/sm2.html">
     <span class="doc-path-label">cn.gmkit:gmkit</span>
     <strong>Java SM2 API</strong>
     <small>实例与静态入口、全部重载、Builder、格式工具和互操作测试。</small>
@@ -112,5 +112,5 @@ C3 不匹配、点编码无效、DER 非最短编码或尾随数据都属于失�
 - [GM/T 0009 实现边界](/standards/GMT-0009-COMPLIANCE)
 - [GM/T 0009 快速参考](/standards/GMT-0009-快速参考)
 - [共享互操作向量](/standards/interop-vectors)
-- [TypeScript SM2 API 的可执行案例](/api/typescript/sm2.html#可执行案例)
-- [Java SM2 API 的 BC 互操作与 no-z 边界](/api/java/sm2.html#标准-z、旧-no-z-与预计算-e)
+- [TypeScript SM2 API 的可执行案例](/manual/typescript/api/sm2.html#可执行案例)
+- [Java SM2 API 的 BC 互操作与 no-z 边界](/manual/java/api/sm2.html#z-与预计算-e)

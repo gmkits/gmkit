@@ -16,14 +16,28 @@ tag:
 
 ## 本地验证
 
+文档工具链与 CI 统一使用 Node.js 22.15+ 和 JDK 21（设置 `JAVA_HOME`）；这是构建要求，不改变发布 Java 库的 Java 8 运行基线。旧 JDK 的 Javadoc 可能生成失效锚点，不能用缓存产物代替当前 JDK 的生成结果。
+
 ```bash
 npm ci
 npm run docs:verify
 ```
 
-`docs:verify` 会构建 gmkitx，生成 TypeDoc 与 Java/SM9 聚合 Javadoc，检查公开 API、版本、措辞和链接，再执行 Node、Go、Python、Rust、Hutool 示例。Java Javadoc 使用 `doclint=all`，公共成员缺少参数、返回值或异常说明时会失败。
+`docs:verify` 会构建 gmkitx，生成 TypeDoc 与 Java/SM9 聚合 Javadoc，检查公开 API、版本、措辞、部署契约和链接，再执行 Node、Go、Python、Rust、Hutool 示例。SM9 普通文档 lane 只做平台诊断和 native 不可用边界检查；Java Javadoc 使用 `doclint=all`，公共成员缺少参数、返回值或异常说明时会失败。SM9 真实运行证据来自专用五平台 Action。
+
+VuePress 使用锁文件安装的工具链，Rolldown 正确性和未知警告直接使构建失败，仅自身的性能报告按下文策略完整输出（配置依据见 [Vite build.rolldownOptions](https://vite.dev/config/build-options.html#build-rolldownoptions)）。浏览器兼容数据库的更新时间提示不属于打包器警告，应在依赖维护时单独更新。内容关键词、TypeDoc 参数标签和成员覆盖检查可以防止遗漏，但不能证明注释语义正确，仍需对照实现和可执行示例审查。
+
+构建后链接门禁枚举全部 HTML（包括 TypeDoc/Javadoc），检查本地页面、资源和锚点；扩展名省略的路径按 `.html` 或目录首页解析，缺页不会退回 SPA 首页。此命令不访问外部站点，外链可用性不属于这项本地验证的证据。
+
+Rust 示例默认使用临时 Cargo 缓存下载锁定依赖。若本机证书吊销服务或 registry 不可达，`docs:verify` 会失败，不自动跳过或关闭证书校验。可在 `docs/site/examples/rust` 运行 `cargo test --locked --offline`，或在运行 `docs:verify` 时显式设置 `CARGO_HOME` 指向已有缓存并设置 `CARGO_NET_OFFLINE=true`。这仍会真实编译、执行所有示例，缺少缓存即失败；报告必须注明离线依赖条件，不能声称全新依赖下载已通过。脚本不会删除外部指定的 Cargo 缓存。
 
 ## 部署顺序
+
+`docs:build` 在 VuePress 完成渲染后执行静态压缩，覆盖最终 HTML 和生成 API。gzip/Brotli/Zstd 分别使用级别 6/5/3，最多同时处理四个文件；原文件始终保留，仅保存体积更小的副本。正确性/未知 warning 和压缩失败都返回非零，不允许以缺失副本掩盖错误。Zstd 使用 Node.js 内置 zlib，要求 Node.js 22.15 及以上。
+
+唯一单独分类的诊断是 Rolldown 自身的 `PLUGIN_TIMINGS`：完整传递给默认日志，不关闭检测。它反映插件与 link 阶段的耗时比例，不表示输出错误，正常 Vue/CSS 编译也可能触发。策略测试验证未知代码、插件自报或相同消息子串不能绕过门禁；[上游定义](https://rolldown.rs/reference/InputOptions.checks#bundlertimings)说明了计时口径。
+
+`deployment.json` 和 `api/versions.json` 由后续部署或快照步骤更新，因此排除压缩并清理旧副本，避免源站优先返回过期压缩内容。
 
 1. Action 写入 `deployment.json`，记录 commit、构建时间、Action run 和 Java/TypeScript 版本。
 2. 同一个 artifact 通过 rsync 部署到 CN 源站的 `/home/gmkit-site/www/`。

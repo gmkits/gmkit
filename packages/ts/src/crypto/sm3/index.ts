@@ -148,6 +148,9 @@ export class SM3HashState {
   private byteLength = 0n;
   private finished = false;
 
+  /** 创建未累计消息的 SM3 状态；完成摘要后需调用 reset 才能再次更新。 */
+  constructor() {}
+
   /**
    * 追加一段消息。字符串按 UTF-8 编码，可多次调用。
    *
@@ -252,6 +255,7 @@ function assertOutputFormat(format?: OutputFormatType) {
  * @param data - 输入数据（字符串或 Uint8Array）
  * @param options - 哈希选项
  * @returns 哈希摘要（默认为小写十六进制字符串，64 个字符）
+ * @throws 输出格式无效或宿主文本编码器失败时抛出错误
  *
  * @example
  * ```typescript
@@ -283,6 +287,7 @@ export const sm3Digest = digest;
  * @param data - 要认证的数据（字符串或 Uint8Array）
  * @param options - 哈希选项
  * @returns HMAC 值（默认为小写十六进制字符串，64 个字符）
+ * @throws 输出格式无效或宿主文本编码器失败时抛出错误
  *
  * @example
  * ```typescript

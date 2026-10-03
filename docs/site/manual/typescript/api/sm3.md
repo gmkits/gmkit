@@ -336,12 +336,12 @@ if (Array.from(reused, (value) => value.toString(16).padStart(2, '0')).join('')
 ::: details 查看测试源码
 <!-- code-sample id="api-typescript-sm3-10" steps="准备输入|计算 SM3 摘要|SM3 重置断言|计算 SM3 HMAC|计算 SHA-256 摘要|SHA-256 重置断言|计算 SHA-256 HMAC" -->
 ```js
-<!-- @include: ../../examples/node/public-api-manual.mjs#ts-sm3-sha-example -->
+<!-- @include: ../../../examples/node/public-api-manual.mjs#ts-sm3-sha-example -->
 ```
 :::
 
 ## 相关页面
 
 - [跨语言 SM3 协议与固定向量](/algorithms/SM3.html)
-- [编码与敏感值比较](/api/typescript/common.html)
-- [TypeScript SM2 API](/api/typescript/sm2.html)：使用 SM3 绑定身份的数字签名
+- [编码与敏感值比较](./common.html)
+- [TypeScript SM2 API](./sm2.html)：使用 SM3 绑定身份的数字签名

@@ -724,6 +724,9 @@ public final class SM2Util {
 
     /**
      * 执行带确认标签的 SM2 密钥交换。
+     * <p>
+     * {@code confirmationTag} 只用于发起方 A 验证响应方 B 发送的标准 S1；
+     * 响应方对发起方返回的 S2 需要另行调用 {@link #confirmResponder(byte[], byte[])}。
      *
      * @param selfStaticPrivateKeyHex 己方静态私钥
      * @param selfEphemeralPrivateKeyHex 己方临时私钥
@@ -747,10 +750,10 @@ public final class SM2Util {
     }
 
     /**
-     * 比较对端确认标签是否匹配。
+     * 以常量时间比较响应方期望的 S2 与发起方返回的确认标签。
      *
-     * @param expectedS2 期望的 S2 标签
-     * @param confirmationTag 实际返回的确认标签
+     * @param expectedS2 响应方本地计算出的 S2 标签
+     * @param confirmationTag 发起方返回的 S2 标签
      * @return 常量时间比较结果
      */
     public static boolean confirmResponder(byte[] expectedS2, byte[] confirmationTag) {

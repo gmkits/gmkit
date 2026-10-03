@@ -11,7 +11,8 @@
   "scripts": {
     "verify": "npm run test:ts && npm run test:java && npm run parity && npm run build:ts && npm run test:package -w packages/ts",
     "test:ts": "npm run type-check -w packages/ts && npm test -w packages/ts",
-    "test:java": "mvn -f packages/java/pom.xml -B -ntp test",
+    "test:java": "npm run test:sm9-bundle && mvn -f packages/java/pom.xml -B -ntp test",
+    "test:sm9-bundle": "node scripts/test-sm9-runtime-assembly.mjs",
     "parity": "mvn -f packages/java/pom.xml -B -ntp -pl gmkit -Dtest=InteropComplianceTest test && npm exec -w packages/ts -- vitest run test/interop-compliance.test.ts --config vitest.config.ts",
     "build:ts": "npm run build -w packages/ts",
     "build:java": "mvn -f packages/java/pom.xml -B -ntp -DskipTests install",
@@ -22,15 +23,16 @@
     "docs:generate-api:versions": "npm run generate:api:versions -w docs/site",
     "docs:check-api": "npm run check:api -w docs/site",
     "docs:check": "npm run check -w docs/site",
+    "docs:check-deploy": "npm run docs:check-deploy -w docs/site",
     "docs:test-examples": "npm run test:examples -w docs/site",
     "docs:check-links": "npm run check:links -w docs/site",
-    "docs:verify": "npm run build:ts && npm run docs:generate-api && npm run docs:check-api && npm run docs:check && npm run docs:test-examples && npm run docs:build && npm run docs:check-links",
+    "docs:verify": "npm run build:ts && npm run docs:generate-api && npm run docs:check-api && npm run docs:check && npm run docs:check-deploy && npm run docs:test-examples && npm run docs:build && npm run docs:check-links",
     "docs:dev": "npm run docs:generate-api && npm run dev -w docs/site",
     "studio:build": "npm run build -w apps/gmkit-studio",
     "studio:dev": "npm run dev -w apps/gmkit-studio --",
     "studio:type-check": "npm run type-check -w apps/gmkit-studio"
   },
   "engines": {
-    "node": ">=22.12.0"
+    "node": ">=22.15.0"
   }
 }

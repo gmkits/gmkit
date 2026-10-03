@@ -19,8 +19,8 @@ public final class SM2KeyExchangeResult {
      * 创建一个密钥交换结果对象。
      *
      * @param key 协商出的共享密钥
-     * @param s1  己方确认标签
-     * @param s2  对方确认标签
+     * @param s1  标准 S1（0x02）；由响应方 B 发送、发起方 A 在协议层验证
+     * @param s2  标准 S2（0x03）；由发起方 A 发送、响应方 B 在协议层验证
      */
     public SM2KeyExchangeResult(byte[] key, byte[] s1, byte[] s2) {
         this.key = Bytes.clone(key);
@@ -38,7 +38,7 @@ public final class SM2KeyExchangeResult {
     }
 
     /**
-     * 获取己方确认标签 S1。
+     * 获取标准 S1（0x02）。
      *
      * @return S1 字节数组的防御性拷贝
      */
@@ -47,7 +47,7 @@ public final class SM2KeyExchangeResult {
     }
 
     /**
-     * 获取对方确认标签 S2。
+     * 获取标准 S2（0x03）。
      *
      * @return S2 字节数组的防御性拷贝
      */

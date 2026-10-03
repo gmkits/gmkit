@@ -15,6 +15,13 @@
     <description>GMKit 主运行时国密算法工具库，支持 SM2、SM3、SM4、ZUC</description>
 
     <dependencies>
+        <!-- 仅用于共享向量的 Draft 2020-12 校验，不进入运行时依赖。 -->
+        <dependency>
+            <groupId>com.networknt</groupId>
+            <artifactId>json-schema-validator</artifactId>
+            <version>2.0.4</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15to18</artifactId>

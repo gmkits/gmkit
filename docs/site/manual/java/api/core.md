@@ -632,7 +632,7 @@ public static byte[] ByteEncodings.decodeAuto(String input, String label)
 ::: details 查看测试源码
 <!-- code-sample id="api-java-core-23" steps="Base64 解码|Hex 编码断言|非法输入断言" -->
 ```java
-<!-- @include: ../../../../packages/java/gmkit/src/test/java/cn/gmkit/PublicApiManualExamplesTest.java#java-core-example -->
+<!-- @include: ../../../../../packages/java/gmkit/src/test/java/cn/gmkit/PublicApiManualExamplesTest.java#java-core-example -->
 ```
 :::
 
@@ -640,5 +640,5 @@ public static byte[] ByteEncodings.decodeAuto(String input, String label)
 
 - [跨语言编码、错误与安全约定](/api/common.html)
 - [Java API 首页](/api/java/)
-- [Java SM2 API](/api/java/sm2.html)
-- [Java SM4 API](/api/java/sm4.html)
+- [Java SM2 API](./sm2.html)
+- [Java SM4 API](./sm4.html)

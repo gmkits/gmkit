@@ -12,7 +12,7 @@ tag: [SM9, Java, JNI, GmSSL]
 SM9 使用身份字符串参与密钥派生和密码运算。GMKit 当前只通过 Java 制品 `cn.gmkit:gmkit-sm9:0.10.1` 提供签名、验签、基于身份的加密（IBE）、PEM 和流式签名；底层由 JNI 调用随 JAR 分发的 GmSSL 本地动态库。`gmkitx` 不提供 SM9、WASM 占位或浏览器降级实现。
 
 <div class="doc-path-grid doc-path-grid-compact">
-  <a class="doc-path-card" href="/api/java/sm9.html">
+  <a class="doc-path-card" href="/manual/java/api/sm9.html">
     <span class="doc-path-label">Java · gmkit-sm9</span>
     <strong>SM9 API 说明书</strong>
     <small>依赖、平台诊断、句柄、签名、IBE、PEM、文件路径、限制和可执行案例。</small>
@@ -104,7 +104,9 @@ IBE 的 255 字节上限适合保护短会话材料，不适合直接处理文�
 ## 句柄与 PEM 边界
 
 - 主密钥、用户私钥和签名上下文持有 native handle，使用 try-with-resources；`close()` 可重复调用。
-- 关闭后再次操作会抛 `SM9Exception`。不要把同一句柄交给多个都负责关闭它的组件。
+- 所有 native 句柄对象都不是并发安全类型；`close()` 不得与任何实例方法并发执行，调用方负责外部同步或所有权转移。
+- 关闭后再次执行 native 操作会抛 `SM9Exception`；`getId()` 仍可读取已保存的 Java 元数据。不要把同一句柄交给多个都负责关闭它的组件。
+- JAR 内置 runtime 的两个文件都经 SHA-256 清单校验后才加载。清单用于发现缺失和内容损坏，不替代制品签名；显式路径和系统库由部署方验证来源，不套用 JAR 内清单。
 - PEM 口令和路径按 UTF-8 处理；Windows native 使用宽字符文件 API。口令或路径包含 NUL 时拒绝。
 - 公开主密钥可以分发，主私钥和用户私钥只能以受控方式保存；口令加密 PEM 不替代文件权限、密钥托管和审计。
 
@@ -117,11 +119,11 @@ IBE 的 255 字节上限适合保护短会话材料，不适合直接处理文�
 | 层级 | 实际执行内容 | 能证明什么 | 不能证明什么 |
 |:--|:--|:--|:--|
 | GmSSL 固定向量 | 五个平台先运行上游 `sm9test.c` 的 `ks`、`ds`、`ke`、`de` 派生向量 | 锁定版本的底层 SM9 派生运算通过其固定结果 | 不能证明 Java 参数桥接或 JAR 打包正确 |
-| Java/JNI 行为 | 签名、错误身份、篡改、IBE、1/255/256 字节边界、PEM、Unicode 与句柄关闭 | Java 参数到 native 的转换和失败语义 | 随机输出不能冒充固定国标向量 |
+| Java/JNI 行为 | 签名、错误身份、篡改、IBE、空/1/255/256 字节边界、PEM、Unicode 与句柄关闭 | Java 参数到 native 的转换和失败语义 | 随机输出不能冒充固定国标向量 |
 | 聚合 JAR | 五个平台使用同一发布 JAR，验证自动选平台、签名、IBE 和 Unicode PEM | 发布物包含并能加载对应 runtime | 不能替代业务 KGC、身份和合规评审 |
 
 </ApiTable>
 
 固定结果的可核查来源是锁定提交的 [`tests/sm9test.c`](https://github.com/guanzhi/GmSSL/blob/d655c06b3a6b0fe8cff900f293bf0e5aac6eb0a2/tests/sm9test.c)。Java 公共 API 不暴露原始 `ks/ke/ds/de` 内存结构，因此标准派生向量在 GmSSL 层执行，Java 层专门验证公开 API 行为和边界。
 
-完整可运行案例与测试对应关系见 [Java SM9 API 说明书](/api/java/sm9.html#可执行案例)。
+完整可运行案例与测试对应关系见 [Java SM9 API 说明书](/manual/java/api/sm9.html#可执行案例)。

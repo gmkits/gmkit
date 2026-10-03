@@ -8,6 +8,7 @@
   "name": "gmkitx API",
   "lang": "zh",
   "readme": "api/public-api.md",
+  "customCss": ".vuepress/styles/typedoc.css",
   "includeVersion": true,
   "excludePrivate": true,
   "excludeProtected": true,

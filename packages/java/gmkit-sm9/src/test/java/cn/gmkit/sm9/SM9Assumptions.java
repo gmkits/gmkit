@@ -21,6 +21,19 @@ final class SM9Assumptions {
      * @return native 库可用返回 {@code true}
      */
     static boolean nativeAvailable() {
-        return SM9.isAvailable();
+        // 专用 native job 设置该属性后，即使库加载失败也必须让测试进入正文并失败，
+        // 不能让 @EnabledIf 把缺失 runtime 伪装成 skipped。
+        return SM9.isAvailable() || Boolean.getBoolean(REQUIRE_NATIVE_PROPERTY);
+    }
+
+    /** 资源 fixture 只依赖支持的平台命名，不依赖本机是否安装 native。 */
+    static boolean platformSupportedOrNativeRequired() {
+        if (Boolean.getBoolean(REQUIRE_NATIVE_PROPERTY)) return true;
+        try {
+            SM9NativeLoader.detectPlatform();
+            return true;
+        } catch (SM9UnsupportedPlatformException unsupported) {
+            return false;
+        }
     }
 }

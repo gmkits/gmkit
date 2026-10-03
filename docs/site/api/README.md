@@ -15,18 +15,18 @@ tag:
 
 # API 说明书
 
-按开发语言进入手写说明书，查询入口选择、参数约束、返回值、失败行为和可运行案例。只有核对历史制品的逐成员签名时，才需要版本签名索引。
+按开发语言进入中文 API 说明，查询入口选择、参数约束、返回值、失败行为和可运行案例。只有核对历史制品的逐成员签名时，才需要生成签名索引。中文说明位于 `manual/<language>/api/`，本页和 `/api/<language>/` 是 API 门户入口。
 
 <div class="doc-path-grid">
   <a class="doc-path-card" href="/api/typescript/">
     <span class="doc-path-label">npm · gmkitx</span>
     <strong>TypeScript API 说明书</strong>
-    <small>121 个根导出，覆盖浏览器与 Node.js 的参数、状态、默认值和失败断言。</small>
+    <small><ApiPackageSummary package-id="typescript" />覆盖浏览器与 Node.js 的参数、状态、默认值和失败断言。</small>
   </a>
   <a class="doc-path-card" href="/api/java/">
     <span class="doc-path-label">Maven · cn.gmkit</span>
     <strong>Java API 说明书</strong>
-    <small>46 个公共顶层类型，覆盖重载、Builder、Provider、异常和资源关闭。</small>
+    <small><ApiPackageSummary package-id="java" />覆盖重载、Builder、Provider、异常和资源关闭。</small>
   </a>
   <a class="doc-path-card" href="/api/common.html">
     <span class="doc-path-label">双语言协议</span>
@@ -48,7 +48,7 @@ tag:
   <li><strong>最后跑案例</strong><span>同时运行成功断言与篡改、错误身份或错误 tag 等失败断言。</span></li>
 </ol>
 
-算法总览只负责标准、协议字段和双语言差异。语言 API 页负责具体签名和案例，避免同一组参数在多处重复维护。
+算法总览只负责标准、协议字段和双语言差异。语言 API 详解负责具体签名和案例，生成签名索引只负责核对公共成员，避免同一组参数在多处重复维护。
 
 自动生成的签名索引会机械列出成员，但不会替应用决定 mode、padding、身份、编码、nonce 或资源生命周期，因此不作为日常阅读入口。
 

@@ -63,9 +63,13 @@ const exchangeB = sm2KeyExchange({
 assert.equal(exchangeA.sharedKey.length, 32);
 assert.equal(exchangeA.sharedKey, exchangeB.sharedKey);
 
-// 6. 确认标签断言：双方计算的 S1 与 S2 必须分别一致后才能接受会话。
+// 6. 确认标签断言：标准 S1 由 B 发给 A，S2 由 A 发给 B；当前 API 只计算，发送与验证由协议层完成。
 assert.equal(exchangeA.s1, exchangeB.s1);
 assert.equal(exchangeA.s2, exchangeB.s2);
+const s1FromB = exchangeB.s1;
+const s2FromA = exchangeA.s2;
+assert.equal(s1FromB, exchangeA.s1);
+assert.equal(s2FromA, exchangeB.s2);
 
 // 7. 身份错误断言：B 的 userId 被替换后，派生 key 和确认标签不得通过比对。
 const wrongIdentity = sm2KeyExchange({

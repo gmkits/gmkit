@@ -1,7 +1,7 @@
 package cn.gmkit.sm9;
 
 /**
- * 当当前操作系统 / CPU 架构没有可用的 SM9 native 库时抛出。
+ * 当当前操作系统 / CPU 架构不受支持、内置 runtime 缺失或 native 库加载失败时抛出。
  * <p>
  * 该异常继承自 {@link SM9Exception}，因此既可以单独捕获以区分“平台不支持”，
  * 也可以与其它 SM9 错误一起按 {@link SM9Exception} 统一处理。

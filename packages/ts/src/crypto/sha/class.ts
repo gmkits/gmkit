@@ -40,6 +40,7 @@ abstract class SHABase {
    * 完成哈希计算并返回结果
    * 注意：调用此方法后哈希器状态会被重置
    * @returns 哈希摘要
+   * @throws 底层输入状态无效或输出编码配置无效时抛出错误
    */
   digest(): string {
     const hash = this.hasher.digest();

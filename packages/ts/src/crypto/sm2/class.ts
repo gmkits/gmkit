@@ -188,6 +188,7 @@ export class SM2 {
   /**
    * 设置标准曲线参数兼容声明。传入不同于标准 SM2 曲线的值后，签名或验签会拒绝执行。
    * @param curveParams - 标准 SM2 曲线参数
+   * @remarks 该声明不会切换曲线或重新计算密钥；它用于在后续签名和验签前拒绝非标准参数。实例保存的是调用方对象的当前引用。
    */
   setCurveParams(curveParams: SM2CurveParams): void {
     this.curveParams = curveParams;
@@ -208,8 +209,10 @@ export class SM2 {
    * @param peerTempPublicKey - 对方临时公钥（十六进制字符串）
    * @param isInitiator - 是否为发起方
    * @param options - 可选参数
-   * @returns 密钥交换结果
-   * @throws 任一密钥、身份、角色或派生长度无效，或确认标签不匹配时抛出错误
+   * @returns 密钥交换结果，包含本方临时公钥、共享密钥以及标准 S1（0x02）/S2（0x03）确认值
+   * @throws 任一密钥、身份、角色或派生长度无效
+   *
+   * 此方法只计算确认值，不接收或验证对端确认值；“确认标签不匹配”必须由上层协议处理。
    *
    * @example
    * ```typescript

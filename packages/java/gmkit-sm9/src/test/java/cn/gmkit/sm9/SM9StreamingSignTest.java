@@ -6,6 +6,8 @@ import org.junit.jupiter.api.condition.EnabledIf;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -53,6 +55,85 @@ class SM9StreamingSignTest {
             assertNotNull(second);
             assertTrue(SM9.verify(master, "reuse@example.com", "second".getBytes(), second));
         }
+    }
+
+    @Test
+    void modeAndFinishedStateShouldBeEnforced() {
+        byte[] message = "state-machine".getBytes(java.nio.charset.StandardCharsets.UTF_8);
+        try (SM9SignMasterKey master = SM9.generateSignMasterKey();
+             SM9SignKey signKey = master.extractKey("state@example.com");
+             SM9Signature signer = new SM9Signature(true);
+             SM9Signature verifier = new SM9Signature(false)) {
+
+            // 验签上下文不能执行签名，签名上下文不能执行验签。
+            assertThrows(SM9Exception.class, () -> verifier.sign(signKey));
+            assertThrows(SM9Exception.class,
+                    () -> signer.verify(new byte[] {1}, master, "state@example.com"));
+            signer.update(message);
+            byte[] signature = signer.sign(signKey);
+            assertThrows(SM9Exception.class, () -> signer.update(message));
+            assertThrows(SM9Exception.class, () -> signer.sign(signKey));
+
+            verifier.update(message);
+            assertTrue(verifier.verify(signature, master, "state@example.com"));
+            assertThrows(SM9Exception.class, () -> verifier.update(message));
+            assertThrows(SM9Exception.class,
+                    () -> verifier.verify(signature, master, "state@example.com"));
+        }
+    }
+
+    @Test
+    void resetShouldSwitchBetweenSignAndVerifyModes() {
+        byte[] message = "reset-mode-switch".getBytes(java.nio.charset.StandardCharsets.UTF_8);
+        try (SM9SignMasterKey master = SM9.generateSignMasterKey();
+             SM9SignKey signKey = master.extractKey("reset-mode@example.com");
+             SM9Signature context = new SM9Signature(true)) {
+
+            context.update(message);
+            byte[] signature = context.sign(signKey);
+
+            context.reset(false);
+            context.update(message);
+            assertTrue(context.verify(signature, master, "reset-mode@example.com"));
+
+            context.reset(true);
+            context.update(message);
+            assertNotNull(context.sign(signKey));
+        }
+    }
+
+    @Test
+    void closedKeysMustNotConsumePendingMessage() {
+        String id = "closed-key-retry@example.com";
+        byte[] message = "pending-message".getBytes(java.nio.charset.StandardCharsets.UTF_8);
+        try (SM9SignMasterKey master = SM9.generateSignMasterKey();
+             SM9SignMasterKey closedMaster = SM9.generateSignMasterKey();
+             SM9SignKey key = master.extractKey(id);
+             SM9SignKey closedKey = master.extractKey(id);
+             SM9Signature signer = new SM9Signature(true);
+             SM9Signature verifier = new SM9Signature(false)) {
+            closedKey.close();
+            closedMaster.close();
+            signer.update(message);
+            assertThrows(SM9Exception.class, () -> signer.sign(closedKey));
+            // 未进入 JNI finish 的参数失败不应丢失已累计消息。
+            byte[] signature = signer.sign(key);
+            verifier.update(message);
+            assertThrows(SM9Exception.class, () -> verifier.verify(signature, closedMaster, id));
+            assertTrue(verifier.verify(signature, master, id));
+        }
+    }
+
+    @Test
+    void closeShouldBeIdempotentAndRejectFurtherUse() {
+        SM9Signature context = new SM9Signature(true);
+        context.close();
+        assertDoesNotThrow(context::close);
+        assertThrows(SM9Exception.class, () -> context.update(new byte[] {1}));
+        assertThrows(SM9Exception.class, () -> context.update(new byte[0]));
+        assertThrows(SM9Exception.class, () -> context.reset(false));
+        assertThrows(SM9Exception.class, () -> context.sign(null));
+        assertThrows(SM9Exception.class, () -> context.verify(new byte[] {1}, null, "closed"));
     }
 
     private static void feedInChunks(SM9Signature ctx, byte[] data) {

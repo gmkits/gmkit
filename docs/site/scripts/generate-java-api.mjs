@@ -47,6 +47,10 @@ await runMaven([
   'org.apache.maven.plugins:maven-checkstyle-plugin:3.6.0:check',
 ]);
 
+// JDK 切换不会使 Maven 的源码时间戳缓存失效；文档门禁必须使用本次工具链重新生成。
+await rm(path.join(javaRoot, 'target', 'maven-javadoc-plugin-stale-data.txt'), { force: true });
+await rm(generated, { recursive: true, force: true });
+
 await runMaven([
   '-f', javaPom,
   '-B', '-ntp',

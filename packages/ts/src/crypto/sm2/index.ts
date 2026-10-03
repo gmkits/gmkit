@@ -858,6 +858,7 @@ export interface VerifyOptions {
  * 生成 SM2 密钥对
  * @param compressed - 是否返回压缩格式的公钥（默认 false，返回非压缩格式）
  * @returns 包含公钥和私钥的对象
+ * @throws strict 策略缺少安全随机源、随机源返回无效数据或重试耗尽时抛出错误
  */
 export function generateKeyPair(compressed: boolean = false): KeyPair {
   let privateKey: Uint8Array | undefined;
@@ -1039,6 +1040,7 @@ function kdf(z: Uint8Array, klen: number): Uint8Array {
  * @param data - 要加密的数据（字符串或 Uint8Array）
  * @param options - 加密选项对象
  * @returns 加密后的数据（默认十六进制字符串）
+ * @throws 公钥、模式或编码无效、随机源失败或 KDF 重试耗尽时抛出错误
  *
  * @example
  * // 基本用法
@@ -1123,6 +1125,7 @@ export function encrypt(
  * @param data - 要签名的数据（字符串或 Uint8Array）
  * @param options - 签名选项
  * @returns 签名（默认十六进制字符串；raw 为 r||s，der 为 ASN.1 DER）
+ * @throws 私钥、用户标识或格式选项无效，使用非标准曲线，或随机源失败时抛出错误
  */
 export function sign(
   privateKey: BytesLike,
@@ -1183,7 +1186,7 @@ export function sign(
  * @param data - 原始数据（字符串或 Uint8Array）
  * @param signature - 签名（十六进制字符串，r || s 格式或 DER 编码）
  * @param options - 验签选项
- * @returns 签名是否有效
+ * @returns 签名有效返回 true；签名不匹配、输入或选项无效以及内部校验异常均返回 false
  */
 export function verify(
   publicKey: BytesLike,
@@ -1268,17 +1271,17 @@ export function verify(
  */
 export interface SM2KeyExchangeParams {
   /**
-   * 己方私钥（十六进制字符串）
+   * 当前参与方的长期私钥（十六进制字符串）。发起方 A 和响应方 B 分别传入自己的私钥。
    */
   privateKey: BytesLike;
 
   /**
-   * 己方公钥（十六进制字符串，可选，如果不提供会从私钥派生）
+   * 当前参与方的长期公钥（十六进制字符串，可选，如果不提供会从私钥派生）
    */
   publicKey?: BytesLike;
 
   /**
-   * 己方用户 ID
+   * 当前参与方的用户 ID
    *
    * 默认：'1234567812345678'（DEFAULT_USER_ID，保持向后兼容）
    * 省略值或空字符串均回落到 DEFAULT_USER_ID
@@ -1286,22 +1289,22 @@ export interface SM2KeyExchangeParams {
   userId?: string;
 
   /**
-   * 己方临时私钥（十六进制字符串，可选，如果不提供会自动生成）
+   * 当前参与方的临时私钥（十六进制字符串，可选，如果不提供会自动生成）
    */
   tempPrivateKey?: BytesLike;
 
   /**
-   * 对方公钥（十六进制字符串）
+   * 对端参与方的长期公钥（十六进制字符串）
    */
   peerPublicKey: BytesLike;
 
   /**
-   * 对方临时公钥（十六进制字符串）
+   * 对端参与方的本次会话临时公钥（十六进制字符串）
    */
   peerTempPublicKey: BytesLike;
 
   /**
-   * 对方用户 ID
+   * 对端参与方的用户 ID
    *
    * 默认：'1234567812345678'（DEFAULT_USER_ID，保持向后兼容）
    * 省略值或空字符串均回落到 DEFAULT_USER_ID
@@ -1324,7 +1327,7 @@ export interface SM2KeyExchangeParams {
  */
 export interface SM2KeyExchangeResult {
   /**
-   * 己方临时公钥（十六进制字符串）
+   * 当前参与方的临时公钥（十六进制字符串）
    */
   tempPublicKey: string;
 
@@ -1334,12 +1337,12 @@ export interface SM2KeyExchangeResult {
   sharedKey: string;
 
   /**
-   * 可选的己方确认哈希值（用于对方验证，十六进制字符串）
+   * 标准 S1（0x02）：B 方计算并发送给 A，A 应在协议层验证；十六进制字符串
    */
   s1?: string;
 
   /**
-   * 可选的对方确认哈希值（用于己方验证，十六进制字符串）
+   * 标准 S2（0x03）：A 方计算并发送给 B，B 应在协议层验证；十六进制字符串
    */
   s2?: string;
 }
@@ -1359,13 +1362,14 @@ export interface SM2KeyExchangeResult {
  * 3. 双方各自计算共享密钥 K
  * 4. 可选：双方交换确认哈希值进行相互认证
  *
- * 安全特性：
- * - 前向保密：即使长期私钥泄露，历史会话密钥仍然安全
- * - 相互认证：可选的确认哈希值提供身份验证
- * - 抗中间人攻击：需要长期密钥对的参与
+ * 本函数只计算共享密钥和确认值，不负责发送临时公钥、交换 S1/S2 或验证对端确认值。
+ * 当前公开 API 没有接收对端确认值的参数，因此不能单独宣称完成相互认证、前向保密
+ * 或抗中间人攻击。上层协议必须明确 A/B 角色、消息顺序、重放防护、确认失败处理和
+ * 临时私钥销毁策略。
  *
  * @param params - 密钥交换参数
  * @returns 密钥交换结果，包含临时公钥、共享密钥和可选的确认哈希值
+ * @throws 密钥、ID 或派生长度无效，公私钥不匹配，或所需随机源失败时抛出错误
  *
  * @example
  * ```typescript
@@ -1544,14 +1548,14 @@ export function keyExchange(params: SM2KeyExchangeParams): SM2KeyExchangeResult 
   const innerHash = sm3Digest(innerHashInput);
   const innerHashBytes = hexToBytes(innerHash);
 
-  // 计算 S1（发起方发送给响应方，响应方用来验证发起方）
+  // 计算标准 S1（0x02）：响应方 B 发送给发起方 A，由 A 在协议层验证。
   const s1Input = new Uint8Array(1 + yv.length + innerHashBytes.length);
   s1Input[0] = 0x02;
   s1Input.set(yv, 1);
   s1Input.set(innerHashBytes, 1 + yv.length);
   const s1 = sm3Digest(s1Input);
 
-  // 计算 S2（响应方发送给发起方，发起方用来验证响应方）
+  // 计算标准 S2（0x03）：发起方 A 发送给响应方 B，由 B 在协议层验证。
   const s2Input = new Uint8Array(1 + yv.length + innerHashBytes.length);
   s2Input[0] = 0x03;
   s2Input.set(yv, 1);

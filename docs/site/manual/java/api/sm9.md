@@ -216,7 +216,7 @@ try (SM9SignMasterKey master = SM9.generateSignMasterKey();
 }
 ```
 
-签名、身份或消息不匹配时验签返回 `false`。`SM9Signature.verify` 将 native 返回码 `1` 解释为成功，其他返回码解释为 `false`；参数非法、句柄已关闭或调用 native 前的校验失败才抛 `SM9Exception`。签名含随机性，不要把一次运行得到的签名字节写成固定标准向量。
+签名、身份或消息不匹配时验签返回 `false`。`SM9Signature.verify` 将 native 返回码 `1` 解释为成功，其他返回码统一解释为 `false`，因此无法仅靠这个返回值区分签名不匹配、DER 解析失败与 GmSSL 报错。参数非法、句柄已关闭或上下文模式/状态错误会抛 `SM9Exception`；JVM 链接与内存错误不会包装为该异常。签名含随机性，不要把一次运行得到的签名字节写成固定标准向量。
 
 ## 加密密钥类型
 
@@ -365,7 +365,7 @@ try (SM9SignMasterKey master = SM9.generateSignMasterKey();
 }
 ```
 
-一次 `sign` 或 `verify` 后，如需在同一对象上开始下一条消息，应先调用 `reset(...)`。上下文有 native 可变状态，不能跨线程并发使用；不同任务应各自创建上下文。
+进入 JNI 完成阶段的一次 `sign` 或 `verify` 后，如需继续使用同一对象，应先调用 `reset(...)`；验签返回 `false` 也一样。参数或已关闭密钥的前置校验失败尚未进入 JNI，此时保留累计消息，可以改用有效参数重试。上下文有 native 可变状态，不能跨线程并发使用；不同任务应各自创建上下文。
 
 ## PEM 与身份
 
@@ -421,7 +421,8 @@ try (SM9SignMasterKey verifierKey =
 
 - 始终使用 try-with-resources。
 - `close()` 可重复调用。
-- close 后再次操作抛 `SM9Exception`。
+- close 后再次执行 native 操作抛 `SM9Exception`；`getId()` 仅返回 Java 元数据，关闭后仍可读取。
+- 所有句柄对象均非并发安全，`close()` 不得与使用该句柄的任何操作并发执行，调用方负责同步或所有权转移。
 - 先关闭子密钥还是主密钥没有隐式级联；每个对象都应独立关闭。
 
 `extractKey()` 返回独立 native 句柄，关闭主密钥不会自动关闭已经派生的用户私钥，关闭用户私钥也不会关闭主密钥。不要依赖垃圾回收释放这些资源。
@@ -462,12 +463,12 @@ public SM9UnsupportedPlatformException(String message, Throwable cause);
 ::: details 查看测试源码
 <!-- code-sample id="api-java-sm9-15" steps="准备身份与消息|创建 KGC 主密钥并派生身份私钥|SM9 签名|SM9 验签|身份失败断言|消息篡改断言|SM9 IBE 加密|SM9 IBE 解密|成功断言|长度失败断言" -->
 ```java
-<!-- @include: ../../../../packages/java/gmkit-sm9/src/test/java/cn/gmkit/sm9/SM9ManualExamplesTest.java#java-sm9-example -->
+<!-- @include: ../../../../../packages/java/gmkit-sm9/src/test/java/cn/gmkit/sm9/SM9ManualExamplesTest.java#java-sm9-example -->
 ```
 
 <!-- code-sample id="api-java-sm9-16" steps="准备身份、订单消息和临时 PEM 文件路径|生成 KGC 签名主密钥，并导出可分发的主公钥 PEM|派生身份私钥，并使用口令加密后写入 PEM|重新导入加密身份私钥，并用它签名订单消息|导入主公钥 PEM，使用相同身份完成验签|成功断言" -->
 ```java
-<!-- @include: ../../../../packages/java/gmkit-sm9/src/test/java/cn/gmkit/sm9/SM9KeyPemTest.java#java-sm9-pem-example -->
+<!-- @include: ../../../../../packages/java/gmkit-sm9/src/test/java/cn/gmkit/sm9/SM9KeyPemTest.java#java-sm9-pem-example -->
 ```
 :::
 

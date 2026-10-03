@@ -32,6 +32,7 @@ import { SHA256 as SHA256Class, SHA384 as SHA384Class, SHA512 as SHA512Class, SH
 /**
  * SM2 椭圆曲线公钥密码算法模块。
  * 聚合所有具名函数与对象式入口 {@link SM2Class}。
+ * @namespace
  */
 export const sm2 = {
   ...sm2Functions,
@@ -42,6 +43,7 @@ export const sm2 = {
 /**
  * SM3 密码杂凑算法模块。
  * 聚合所有具名函数与对象式入口 {@link SM3Class}。
+ * @namespace
  */
 export const sm3 = {
   ...sm3Functions,
@@ -52,6 +54,7 @@ export const sm3 = {
 /**
  * SM4 分组密码算法模块。
  * 聚合所有具名函数与对象式入口 {@link SM4Class}。
+ * @namespace
  */
 export const sm4 = {
   ...sm4Functions,
@@ -62,6 +65,7 @@ export const sm4 = {
 /**
  * ZUC 流密码算法模块（含 EEA3 加密 / EIA3 完整性算法）。
  * 聚合所有具名函数与对象式入口 {@link ZUCClass}。
+ * @namespace
  */
 export const zuc = {
   ...zucFunctions,
@@ -72,6 +76,7 @@ export const zuc = {
 /**
  * SHA 系列哈希算法模块（FIPS 180-4 国际标准）。
  * 聚合 SHA-1 / SHA-256 / SHA-384 / SHA-512 的具名函数与对象式入口。
+ * @namespace
  */
 export const sha = {
   ...shaFunctions,

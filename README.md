@@ -66,7 +66,7 @@ SM9 Java native runtime 可在需要时本地构建：
 - `ci.yml`：TS 与普通 Java 测试；不强制 SM9 native。
 - `parity.yml`：运行共享 `vectors/interop.json` 互操作校验。
 - `sm9-native.yml`：在 Linux、macOS、Windows 上编译 GmSSL/JNI runtime，并强制运行当前平台的 SM9 native 测试。
-- `docs.yml`：生成 TypeDoc/Javadoc，执行文档和多语言 fixture 门禁，并从同一 artifact 部署 HK/CN 源站、刷新 EdgeOne 和核对规范域名。
+- `docs.yml`：生成 TypeDoc/Javadoc，执行文档和多语言 fixture 门禁，并从同一 artifact 部署国内源站、刷新 EdgeOne 和核对 `gmkit.cn` 规范域名。
 - `release.yml`：手动选择 Java 或 TypeScript，从源码版本自动创建对应 tag，并启动正式发布工作流。
 - `publish-ts.yml`：发布 `ts-v*` 标签，通过 npm Trusted Publisher 和 GitHub OIDC 发布。
 - `publish-java.yml`：发布 `java-v*` 标签，聚合五个平台 runtime、消费测试同一个 `gmkit-sm9` JAR，再发布 Maven Central。

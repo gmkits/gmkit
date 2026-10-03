@@ -69,7 +69,7 @@ public final class SM2KeyExchangeOptions {
     }
 
     /**
-     * 获取对端确认标签。
+     * 获取发起方 A 用于验证响应方 B 的 S1 确认标签。
      *
      * @return 确认标签的防御性拷贝；未设置时返回 {@code null}
      */
@@ -135,9 +135,9 @@ public final class SM2KeyExchangeOptions {
         }
 
         /**
-         * 设置对端确认标签。
+     * 设置响应方 B 返回的 S1，供发起方 A 验证。
          *
-         * @param confirmationTag 对端确认标签
+         * @param confirmationTag 响应方 B 返回的 S1 确认标签
          * @return 当前构建器
          */
         public Builder confirmationTag(byte[] confirmationTag) {

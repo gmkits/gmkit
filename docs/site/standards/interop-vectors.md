@@ -12,10 +12,10 @@ category: [协议与标准, 互操作]
 
 ## 信任级别
 
-| 级别 | `source` | 可证明的内容 |
+| 级别 | `sourceType` | 可证明的内容 |
 |:--|:--|:--|
-| 外部固定向量 | 标明标准及测试集 | 项目输出与该标准测试集的确定性结果一致 |
-| 项目互操作向量 | `project` 或缺省 | Java 与 TypeScript 在已固定参数下字节级一致 |
+| 外部固定向量 | `standard`，附 `sourceRef` 定位 | 项目输出与该标准测试集的确定性结果一致 |
+| 项目互操作向量 | `project-fixture` | Java 与 TypeScript 在已固定参数下字节级一致 |
 | 随机算法回环 | 项目测试代码 | 生成结果可解密或验签，且篡改会被拒绝 |
 
 项目互操作向量由仓库实现产生，不能用于证明实现本身正确。算法正确性需要外部标准向量、独立实现复核和负向测试共同支撑。
@@ -38,8 +38,8 @@ mvn -f packages/java/pom.xml -B -ntp -pl gmkit -Dtest=InteropComplianceTest test
 
 ## 数据约定
 
-- 没有 `source` 或写明 `source: "project"` 的值是项目互操作回归向量，用于 Java/TS 字节级对齐。
-- 写明标准来源的值才是外部固定向量。当前 ZUC 包含 3GPP TS 35.221 EEA3 和 TS 35.222 EIA3 关键向量。
+- 每项必须填写 `sourceId`、`sourceType`、`sourceRef` 和 `description`。旧 `source` 字段只作可读说明，不再靠缺省来源判断证据等级。
+- ZUC EEA3 的 800-bit 用例对应 TS 35.223 / Implementor's Test Data §4.4 Test Set 2；全零密钥流有固定参考。当前共享 EIA3 用例是项目回归：64-bit 参数组合未确认完整外部出处，direction-one 用例截取了官方 577-bit 测试的 480-bit 前缀，不能称为原始标准向量。
 - SM2 加密和签名含随机数。未固定随机源时不比较完整密文或签名字面值，只验证解密结果、验签结果及篡改拒绝。
 - 字符串统一使用 UTF-8，二进制字段使用偶数长度的小写 hex，不带 `0x` 前缀。
 
@@ -146,7 +146,7 @@ if (!"1b3d0f74".equals(mac)) {
 
 ## 修改规则
 
-1. 增加标准向量时填写准确 `source`。
+1. 增加标准向量时填写准确 `sourceType: "standard"`、稳定 `sourceId`、可定位的 `sourceRef` 和 `description`；修改标准参数后应降为 `project-fixture` 并解释改动。
 2. `id` 一经发布即视为稳定测试标识；改变语义时新增 case，不复用旧 `id` 掩盖不兼容变化。
 3. 字段新增应保持消费者向后兼容；重命名或删除必须同步修改 Java、TypeScript 测试和 CHANGELOG。
 4. 任何确定性期望值变更都应先由外部标准或独立成熟实现复核，不能只用本项目实现自证。

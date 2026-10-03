@@ -5,20 +5,25 @@
   "description": "Documentation portal for GMKit Java and TypeScript packages",
   "type": "module",
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=22.15.0"
   },
   "scripts": {
     "dev": "vuepress dev .",
+    "prebuild": "node scripts/clean.mjs",
     "build": "vuepress build .",
+    "postbuild": "node scripts/compress-site.mjs",
     "generate:api:typescript": "typedoc --options typedoc.json",
     "generate:api:java": "node scripts/generate-java-api.mjs",
     "generate:api:manifest": "node scripts/generate-api-manifest.mjs",
     "generate:api:versions": "node scripts/generate-api-versions.mjs",
     "generate:api": "npm run generate:api:typescript && npm run generate:api:java && npm run generate:api:manifest && npm run generate:api:versions",
     "check:api": "node scripts/check-api.mjs",
-    "check:links": "linkinator .vuepress/dist/index.html --recurse --skip \"^https?://(?!127\\.0\\.0\\.1)(?!localhost)\" --skip \"^mailto:\" --check-fragments --verbosity error",
+    "docs:check-api": "node scripts/check-api.mjs",
+    "check:links": "node scripts/check-links.mjs",
     "clean": "node scripts/clean.mjs",
-    "check": "node --test scripts/code-sample-audit.test.mjs && node scripts/check-docs.mjs",
+    "check": "node --test scripts/*.test.mjs && node scripts/check-docs.mjs",
+    "docs:check": "npm run check",
+    "docs:check-deploy": "node ../../.github/scripts/test-deploy-docs-origin.mjs",
     "test:examples": "node scripts/test-examples.mjs"
   },
   "devDependencies": {
@@ -26,11 +31,10 @@
     "@vuepress/plugin-markdown-ext": "^2.0.0-rc.118",
     "@vuepress/plugin-markdown-tab": "^2.0.0-rc.118",
     "katex": "^0.16.25",
+    "linkinator": "^7.6.1",
     "mermaid": "^11.12.1",
     "sass": "^1.94.2",
-    "linkinator": "^7.6.1",
     "typedoc": "^0.28.20",
-    "vite-plugin-compression2": "^2.3.1",
     "vue": "^3.5.24",
     "vue-router": "^4.6.3",
     "vuepress": "^2.0.0-rc.24",

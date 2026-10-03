@@ -96,6 +96,7 @@ let customTextCodec: TextCodec | null = null;
  * 注入宿主提供的 UTF-8 编解码器，并清除内部缓存。
  *
  * @param codec - 同时提供 encode/decode 的编解码器
+ * @remarks 这是模块级配置；设置后新发生的字符串转换使用该编解码器，调用方应在启动阶段完成配置，不要在并发请求中切换。
  * @throws 后续调用中，编解码器返回类型不符合约定时由调用点抛出错误
  */
 export function setTextCodec(codec: TextCodec) {
@@ -616,6 +617,7 @@ let unsafeFallbackWarningShown = false;
  * 配置缺少系统 CSPRNG 时的处理策略。默认值是 `warn`。
  *
  * @param policy - `strict`、`warn` 或 `allow`
+ * @remarks 这是模块级策略。`warn` 保留受限小程序的兼容降级并发出警告，`strict` 在没有 CSPRNG 时拒绝生成随机材料。
  * @throws 传入其他字符串时抛出错误
  */
 export function configureRNG(policy: RNGPolicy): void {
@@ -642,6 +644,7 @@ export function setRNGPolicy(policy: RNGPolicy) {
  * 测试中的确定性实现必须在结束后通过 {@link clearCustomRNG} 清除。
  *
  * @param fn - 接收正整数长度并返回相同长度字节数组的函数
+ * @remarks 这是模块级配置；函数必须由宿主提供密码学安全随机源，库不会验证其熵质量。配置后会影响密钥生成、签名和加密中的随机数来源。
  * @throws 参数不是函数时立即抛错；返回类型或长度错误时由 {@link getRandomBytes} 抛错
  */
 export function setCustomRNG(fn: (len: number) => Uint8Array): void {

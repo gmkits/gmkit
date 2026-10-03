@@ -77,7 +77,7 @@ TypeScript GCM 当前要求 12 字节 nonce；Java 接受更宽范围。跨语�
 4. 当前操作系统、CPU 架构和 JAR 的精确版本；
 5. 是否设置了 `gmkit.sm9.native.path`。
 
-不受支持的平台不会自动退回纯 Java 或其他算法。完整加载顺序和支持矩阵见 [Java SM9 API](/api/java/sm9.html)。
+不受支持的平台不会自动退回纯 Java 或其他算法。完整加载顺序和支持矩阵见 [Java SM9 API](/manual/java/api/sm9.html)。
 
 ## 仍无法定位
 

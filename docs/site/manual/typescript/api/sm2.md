@@ -101,7 +101,7 @@ configureRNG('strict');
 
 已发布接口允许省略部分输入格式。该行为只用于读取旧数据；新协议必须显式保存并传入编码。兼容优先级见[旧系统迁移](/manual/migration.html#密文和签名自动识别)。
 
-密钥生成、加密、签名以及未提供临时私钥的密钥交换都需要安全随机数。浏览器通常使用 Web Crypto，Node.js 使用系统密码学随机源；受限运行环境应先注入平台 CSPRNG，详见[随机源 API](/api/typescript/common.html#随机数与环境)。
+密钥生成、加密、签名以及未提供临时私钥的密钥交换都需要安全随机数。浏览器通常使用 Web Crypto，Node.js 使用系统密码学随机源；受限运行环境应先注入平台 CSPRNG，详见[随机源 API](./common.html#随机源)。
 
 ## 密钥与公钥格式
 
@@ -470,13 +470,13 @@ sm2KeyExchange(params: SM2KeyExchangeParams): SM2KeyExchangeResult
 
 | 字段 | 必填 | 默认值 | 编码、单位与作用 |
 |:--|:--:|:--|:--|
-| `privateKey` | 是 | 无 | 己方 32 字节长期私钥 |
-| `publicKey` | 否 | 从私钥派生 | 己方长期公钥；传入时必须与私钥匹配 |
-| `userId` | 否 | `DEFAULT_USER_ID` | 己方 UTF-8 身份；空字符串也回落到默认值 |
+| `privateKey` | 是 | 无 | 当前参与方的 32 字节长期私钥 |
+| `publicKey` | 否 | 从私钥派生 | 当前参与方的长期公钥；传入时必须与私钥匹配 |
+| `userId` | 否 | `DEFAULT_USER_ID` | 当前参与方的 UTF-8 身份；空字符串也回落到默认值 |
 | `tempPrivateKey` | 否 | 内部随机生成 | 本次会话的 32 字节临时私钥 |
-| `peerPublicKey` | 是 | 无 | 对方长期公钥 |
-| `peerTempPublicKey` | 是 | 无 | 对方本次会话临时公钥 |
-| `peerUserId` | 否 | `DEFAULT_USER_ID` | 对方 UTF-8 身份 |
+| `peerPublicKey` | 是 | 无 | 对端参与方的长期公钥 |
+| `peerTempPublicKey` | 是 | 无 | 对端参与方的本次会话临时公钥 |
+| `peerUserId` | 否 | `DEFAULT_USER_ID` | 对端参与方的 UTF-8 身份 |
 | `isInitiator` | 是 | 无 | 发起方传 `true`，响应方传 `false`；运行时按该布尔值选择双方顺序 |
 | `keyLength` | 否 | `16` | 派生密钥字节数，必须为正安全整数 |
 
@@ -484,13 +484,14 @@ sm2KeyExchange(params: SM2KeyExchangeParams): SM2KeyExchangeResult
 
 返回字段均为小写 Hex：
 
-- `tempPublicKey`：己方 65 字节非压缩临时公钥。
+- `tempPublicKey`：当前参与方的 65 字节非压缩临时公钥。
 - `sharedKey`：派生共享密钥，Hex 长度为 `keyLength × 2`。
-- `s1`、`s2`：32 字节确认值。类型保留为可选字段；当前实现会同时返回两项。
+- `s1`：标准 S1（0x02），由 B 发送、A 在协议层验证。
+- `s2`：标准 S2（0x03），由 A 发送、B 在协议层验证。类型保留为可选字段；当前实现会同时返回两项。
 
 `keyLength` 没有协议级上限。若该值来自配置或请求，应用必须先设置自己的合理上限，避免一次派生分配过大缓冲区。
 
-双方需要先交换临时公钥，再以镜像身份和相反角色调用。为了让临时公钥在调用前可发送给对方，最直接的方式是先用 `sm2GenerateKeyPair()` 生成临时密钥对，并把临时私钥传给 `tempPrivateKey`。
+双方需要先交换临时公钥，再以镜像身份和相反角色调用。为了让临时公钥在调用前可发送给对方，最直接的方式是先用 `sm2GenerateKeyPair()` 生成临时密钥对，并把临时私钥传给 `tempPrivateKey`。`sm2KeyExchange` 只计算 `s1`/`s2`，不接收对端确认值；A/B 的发送、验证、重放防护和失败处理必须由上层协议实现。
 
 <!-- code-sample id="api-typescript-sm2-10" steps="生成长期密钥|生成临时密钥|发起方计算|响应方计算|密钥与确认值断言" -->
 ```ts
@@ -704,13 +705,13 @@ TypeScript 0.10.1 没有公开的预计算 `e` 签名接口。替代方案和互
 ::: details 查看测试源码
 <!-- code-sample id="api-typescript-sm2-13" steps="准备输入|生成 SM2 密钥对|SM2 签名|SM2 验签|篡改断言" -->
 ```js
-<!-- @include: ../../examples/node/public-api-manual.mjs#ts-sm2-example -->
+<!-- @include: ../../../examples/node/public-api-manual.mjs#ts-sm2-example -->
 ```
 :::
 
 ## 相关页面
 
 - [跨语言 SM2 协议与向量](/algorithms/SM2.html)
-- [输入编码、随机源与字节工具](/api/typescript/common.html)
-- [raw/DER 签名转换工具](/api/typescript/common.html#asn-1-与-sm2-签名)
-- [TypeScript SM4 API](/api/typescript/sm4.html)：大数据混合加密的对称算法部分
+- [输入编码、随机源与字节工具](./common.html)
+- [raw/DER 签名转换工具](./common.html#sm2-签名-asn-1-der)
+- [TypeScript SM4 API](./sm4.html)：大数据混合加密的对称算法部分

@@ -4,15 +4,41 @@
     "typescript": "typedoc-public-members",
     "java": "declared-public-members"
   },
+  "typescriptNamespacePages": {
+    "sm2": "manual/typescript/api/sm2.md",
+    "sm3": "manual/typescript/api/sm3.md",
+    "sm4": "manual/typescript/api/sm4.md",
+    "zuc": "manual/typescript/api/zuc.md",
+    "sha": "manual/typescript/api/sha.md"
+  },
+  "semanticCoverage": {
+    "typescript": {
+      "manual/typescript/api/common.md": ["编码", "默认", "返回", "失败", "安全"],
+      "manual/typescript/api/sm2.md": ["编码", "默认", "返回值", "失败", "安全"],
+      "manual/typescript/api/sm3.md": ["编码", "默认", "返回", "失败", "状态", "安全"],
+      "manual/typescript/api/sm4.md": ["编码", "默认", "返回", "失败", "状态", "安全"],
+      "manual/typescript/api/zuc.md": ["编码", "默认", "返回", "失败", "状态", "安全"],
+      "manual/typescript/api/sha.md": ["编码", "默认", "返回", "失败", "状态", "安全"]
+    },
+    "java": {
+      "manual/java/api/core.md": ["编码", "默认", "返回", "失败", "安全"],
+      "manual/java/api/sm2.md": ["编码", "默认", "返回", "失败", "安全"],
+      "manual/java/api/sm3.md": ["编码", "默认", "返回", "失败", "安全"],
+      "manual/java/api/sm4.md": ["编码", "默认", "返回", "失败", "安全"],
+      "manual/java/api/zuc.md": ["编码", "返回", "失败", "安全"],
+      "manual/java/api/sm9.md": ["native", "PEM", "长度", "生命周期", "失败"],
+      "manual/java/api/integration.md": ["默认", "返回", "失败", "安全"]
+    }
+  },
   "typescript": {
-    "api/typescript/README.md": [
+    "manual/typescript/api/README.md": [
       "sha",
       "sm2",
       "sm3",
       "sm4",
       "zuc"
     ],
-    "api/typescript/common.md": [
+    "manual/typescript/api/common.md": [
       "BytesLike",
       "CipherMode",
       "CipherModeType",
@@ -70,7 +96,7 @@
       "verify",
       "xor"
     ],
-    "api/typescript/sm2.md": [
+    "manual/typescript/api/sm2.md": [
       "KeyPair",
       "SM2",
       "SM2CurveParams",
@@ -93,13 +119,13 @@
       "sm2Sign",
       "sm2Verify"
     ],
-    "api/typescript/sm3.md": [
+    "manual/typescript/api/sm3.md": [
       "SM3",
       "SM3Options",
       "sm3Digest",
       "sm3Hmac"
     ],
-    "api/typescript/sm4.md": [
+    "manual/typescript/api/sm4.md": [
       "SM4",
       "SM4AEADResult",
       "SM4CCMResult",
@@ -111,7 +137,7 @@
       "sm4DecryptBytes",
       "sm4Encrypt"
     ],
-    "api/typescript/zuc.md": [
+    "manual/typescript/api/zuc.md": [
       "ZUC",
       "ZUCDecryptOptions",
       "ZUCOptions",
@@ -126,7 +152,7 @@
       "zucKeystream",
       "zucKeystreamWords"
     ],
-    "api/typescript/sha.md": [
+    "manual/typescript/api/sha.md": [
       "SHA1",
       "SHA256",
       "SHA384",
@@ -142,7 +168,7 @@
     ]
   },
   "java": {
-    "api/java/core.md": [
+    "manual/java/api/core.md": [
       "cn.gmkit.core.Base64Codec",
       "cn.gmkit.core.BcProviders",
       "cn.gmkit.core.ByteEncodings",
@@ -162,7 +188,7 @@
       "cn.gmkit.core.SM4Padding",
       "cn.gmkit.core.Texts"
     ],
-    "api/java/sm2.md": [
+    "manual/java/api/sm2.md": [
       "cn.gmkit.sm2.SM2",
       "cn.gmkit.sm2.SM2Ciphertext",
       "cn.gmkit.sm2.SM2Ciphertexts",
@@ -174,21 +200,21 @@
       "cn.gmkit.sm2.SM2Util",
       "cn.gmkit.sm2.SM2VerifyOptions"
     ],
-    "api/java/sm3.md": [
+    "manual/java/api/sm3.md": [
       "cn.gmkit.sm3.SM3",
       "cn.gmkit.sm3.SM3Util"
     ],
-    "api/java/sm4.md": [
+    "manual/java/api/sm4.md": [
       "cn.gmkit.sm4.SM4",
       "cn.gmkit.sm4.SM4CipherResult",
       "cn.gmkit.sm4.SM4Options",
       "cn.gmkit.sm4.SM4Util"
     ],
-    "api/java/zuc.md": [
+    "manual/java/api/zuc.md": [
       "cn.gmkit.zuc.ZUC",
       "cn.gmkit.zuc.ZUCUtil"
     ],
-    "api/java/sm9.md": [
+    "manual/java/api/sm9.md": [
       "cn.gmkit.sm9.SM9",
       "cn.gmkit.sm9.SM9EncKey",
       "cn.gmkit.sm9.SM9EncMasterKey",
@@ -198,7 +224,7 @@
       "cn.gmkit.sm9.SM9Signature",
       "cn.gmkit.sm9.SM9UnsupportedPlatformException"
     ],
-    "api/java/integration.md": [
+    "manual/java/api/integration.md": [
       "cn.gmkit.integration.SM2Sm4Hybrid",
       "cn.gmkit.integration.SM2Sm4HybridPayload"
     ]

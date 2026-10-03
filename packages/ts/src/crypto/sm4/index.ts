@@ -729,8 +729,8 @@ function resolveCcmTagLength(tagLength?: number): number {
  *               Data to encrypt (string or Uint8Array)
  * @param options - 加密选项（模式、填充、IV）
  *                  Encryption options (mode, padding, IV)
- * @returns 小写十六进制字符串形式的加密数据，或GCM模式下返回包含密文和标签的对象
- *          Encrypted data as lowercase hex string, or object with ciphertext and tag for GCM mode
+ * @returns 总是返回包含 ciphertext 的对象，编码默认 Hex；GCM/CCM 额外包含 tag
+ * @throws key、IV/nonce、模式、填充、编码或 AEAD 长度参数无效时抛出错误
  *
  * @example
  * // ECB 模式
@@ -1011,6 +1011,7 @@ export function encrypt(
  *                  Decryption options (mode, padding, IV, tag for GCM/CCM)
  * @returns 解密后的数据（UTF-8 字符串）
  *          Decrypted data (UTF-8 string)
+ * @throws 参数或密文编码无效、填充错误、AEAD 认证失败，或宿主文本解码器失败时抛出错误
  *
  * @example
  * // ECB 模式

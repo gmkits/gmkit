@@ -69,6 +69,19 @@ case "$deploy_mode" in
       exit 1
     }
     expected_remote="$site_root/api/"
+    # 命令替换保留解析进程的退出码；进程替换会把 JSON 解析失败掩盖成空清单。
+    manifest_entries=$(node -e '
+      const fs = require("node:fs");
+      const manifest = JSON.parse(fs.readFileSync(process.argv[1], "utf8"));
+      if (!Array.isArray(manifest.packages) || manifest.packages.length === 0) throw new Error("Invalid API manifest packages");
+      for (const entry of manifest.packages) {
+        if (!/^(typescript|java)$/.test(entry.id) || !Array.isArray(entry.versions)) throw new Error("Invalid API manifest package");
+        for (const version of entry.versions) {
+          if (!/^\d+\.\d+\.\d+$/.test(version.version)) throw new Error("Invalid API manifest version");
+          console.log(`${entry.id}\t${version.version}`);
+        }
+      }
+    ' "$DOCS_SOURCE_DIR/versions.json")
     ;;
   *)
     echo "Unsupported DOCS_DEPLOY_MODE: $deploy_mode" >&2
@@ -79,6 +92,12 @@ esac
 if [[ "$DOCS_REMOTE_DIR" != "$expected_remote" ]]; then
   echo "Refusing unexpected remote directory for $deploy_mode: $DOCS_REMOTE_DIR" >&2
   exit 1
+fi
+
+# 仅验证制品与路径契约，不触发 SSH、rsync 或远端写入。
+if [[ "${DOCS_VALIDATE_ONLY:-false}" == "true" ]]; then
+  echo "Validated $deploy_mode deployment contract"
+  exit 0
 fi
 
 temporary=$(mktemp -d)
@@ -115,21 +134,14 @@ target="$SSH_REMOTE_USER@$SSH_REMOTE_HOST"
 
 if [[ "$deploy_mode" == "api-manifest" ]]; then
   while IFS=$'\t' read -r language version; do
+    [[ -n "$language" ]] || continue
     [[ "$language" =~ ^(typescript|java)$ && "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || {
       echo "Invalid entry in versions.json: $language $version" >&2
       exit 1
     }
     ssh "${ssh_options[@]}" "$target" \
       "test -s '$site_root/api/$language/versions/$version/index.html'"
-  done < <(
-    node -e '
-      const fs = require("node:fs");
-      const manifest = JSON.parse(fs.readFileSync(process.argv[1], "utf8"));
-      for (const entry of manifest.packages ?? []) {
-        for (const version of entry.versions ?? []) console.log(`${entry.id}\t${version.version}`);
-      }
-    ' "$DOCS_SOURCE_DIR/versions.json"
-  )
+  done <<< "$manifest_entries"
 fi
 
 rsync "${rsync_options[@]}" \
