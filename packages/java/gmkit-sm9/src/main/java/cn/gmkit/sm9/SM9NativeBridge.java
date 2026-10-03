@@ -42,19 +42,26 @@ final class SM9NativeBridge {
 
     static {
         Throwable error = null;
+        SecurityException platformError = null;
         boolean available;
         String platform;
         try {
             platform = SM9NativeLoader.detectPlatform();
         } catch (SM9UnsupportedPlatformException ex) {
             platform = "unsupported";
+        } catch (SecurityException ex) {
+            platform = "unsupported";
+            platformError = ex;
         }
         try {
             SM9NativeLoader.load();
             available = true;
-        } catch (SM9Exception ex) {
+        } catch (SM9Exception | SecurityException ex) {
             available = false;
             error = ex;
+            if (platformError != null && platformError != ex) {
+                error.addSuppressed(platformError);
+            }
         }
         AVAILABLE = available;
         LOAD_ERROR = error;

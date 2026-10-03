@@ -1,6 +1,7 @@
 package cn.gmkit.sm9;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.api.io.TempDir;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -16,6 +17,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /** 隔离 JVM 只读取测试 JAR，覆盖真正的资源查找、清单解析和加载前校验。 */
+@EnabledIf(value = "cn.gmkit.sm9.SM9Assumptions#platformSupportedOrNativeRequired",
+        disabledReason = "Resource fixture requires a supported platform; native-required builds never skip")
 class SM9NativeLoaderHashTest {
     @TempDir
     Path directory;

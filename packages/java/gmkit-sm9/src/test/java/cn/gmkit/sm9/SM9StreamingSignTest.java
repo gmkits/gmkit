@@ -103,6 +103,28 @@ class SM9StreamingSignTest {
     }
 
     @Test
+    void closedKeysMustNotConsumePendingMessage() {
+        String id = "closed-key-retry@example.com";
+        byte[] message = "pending-message".getBytes(java.nio.charset.StandardCharsets.UTF_8);
+        try (SM9SignMasterKey master = SM9.generateSignMasterKey();
+             SM9SignMasterKey closedMaster = SM9.generateSignMasterKey();
+             SM9SignKey key = master.extractKey(id);
+             SM9SignKey closedKey = master.extractKey(id);
+             SM9Signature signer = new SM9Signature(true);
+             SM9Signature verifier = new SM9Signature(false)) {
+            closedKey.close();
+            closedMaster.close();
+            signer.update(message);
+            assertThrows(SM9Exception.class, () -> signer.sign(closedKey));
+            // 未进入 JNI finish 的参数失败不应丢失已累计消息。
+            byte[] signature = signer.sign(key);
+            verifier.update(message);
+            assertThrows(SM9Exception.class, () -> verifier.verify(signature, closedMaster, id));
+            assertTrue(verifier.verify(signature, master, id));
+        }
+    }
+
+    @Test
     void closeShouldBeIdempotentAndRejectFurtherUse() {
         SM9Signature context = new SM9Signature(true);
         context.close();

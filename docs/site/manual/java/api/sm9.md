@@ -365,7 +365,7 @@ try (SM9SignMasterKey master = SM9.generateSignMasterKey();
 }
 ```
 
-一次 `sign` 或 `verify` 后，如需在同一对象上开始下一条消息，应先调用 `reset(...)`。上下文有 native 可变状态，不能跨线程并发使用；不同任务应各自创建上下文。
+进入 JNI 完成阶段的一次 `sign` 或 `verify` 后，如需继续使用同一对象，应先调用 `reset(...)`；验签返回 `false` 也一样。参数或已关闭密钥的前置校验失败尚未进入 JNI，此时保留累计消息，可以改用有效参数重试。上下文有 native 可变状态，不能跨线程并发使用；不同任务应各自创建上下文。
 
 ## PEM 与身份
 

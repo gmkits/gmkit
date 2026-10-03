@@ -88,7 +88,7 @@ final class SM9NativeLoader {
         // 3. JAR 内置资源。
         try {
             loadFromResources();
-        } catch (SM9Exception ex) {
+        } catch (SM9Exception | SecurityException ex) {
             ex.addSuppressed(systemLoadError);
             throw ex;
         }

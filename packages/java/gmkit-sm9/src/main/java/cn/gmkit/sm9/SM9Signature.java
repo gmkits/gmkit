@@ -129,6 +129,7 @@ public final class SM9Signature implements AutoCloseable {
     /**
      * 使用用户签名私钥完成签名，输出 DER 编码的签名值。
      * 进入完成阶段后，无论成功与否都必须 reset 才可继续使用。
+     * 参数或密钥句柄的前置检查失败不进入完成阶段，允许修正参数后重试。
      *
      * @param signKey 用户签名私钥
      * @return 签名值
@@ -137,8 +138,10 @@ public final class SM9Signature implements AutoCloseable {
     public byte[] sign(SM9SignKey signKey) {
         ensureMode(true, "sign");
         SM9Checks.requireNonNull(signKey, "signKey");
+        long keyHandle = signKey.handle();
+        // 参数/句柄检查失败时尚未调用 JNI finish，保留累计消息以便用有效密钥重试。
         finished = true;
-        byte[] signature = SM9NativeBridge.sm9SignFinish(ctx, signKey.handle());
+        byte[] signature = SM9NativeBridge.sm9SignFinish(ctx, keyHandle);
         if (signature == null) {
             throw new SM9Exception(SM9Messages.operationReturnedNull("sign finish"));
         }
@@ -148,6 +151,7 @@ public final class SM9Signature implements AutoCloseable {
     /**
      * 使用公开主密钥与用户标识完成验签。
      * 进入完成阶段后，即使返回 false，也必须 reset 才可继续使用。
+     * 参数或密钥句柄的前置检查失败不进入完成阶段，允许修正参数后重试。
      *
      * @param signature       DER 编码签名字节，不允许 null 或零长度
      * @param masterPublicKey 公开主密钥
@@ -160,9 +164,11 @@ public final class SM9Signature implements AutoCloseable {
         SM9Checks.requireNonEmpty(signature, "signature");
         SM9Checks.requireNonNull(masterPublicKey, "masterPublicKey");
         String userId = SM9Checks.requireNonBlank(id, "id");
+        long keyHandle = masterPublicKey.handle();
+        byte[] idBytes = SM9Checks.utf8Bytes(userId);
         finished = true;
         int code = SM9NativeBridge.sm9VerifyFinish(
-            ctx, signature, masterPublicKey.handle(), SM9Checks.utf8Bytes(userId));
+            ctx, signature, keyHandle, idBytes);
         return code == 1;
     }
 
