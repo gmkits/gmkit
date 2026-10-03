@@ -187,9 +187,9 @@ function Write-RuntimeManifest {
 
     function Get-RelativeResourcePath {
         param([string]$BasePath, [string]$FilePath)
-        $baseUri = New-Object System.Uri(($BasePath.TrimEnd('\') + '\'))
+        $baseUri = New-Object System.Uri(($BasePath.TrimEnd([IO.Path]::DirectorySeparatorChar) + [IO.Path]::DirectorySeparatorChar))
         $fileUri = New-Object System.Uri($FilePath)
-        return $baseUri.MakeRelativeUri($fileUri).ToString().Replace('/', '/')
+        return [Uri]::UnescapeDataString($baseUri.MakeRelativeUri($fileUri).ToString())
     }
 
     $nativeRoot = Join-Path $ResourceRoot 'native'
@@ -221,6 +221,26 @@ function Write-RuntimeManifest {
     $utf8 = New-Object System.Text.UTF8Encoding($false)
     [System.IO.File]::WriteAllText((Join-Path $metadataDir 'sm9-native.properties'), $properties, $utf8)
     [System.IO.File]::WriteAllText((Join-Path $metadataDir 'sm9-native.sha256'), "$manifest`n", $utf8)
+}
+
+function Assert-PackagedRuntime {
+    param([string]$Jar, [string]$PlatformId, [hashtable]$NativeInfo)
+    # 单平台构建只核对当前平台；五平台完整性仍由聚合作业的 bundle profile 强制检查。
+    Add-Type -AssemblyName System.IO.Compression.FileSystem
+    $archive = [IO.Compression.ZipFile]::OpenRead($Jar)
+    try {
+        foreach ($resource in @(
+            "native/$PlatformId/$($NativeInfo.Bridge)",
+            "native/$PlatformId/$($NativeInfo.Gmssl)",
+            'META-INF/gmkit/sm9-native.sha256',
+            'META-INF/gmkit/sm9-native.properties'
+        )) {
+            $entry = $archive.GetEntry($resource)
+            if ($null -eq $entry -or $entry.Length -eq 0) { throw "打包缺少 runtime 资源：$resource" }
+        }
+    } finally {
+        $archive.Dispose()
+    }
 }
 
 $repoRoot = Resolve-RepoRoot
@@ -349,12 +369,14 @@ if ($PackageRuntime) {
         '-f', (Join-Path $javaRoot 'pom.xml'),
         '-B',
         '-ntp',
-        '-Psm9-runtime-bundle,release',
+        '-Prelease',
         '-pl', 'gmkit-sm9',
         '-Dgpg.skip=true',
         '-DskipTests',
         'package'
     )
+    $version = ([xml](Get-Content -LiteralPath (Join-Path $javaRoot 'pom.xml') -Raw)).project.version
+    Assert-PackagedRuntime (Join-Path $javaRoot "gmkit-sm9/target/gmkit-sm9-$version.jar") $platformId $nativeInfo
 }
 
 if ($Test) {

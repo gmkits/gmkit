@@ -98,6 +98,10 @@ jobs:
           cache-dependency-path: |
             packages/java/pom.xml
             packages/java/gmkit-sm9/pom.xml
+      - name: Verify single-platform packaging contract
+        shell: pwsh
+        run: ./scripts/test-sm9-native-contract.ps1
+
       - name: Build and test SM9 native runtime
         shell: pwsh
         run: |
