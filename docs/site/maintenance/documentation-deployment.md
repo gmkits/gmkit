@@ -16,7 +16,7 @@ tag:
 
 ## 本地验证
 
-文档工具链与 CI 统一使用 Node.js 22.12+ 和 JDK 21（设置 `JAVA_HOME`）；这是构建要求，不改变发布 Java 库的 Java 8 运行基线。旧 JDK 的 Javadoc 可能生成失效锚点，不能用缓存产物代替当前 JDK 的生成结果。
+文档工具链与 CI 统一使用 Node.js 22.15+ 和 JDK 21（设置 `JAVA_HOME`）；这是构建要求，不改变发布 Java 库的 Java 8 运行基线。旧 JDK 的 Javadoc 可能生成失效锚点，不能用缓存产物代替当前 JDK 的生成结果。
 
 ```bash
 npm ci
@@ -32,6 +32,10 @@ VuePress 使用锁文件安装的工具链，Rolldown 打包警告直接使构�
 Rust 示例默认使用临时 Cargo 缓存下载锁定依赖。若本机证书吊销服务或 registry 不可达，`docs:verify` 会失败，不自动跳过或关闭证书校验。可在 `docs/site/examples/rust` 运行 `cargo test --locked --offline`，或在运行 `docs:verify` 时显式设置 `CARGO_HOME` 指向已有缓存并设置 `CARGO_NET_OFFLINE=true`。这仍会真实编译、执行所有示例，缺少缓存即失败；报告必须注明离线依赖条件，不能声称全新依赖下载已通过。脚本不会删除外部指定的 Cargo 缓存。
 
 ## 部署顺序
+
+`docs:build` 在 VuePress 完成渲染后执行静态压缩，覆盖最终 HTML 和生成 API。gzip/Brotli/Zstd 分别使用级别 6/5/3，最多同时处理四个文件；原文件始终保留，仅保存体积更小的副本。构建 warning 和压缩失败都返回非零，不允许以缺失副本掩盖错误。Zstd 使用 Node.js 内置 zlib，要求 Node.js 22.15 及以上。
+
+`deployment.json` 和 `api/versions.json` 由后续部署或快照步骤更新，因此排除压缩并清理旧副本，避免源站优先返回过期压缩内容。
 
 1. Action 写入 `deployment.json`，记录 commit、构建时间、Action run 和 Java/TypeScript 版本。
 2. 同一个 artifact 通过 rsync 部署到 CN 源站的 `/home/gmkit-site/www/`。

@@ -33,6 +33,6 @@
     "studio:type-check": "npm run type-check -w apps/gmkit-studio"
   },
   "engines": {
-    "node": ">=22.12.0"
+    "node": ">=22.15.0"
   }
 }

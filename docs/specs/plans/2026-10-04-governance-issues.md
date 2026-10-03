@@ -21,7 +21,7 @@
 
 | 顺序 | GitHub Issue | 目标 | 前置 | 最近状态 | PR / 验证 |
 |:--|:--|:--|:--|:--|:--|
-| G01 | [#22](https://github.com/gmkits/gmkit/issues/22) | 补齐现有治理分支的远端验收并合并 | 现有治理分支 | In Progress | 以对应 Issue 的验收评论为准 |
+| G01 | [#22](https://github.com/gmkits/gmkit/issues/22) | 补齐现有治理分支的远端验收并合并 | 现有治理分支 | 验证/审查 | [PR #34](https://github.com/gmkits/gmkit/pull/34)，文档 CI 压缩耗时问题修复后须按新 SHA 重验 |
 | G02 | [#23](https://github.com/gmkits/gmkit/issues/23) | 治理算法包及测试工具链依赖告警 | G01 | Backlog | 以对应 Issue 的验收评论为准 |
 | G03 | [#24](https://github.com/gmkits/gmkit/issues/24) | 治理文档工具链依赖与构建警告 | G02 | Backlog | 以对应 Issue 的验收评论为准 |
 | G04 | [#25](https://github.com/gmkits/gmkit/issues/25) | 补齐 SM4 共享互操作向量 | G03 | Backlog | 以对应 Issue 的验收评论为准 |
@@ -33,6 +33,7 @@
 | G10 | [#31](https://github.com/gmkits/gmkit/issues/31) | 为历史 API 快照增加来源与摘要验证 | G09 | Backlog | 以对应 Issue 的验收评论为准 |
 | G11 | [#32](https://github.com/gmkits/gmkit/issues/32) | 完成生产文档与最终发布前复验 | G10 | Backlog | 以对应 Issue 的验收评论为准 |
 | BACKLOG | [#33](https://github.com/gmkits/gmkit/issues/33) | Studio 依赖告警专项 | 另行确认范围 | Backlog | 以对应 Issue 的验收评论为准 |
+| BACKLOG | [#35](https://github.com/gmkits/gmkit/issues/35) | 固定 SM9 Linux 构建基线并明确 ABI 支持范围 | 另行确认范围 | Backlog | ubuntu-latest 迁移提示，不作为已确认的算法缺陷 |
 
 ## 验收范围
 
@@ -40,8 +41,8 @@
 
 保留原分支及中文提交，完成远端验收、独立审查、合并后检查。
 
-- [ ] 核对干净工作区和 main 基线，登记现有提交及 Issue 总表。
-- [ ] 推送现有治理分支并建立 Refs 本 Issue 的 PR；核心 CI、parity、Docs 和 SM9 Native 记录 run/SHA。
+- [x] 核对干净工作区和 main 基线，登记现有提交及 Issue 总表。
+- [x] 推送现有治理分支并建立 Refs 本 Issue 的 PR；核心 CI、parity、Docs 和 SM9 Native 记录 run/SHA。
 - [ ] 对同一 head SHA 手动执行 publish-java.yml，publish=false，验证五平台构建、单一聚合 JAR、五平台消费。
 - [ ] 修复直接阻碍验收的问题，重跑受影响检查，不通过跳过测试或关闭门禁制造成功。
 - [ ] 独立审查无未解决 P0/P1/P2 后按 head SHA 普通合并；等 main 的适用工作流及文档部署成功后关闭。
@@ -49,6 +50,8 @@
 **关闭条件：** 所有适用工作流成功且绑定最终 head SHA；五平台 native 行为测试不得 skipped；聚合 JAR 恰含五平台十个动态库并能消费；main 相关工作流成功；附 PR、合并 SHA 和 run URL。不以普通 Maven skipped 测试替代 native。
 
 **不包含：** 不提前实施 G02-G11，不改变算法 API；publish=false 不上传 Central。
+
+**中间证据（非最终合并依据）：** `1c34646e26f1bc90d3490ac3a15c6548c0b7dab6` 的 [五平台 SM9](https://github.com/gmkits/gmkit/actions/runs/37136369767) 和 [publish=false 聚合消费](https://github.com/gmkits/gmkit/actions/runs/37136370654) 成功；[Docs](https://github.com/gmkits/gmkit/actions/runs/37136369793) 多语言示例成功，但打包时最高级别压缩触发 PLUGIN_TIMINGS 警告并失败。压缩移至最终站点生成后，保持所有 bundler warning 失败，错误传播及压缩回读由单测验证。最终 SHA 与合并后证据继续记录在 #22，不复用旧 SHA 作为最终通过证明。
 
 ### G02 治理算法包及测试工具链依赖告警
 

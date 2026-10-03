@@ -36,7 +36,7 @@ tag: [支持矩阵, TypeScript, Java]
 ## 运行环境
 
 - `gmkitx` 包声明 Node.js 18 及以上；CI 在 Node.js 18、20、22 上执行类型、测试和构建。
-- Monorepo 安装和文档构建使用 Node.js 22.12 及以上。
+- Monorepo 安装和文档构建使用 Node.js 22.15 及以上。
 - Java 主包保持 Java 8 API/字节码基线；CI 在 JDK 8、11、17、21、25 上测试。
 - SM9 native CI 覆盖 Linux x86_64/aarch64、macOS x86_64/aarch64、Windows x86_64。未进入矩阵的平台不属于已验证范围。
 

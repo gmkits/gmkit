@@ -1,8 +1,6 @@
 import { defineUserConfig } from 'vuepress';
 import { hopeTheme } from 'vuepress-theme-hope';
 import { viteBundler } from '@vuepress/bundler-vite';
-import { compression, defineAlgorithm } from 'vite-plugin-compression2';
-import { constants } from 'zlib';
 
 const hiddenContributors = new Set(['Copilot', 'copilot-swe-agent[bot]']);
 
@@ -31,23 +29,6 @@ export default defineUserConfig({
           },
         },
       },
-      plugins: [
-        compression({
-          include: /\.(js|mjs|css|html|json|svg|map)$/i,
-          threshold: 1024,
-          skipIfLargerOrEqual: true,
-          deleteOriginalAssets: false,
-          algorithms: [
-            defineAlgorithm('gzip', { level: 9 }),
-            defineAlgorithm('brotliCompress', {
-              params: {
-                [constants.BROTLI_PARAM_QUALITY]: 11,
-              },
-            }),
-            defineAlgorithm('zstandard', { level: 19 }),
-          ],
-        }),
-      ],
     },
   }),
 
