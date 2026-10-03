@@ -7,6 +7,7 @@
 | 路径 | 职责 | 是否发布到网站 |
 |:--|:--|:--:|
 | `API_STABILITY.md` | 仓库级公共 API 兼容策略 | 否 |
+| `specs/plans/` | Issue 推进顺序、依赖和验证证据索引；GitHub 是状态依据 | 否 |
 | `site/` | VuePress 文档门户 workspace | 是 |
 | `site/.vuepress/` | 站点配置、主题样式和静态资源 | 是 |
 | `site/guide/` | 安装、快速开始和安全边界 | 是 |
