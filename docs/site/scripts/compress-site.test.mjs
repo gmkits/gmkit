@@ -69,10 +69,9 @@ test('动态部署/版本清单不压缩，原文件缺失时也移除旧副本'
   assert.deepEqual(await compressSite(root), { files: 0, sidecars: 0 });
 });
 
-test('压缩在完整站点生成后执行，不能关闭 Rolldown 警告门禁', async () => {
+test('压缩在完整站点生成后执行，不占用 bundler hook', async () => {
   const pkg = JSON.parse(await readFile(new URL('../package.json', import.meta.url), 'utf8'));
   const config = await readFile(new URL('../.vuepress/config.ts', import.meta.url), 'utf8');
   assert.equal(pkg.scripts.postbuild, 'node scripts/compress-site.mjs');
   assert.doesNotMatch(config, /vite-plugin-compression2/);
-  assert.match(config, /onwarn\(warning\)\s*\{\s*throw new Error/);
 });

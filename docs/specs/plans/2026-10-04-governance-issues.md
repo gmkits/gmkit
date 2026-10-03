@@ -53,6 +53,8 @@
 
 **中间证据（非最终合并依据）：** `1c34646e26f1bc90d3490ac3a15c6548c0b7dab6` 的 [五平台 SM9](https://github.com/gmkits/gmkit/actions/runs/37136369767) 和 [publish=false 聚合消费](https://github.com/gmkits/gmkit/actions/runs/37136370654) 成功；[Docs](https://github.com/gmkits/gmkit/actions/runs/37136369793) 多语言示例成功，但打包时最高级别压缩触发 PLUGIN_TIMINGS 警告并失败。压缩移至最终站点生成后，保持所有 bundler warning 失败，错误传播及压缩回读由单测验证。最终 SHA 与合并后证据继续记录在 #22，不复用旧 SHA 作为最终通过证明。
 
+**后续诊断：** `08d3492` 的 [Docs](https://github.com/gmkits/gmkit/actions/runs/37137410120) 在移除压缩 hook 后，仅 3.5 秒 Vue/CSS 编译仍触发同一耗时占比提示。因此将 Rolldown 自身 `PLUGIN_TIMINGS` 明确归为可见性能报告，完整交给默认日志；其它和未知 warning 继续失败，禁止按消息文本宽泛过滤。该提交的五平台 native 测试通过，但 [聚合验证](https://github.com/gmkits/gmkit/actions/runs/37137416341) Windows 构建测试出现加密 PEM 导入错误，必须定位修复，不能重跑后忽略。G01 仍未合并，后续 Issue 未启动。
+
 ### G02 治理算法包及测试工具链依赖告警
 
 按依赖族处理核心包和测试工具链告警，保留运行时兼容。
