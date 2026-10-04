@@ -11,10 +11,11 @@ export default [
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'module',
-      globals: { ...globals.node, ...globals.browser },
+      globals: { ...globals.node, ...globals.es2022 },
     },
     rules: {
       eqeqeq: ['error', 'always'],
+      'no-inner-declarations': ['error', 'functions', { blockScopedFunctions: 'disallow' }],
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-unused-vars': ['error', {
         argsIgnorePattern: '^_',
