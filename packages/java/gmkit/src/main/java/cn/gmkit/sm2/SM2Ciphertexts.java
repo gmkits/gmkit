@@ -16,6 +16,8 @@ import java.util.Arrays;
  * SM2 密文编码转换工具。
  * <p>
  * 负责在原始 C1/C2/C3 布局、GmSSL 兼容布局以及 ASN.1 DER 编码之间做转换。
+ * 无点前缀的兼容布局以完整 C1 曲线点校验识别，不能仅按首字节判断。
+ * 若带前缀和补前缀两种解释均为合法点，优先采用带前缀布局；转换本身不校验 C3。
  */
 public final class SM2Ciphertexts {
 
@@ -245,7 +247,9 @@ public final class SM2Ciphertexts {
                 "SM2 密文长度无效，应为原始 C1||C3||C2 或 C1||C2||C3 格式，当前长度为 " + ciphertext.length + " 字节",
                 "Invalid SM2 ciphertext: expected raw C1||C3||C2 or C1||C2||C3 bytes, but length was " + ciphertext.length));
         }
-        if (ciphertext[0] != 0x04) {
+        // 无前缀密文的 X 坐标也可能以 04 开头，必须校验完整 C1，不能只看首字节。
+        // 有前缀且点合法时优先保留原布局；解密仍由 BC 校验 C3，不放宽认证。
+        if (!hasValidUncompressedC1(ciphertext)) {
             byte[] prefixed = tryAddMissingPointPrefix(ciphertext);
             if (prefixed != null) {
                 return prefixed;
@@ -262,11 +266,18 @@ public final class SM2Ciphertexts {
             return null;
         }
         byte[] candidate = Bytes.concat(new byte[]{0x04}, ciphertext);
+        return hasValidUncompressedC1(candidate) ? candidate : null;
+    }
+
+    private static boolean hasValidUncompressedC1(byte[] ciphertext) {
+        if (ciphertext.length < SM2Domain.C1_LENGTH || ciphertext[0] != 0x04) {
+            return false;
+        }
         try {
-            SM2Domain.X9_PARAMETERS.getCurve().decodePoint(Bytes.copyOfRange(candidate, 0, SM2Domain.C1_LENGTH)).normalize();
-            return candidate;
-        } catch (RuntimeException ex) {
-            return null;
+            SM2Domain.X9_PARAMETERS.getCurve().decodePoint(Bytes.copyOfRange(ciphertext, 0, SM2Domain.C1_LENGTH)).normalize();
+            return true;
+        } catch (IllegalArgumentException ex) {
+            return false;
         }
     }
 }

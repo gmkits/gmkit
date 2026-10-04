@@ -11,7 +11,7 @@ test('Rolldown 性能诊断完整交给默认日志处理，不吞掉报告', ()
 });
 
 test('正确性、插件自报、未知及无代码 warning 一律失败，不按消息子串放行', () => {
-  const warnings = ['MISSING_EXPORT', 'UNRESOLVED_IMPORT', 'CIRCULAR_DEPENDENCY', 'PLUGIN_WARNING', 'UNKNOWN', undefined]
+  const warnings = ['MISSING_EXPORT', 'UNRESOLVED_IMPORT', 'INVALID_ANNOTATION', 'CIRCULAR_DEPENDENCY', 'PLUGIN_WARNING', 'UNKNOWN', undefined]
     .map((code) => ({ code, message: 'PLUGIN_TIMINGS' }));
   warnings.push({ code: 'PLUGIN_TIMINGS', plugin: 'untrusted', message: 'unexpected' });
   for (const warning of warnings) {

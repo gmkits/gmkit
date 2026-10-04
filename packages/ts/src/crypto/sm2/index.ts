@@ -1256,7 +1256,7 @@ export function verify(
     }
 
     return sm2VerifyDigest(e, cleanPublicKey, BigInt('0x' + r), BigInt('0x' + s));
-  } catch (error) {
+  } catch {
     // 验证失败
     return false;
   }

@@ -6,6 +6,8 @@
 **GitHub 总 Issue：** [#21](https://github.com/gmkits/gmkit/issues/21)。GitHub 是状态的主要依据，本表记录顺序、依赖和最近一次同步状态。
 **范围：** 本文件属于仓库内部执行记录，不加入 VuePress 导航或发布站点。
 
+**当前执行状态（2026-10-04）：** G01 代码已由 PR #34 合并至 `main` 的 `c812e244be01c3d3d41c46bb46f8a2e239e46049`；合并后算法、Parity、SM9 和文档构建通过，但 CN 源站 SSH 扫描连续两次失败。用户明确同意先推进 G02 代码与测试，G01 保持开放并标为 Blocked；G03-G11 未启动。此次前置例外不改变 G01 关闭标准，失败记录不是已完成验收或可发布结论。
+
 ## 执行与关闭规则
 
 1. 每个 Issue 正文包含问题与证据、目标、不包含的工作、实现清单、测试命令、验收条件、依赖和回退方式。
@@ -14,15 +16,15 @@
 4. 修复先补失败测试；独立审查无未解决 P0/P1/P2，且当前 PR SHA 的所有适用检查成功后，普通合并并保留提交。不得使用管理员绕过或修改保护规则。
 5. PR 使用 `Refs #编号`，不使用合并即关闭的关键字；相关 main CI/部署成功后，附 run URL、合并 SHA、验证命令与限制，再手动关闭 Issue。
 6. GitHub Auto-merge 当前未启用；由执行者检查完整证据后发起合并。没有 required checks 不代表通过。更新总表的文档提交不能替代代码提交的验证证据。
-7. 直接阻碍当前验收的问题在当前项内解决；无关问题登记 Backlog。不提前启动下一项，不增加定时任务。
+7. 直接阻碍当前验收的问题在当前项内解决；无关问题登记 Backlog。不提前启动下一项，不增加定时任务。2026-10-04 用户仅为 G01 部署阻塞明确授权 G02 代码/测试先行，此例外不放宽验收或自动扩展到 G03。
 8. 回退使用普通 revert PR，经相应门禁后合并；不 force-push main、不删除 tag、不覆盖已发布制品。
 
 ## 队列
 
 | 顺序 | GitHub Issue | 目标 | 前置 | 最近状态 | PR / 验证 |
 |:--|:--|:--|:--|:--|:--|
-| G01 | [#22](https://github.com/gmkits/gmkit/issues/22) | 补齐现有治理分支的远端验收并合并 | 现有治理分支 | 验证/审查 | [PR #34](https://github.com/gmkits/gmkit/pull/34)，文档 CI 压缩耗时问题修复后须按新 SHA 重验 |
-| G02 | [#23](https://github.com/gmkits/gmkit/issues/23) | 治理算法包及测试工具链依赖告警 | G01 | Backlog | 以对应 Issue 的验收评论为准 |
+| G01 | [#22](https://github.com/gmkits/gmkit/issues/22) | 补齐现有治理分支的远端验收并合并 | 现有治理分支 | Blocked：合并后部署 | [PR #34 已合并](https://github.com/gmkits/gmkit/pull/34)；[main Docs attempt 2](https://github.com/gmkits/gmkit/actions/runs/37138805642/attempts/2) 源站连接失败 |
+| G02 | [#23](https://github.com/gmkits/gmkit/issues/23) | 治理算法包及测试工具链依赖告警 | G01，用户允许先推进代码测试 | 验证/审查 | [PR #36 草稿](https://github.com/gmkits/gmkit/pull/36)、[实施计划](2026-10-04-g02-core-dependencies.md)；本地通过、审查问题已修复，远端验证中；G01 部署仍未验收 |
 | G03 | [#24](https://github.com/gmkits/gmkit/issues/24) | 治理文档工具链依赖与构建警告 | G02 | Backlog | 以对应 Issue 的验收评论为准 |
 | G04 | [#25](https://github.com/gmkits/gmkit/issues/25) | 补齐 SM4 共享互操作向量 | G03 | Backlog | 以对应 Issue 的验收评论为准 |
 | G05 | [#26](https://github.com/gmkits/gmkit/issues/26) | 补齐 ZUC 非整字节标准向量 | G04 | Backlog | 以对应 Issue 的验收评论为准 |
@@ -43,8 +45,8 @@
 
 - [x] 核对干净工作区和 main 基线，登记现有提交及 Issue 总表。
 - [x] 推送现有治理分支并建立 Refs 本 Issue 的 PR；核心 CI、parity、Docs 和 SM9 Native 记录 run/SHA。
-- [ ] 对同一 head SHA 手动执行 publish-java.yml，publish=false，验证五平台构建、单一聚合 JAR、五平台消费。
-- [ ] 修复直接阻碍验收的问题，重跑受影响检查，不通过跳过测试或关闭门禁制造成功。
+- [x] 对同一 head SHA 手动执行 publish-java.yml，publish=false，验证五平台构建、单一聚合 JAR、五平台消费。
+- [x] 修复直接阻碍合并前验收的代码问题，重跑检查，不通过跳过测试或关闭门禁制造成功；合并后部署阻塞继续跟进。
 - [ ] 独立审查无未解决 P0/P1/P2 后按 head SHA 普通合并；等 main 的适用工作流及文档部署成功后关闭。
 
 **关闭条件：** 所有适用工作流成功且绑定最终 head SHA；五平台 native 行为测试不得 skipped；聚合 JAR 恰含五平台十个动态库并能消费；main 相关工作流成功；附 PR、合并 SHA 和 run URL。不以普通 Maven skipped 测试替代 native。
@@ -55,14 +57,22 @@
 
 **后续诊断：** `08d3492` 的 [Docs](https://github.com/gmkits/gmkit/actions/runs/37137410120) 在移除压缩 hook 后，仅 3.5 秒 Vue/CSS 编译仍触发同一耗时占比提示。因此将 Rolldown 自身 `PLUGIN_TIMINGS` 明确归为可见性能报告，完整交给默认日志；其它和未知 warning 继续失败，禁止按消息文本宽泛过滤。该提交的五平台 native 测试通过，但 [聚合验证](https://github.com/gmkits/gmkit/actions/runs/37137416341) Windows 构建测试出现加密 PEM 导入错误，必须定位修复，不能重跑后忽略。G01 仍未合并，后续 Issue 未启动。
 
+**合并前最终证据：** 候选 `a85b0ebb135ea1ea4e713c526b8290dac1cdd2a2` 的 [CI](https://github.com/gmkits/gmkit/actions/runs/37138442778)、[Parity](https://github.com/gmkits/gmkit/actions/runs/37138442717)、[Docs](https://github.com/gmkits/gmkit/actions/runs/37138442892)、[SM9 Native](https://github.com/gmkits/gmkit/actions/runs/37138442758) 和 [publish=false 聚合 JAR 消费](https://github.com/gmkits/gmkit/actions/runs/37138457431) 全部成功。五平台各 81 项 native 测试、0 跳过，其中 15 项为新增固定标量 PEM 回归。短 INTEGER 的失败先在旧 runtime 复现，再修复 JNI；加密主密钥解析失败误报成功也已拒绝。固定样本属于项目回归，不是国标证明。审查无未解决 P0/P1/P2 后普通合并，未使用管理员绕过。
+
+**合并后证据与阻塞：** `c812e24` 的 [CI](https://github.com/gmkits/gmkit/actions/runs/37138805613)、[Parity](https://github.com/gmkits/gmkit/actions/runs/37138805589)、[SM9 Native](https://github.com/gmkits/gmkit/actions/runs/37138805629) 成功。Docs 的 Verify and build 成功，但 CN 部署在 SSH 公钥扫描阶段约 15 秒后退出，单独重试失败 job 后仍失败。secrets 非空，日志没有指纹不匹配或 SSH 登录拒绝信息；失败发生于 rsync、EdgeOne 刷新及域名验证之前。当前尚不能判断是主机地址、22 端口、SSH 服务还是安全组/网络限制，需要服务器侧确认。不得把旧站点在线或旧 SHA 结果当作本次部署成功。
+
+**恢复条件：** 确认 `docs-production` 使用的 CN 主机地址及 SSH 端口和 Actions 连通性；若地址/端口/指纹确有变化，以可信服务器控制台信息更新配置，不关闭主机身份校验。随后重跑 main Docs，验证 CDN `deployment.json` 为本次 commit 和 www HTTPS 跳转，再关闭 #22、更新本表；#23 已按用户后续许可先推进代码和测试。没有创建版本 tag 或发布 npm/Central。
+
 ### G02 治理算法包及测试工具链依赖告警
 
 按依赖族处理核心包和测试工具链告警，保留运行时兼容。
 
-- [ ] 保存带日期和版本的审计及依赖路径；区分核心生产、测试/构建、文档、Studio。
-- [ ] 优先兼容补丁升级；必要的 Vitest 主版本迁移单独中文提交，保留 Node 消费兼容矩阵。
-- [ ] 不运行 audit fix --force；不在此项升级 Studio/文档专属依赖。
-- [ ] 核对 npm tarball 和 Maven 依赖范围，确保测试库未变成生产依赖。
+- [x] 保存带日期和版本的审计及依赖路径；区分核心生产、测试/构建、文档、Studio。
+- [x] 优先兼容补丁升级；必要的 Vitest 主版本迁移单独中文提交，保留 Node 消费兼容矩阵。
+- [x] 不运行 audit fix --force；只更新核心与共享依赖族，不改 Studio/文档直接依赖声明。
+- [x] 核对 npm tarball 和 Maven 依赖范围，确保测试库未变成生产依赖。
+
+**当前证据：** [G02 审计和测试记录](../evidence/g02/README.md)。核心 workspace 官方审计 19 → 0，整个 workspace 26 → 10；剩余告警逐项登记到 #24/#33。代码提交 `8db4efc`、`d1f2196`、`6947eff`；远端最终 SHA 验收尚未完成，本项未关闭。
 
 **关闭条件：** 核心相关可修复告警处理完成；剩余告警逐项记录版本、影响面和不修复原因，阻塞性告警未解决不得关闭；Java 8 基线、类型、测试、pack 和消费矩阵通过。
 
