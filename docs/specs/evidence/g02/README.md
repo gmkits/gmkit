@@ -53,20 +53,24 @@ Node 18 ESM 未必有 globalThis.crypto，消费样例显式注入 `node:crypto.
 ## 本地验证
 
 - `npm ci`：成功；没有 `audit fix --force`。
-- `npm run verify`：最后一轮代码和依赖修改后成功，TS 667、Java core 297、Java/TS parity、构建和真实包消费。
+- `npm run verify`：SM2 修复后成功，TS 667、Java core 299、Java/TS parity、构建和真实包消费。
 - `npm run lint -w packages/ts`：源码 lint 和 5 项规则回归成功。
 - `npm run test:coverage -w packages/ts`：667 项；statements 89.14%、branches 80.35%、functions 94.37%、lines 89.53%；阈值未降低。Vitest 4 的 AST 覆盖率映射不同，不把分母变化写成算法覆盖回退或提升。
 - `npm run test:package-negative -w packages/ts`：3 项本地制品负例成功；最初使用 `.test.mjs` 被 Vitest 误收集，已更名为独立 node:test 脚本并重跑，未放宽 Vitest 发现范围。
 - `npm run audit:pack -w packages/ts`：9 文件，约 165.5 KB；消费者只安装 gmkitx，无额外依赖。
 - 同一 tarball 在本机 Node 18.20.7 / 20.19.1 / 22.15.1 / 24.1.0 通过；CI 仍需对最终 SHA 实际执行。
-- JDK 21 core coverage / animal-sniffer：成功，297 项、0 skipped。
+- JDK 21 core coverage / animal-sniffer：最终 SM2 回归断言补齐后成功，299 项、0 skipped。
 - JDK 8 `-pl gmkit,gmkit-sm9 verify`：成功；SM9 58 项中 26 执行、32 native 条件跳过。跳过不算 SM9 行为证明，本次没有改 JNI/GmSSL。
 - Maven dependency:tree：core 的 BC 1.83 为 compile，JSON Schema/JUnit 为 test；SM9 的 BC/JUnit 均为 test。未执行 Maven 漏洞数据库扫描，不据此宣称 Java 零漏洞。
-- `npm run docs:verify`：最后一个 sucrase 补丁后完整复验成功，包括多语言示例、TypeDoc/Javadoc、构建、393 页面 / 15451 链接。
+- `npm run docs:verify`：SM2 文档及 VueUse 14.4.0 更新后完整复验成功，包括多语言示例、TypeDoc/Javadoc、构建、393 页面 / 15451 链接。全新 `npm ci` 后重新审计仍为核心 0、workspace 10。
 - YAML parser 严格检查 CI/Parity 成功，本机无 actionlint；语义与平台执行由远端工作流验证。
 
 独立审查最终确认原 ESLint P2 和测试收集 P1 均已修复，未发现遗留 P0/P1/P2。审查不替代平台运行证据。
 
 第一轮远端 `7140e29` 的 CI/Docs 在旧的 Rollup 二次安装步骤触发 npm `edgesOut` 解析崩溃，并非算法测试失败。锁文件已包含与 Rollup 4.62.2 一致的 linux-x64-gnu 可选包。将五个工作流中相同的二次安装统一改为实际调用 native parser；缺失 binary 时仍硬失败，不再重解依赖树或修改安装图。发布工作流只变更这个验证步骤，不更改触发条件、凭据或发布开关，也没有执行发布。
+
+第二轮 `6b983db` 的 push CI / JDK17 暴露已有 Java SM2 格式识别缺陷：随机 C1 的 X 首字节为 `04` 时，无前缀密文被误当有前缀。新建 `SM2PrefixCompatibilityTest` 用固定 k=11，在修复前两个模式均稳定失败；修复后 core 299 项、coverage 及篡改拒绝通过。只修直接阻碍本项验收的边界，不以重跑随机用例消除失败，也不改变 API。此处开始不再使用前面 297 项作为最终 core 测试数量。
+
+同一轮 Docs 暴露 VueUse 14.3.0 产物的两处无效 PURE 注释。采用上游 [#5388](https://github.com/vueuse/vueuse/pull/5388) 已发布的 14.4.0 修复，仅更新 core/shared/metadata 三个锁节点，没有提升 VuePress、Vite、Rolldown。增加 `INVALID_ANNOTATION` 必须失败的显式回归；保持严格 warning 门禁。这是解除当前远端阻碍的最小依赖修复，未开始 G03 的其余文档升级。SM2 增量审查未发现 P1/P2，并补充了每种 mode 的 C2/C3 分别篡改、97 字节最短兼容输入断言。
 
 [草稿 PR #36](https://github.com/gmkits/gmkit/pull/36) 的远端结果必须绑定最终 SHA，并附在 #23 / PR 评论。G01 未恢复的 CN 部署与本项分别记录；不发布 npm/Central、不创建 tag。
