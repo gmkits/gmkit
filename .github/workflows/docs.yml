@@ -86,8 +86,8 @@ jobs:
             packages/java/gmkit-sm9/pom.xml
             docs/site/examples/hutool/pom.xml
       - run: npm ci
-      - name: Repair Rollup optional native package
-        run: npm install --no-save --package-lock=false @rollup/rollup-linux-x64-gnu@$(node -p "require('./node_modules/rollup/package.json').version")
+      - name: Verify locked Rollup native package
+        run: node -e "require('rollup/parseAst').parseAst('export const value = 1'); console.log('Rollup native parser OK')"
       - name: Verify EdgeOne client
         run: python .github/scripts/test_purge_edgeone.py
       - name: Verify deployment script syntax

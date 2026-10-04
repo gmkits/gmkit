@@ -67,4 +67,6 @@ Node 18 ESM 未必有 globalThis.crypto，消费样例显式注入 `node:crypto.
 
 独立审查最终确认原 ESLint P2 和测试收集 P1 均已修复，未发现遗留 P0/P1/P2。审查不替代平台运行证据。
 
+第一轮远端 `7140e29` 的 CI/Docs 在旧的 Rollup 二次安装步骤触发 npm `edgesOut` 解析崩溃，并非算法测试失败。锁文件已包含与 Rollup 4.62.2 一致的 linux-x64-gnu 可选包。将五个工作流中相同的二次安装统一改为实际调用 native parser；缺失 binary 时仍硬失败，不再重解依赖树或修改安装图。发布工作流只变更这个验证步骤，不更改触发条件、凭据或发布开关，也没有执行发布。
+
 [草稿 PR #36](https://github.com/gmkits/gmkit/pull/36) 的远端结果必须绑定最终 SHA，并附在 #23 / PR 评论。G01 未恢复的 CN 部署与本项分别记录；不发布 npm/Central、不创建 tag。

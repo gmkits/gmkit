@@ -58,8 +58,8 @@ jobs:
           cache: npm
           cache-dependency-path: package-lock.json
       - run: npm ci
-      - name: Work around npm optional dependency bug (rollup native binary)
-        run: npm install --no-save --package-lock=false @rollup/rollup-linux-x64-gnu@$(node -p "require('./node_modules/rollup/package.json').version")
+      - name: Verify locked Rollup native package
+        run: node -e "require('rollup/parseAst').parseAst('export const value = 1'); console.log('Rollup native parser OK')"
       - name: TypeScript interop compliance
         working-directory: packages/ts
         run: npx vitest run test/interop-compliance.test.ts

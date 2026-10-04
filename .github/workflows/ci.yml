@@ -47,8 +47,8 @@ jobs:
           cache: npm
           cache-dependency-path: package-lock.json
       - run: npm ci
-      - name: Repair Rollup optional native package
-        run: npm install --no-save --package-lock=false @rollup/rollup-linux-x64-gnu@$(node -p "require('./node_modules/rollup/package.json').version")
+      - name: Verify locked Rollup native package
+        run: node -e "require('rollup/parseAst').parseAst('export const value = 1'); console.log('Rollup native parser OK')"
       - run: npm run type-check -w packages/ts
       - run: npm run lint -w packages/ts
       - run: npm test -w packages/ts
