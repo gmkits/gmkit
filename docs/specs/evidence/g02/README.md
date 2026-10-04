@@ -65,4 +65,6 @@ Node 18 ESM 未必有 globalThis.crypto，消费样例显式注入 `node:crypto.
 - `npm run docs:verify`：最后一个 sucrase 补丁后完整复验成功，包括多语言示例、TypeDoc/Javadoc、构建、393 页面 / 15451 链接。
 - YAML parser 严格检查 CI/Parity 成功，本机无 actionlint；语义与平台执行由远端工作流验证。
 
-远端结果必须绑定 PR 最终 SHA，G01 未恢复的 CN 部署与本项分别记录；不发布 npm/Central、不创建 tag。
+独立审查最终确认原 ESLint P2 和测试收集 P1 均已修复，未发现遗留 P0/P1/P2。审查不替代平台运行证据。
+
+[草稿 PR #36](https://github.com/gmkits/gmkit/pull/36) 的远端结果必须绑定最终 SHA，并附在 #23 / PR 评论。G01 未恢复的 CN 部署与本项分别记录；不发布 npm/Central、不创建 tag。

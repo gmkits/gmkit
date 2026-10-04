@@ -24,7 +24,7 @@
 | 顺序 | GitHub Issue | 目标 | 前置 | 最近状态 | PR / 验证 |
 |:--|:--|:--|:--|:--|:--|
 | G01 | [#22](https://github.com/gmkits/gmkit/issues/22) | 补齐现有治理分支的远端验收并合并 | 现有治理分支 | Blocked：合并后部署 | [PR #34 已合并](https://github.com/gmkits/gmkit/pull/34)；[main Docs attempt 2](https://github.com/gmkits/gmkit/actions/runs/37138805642/attempts/2) 源站连接失败 |
-| G02 | [#23](https://github.com/gmkits/gmkit/issues/23) | 治理算法包及测试工具链依赖告警 | G01，用户允许先推进代码测试 | In Progress | [实施计划](2026-10-04-g02-core-dependencies.md)；G01 部署仍未验收 |
+| G02 | [#23](https://github.com/gmkits/gmkit/issues/23) | 治理算法包及测试工具链依赖告警 | G01，用户允许先推进代码测试 | 验证/审查 | [PR #36 草稿](https://github.com/gmkits/gmkit/pull/36)、[实施计划](2026-10-04-g02-core-dependencies.md)；本地通过、审查问题已修复，远端验证中；G01 部署仍未验收 |
 | G03 | [#24](https://github.com/gmkits/gmkit/issues/24) | 治理文档工具链依赖与构建警告 | G02 | Backlog | 以对应 Issue 的验收评论为准 |
 | G04 | [#25](https://github.com/gmkits/gmkit/issues/25) | 补齐 SM4 共享互操作向量 | G03 | Backlog | 以对应 Issue 的验收评论为准 |
 | G05 | [#26](https://github.com/gmkits/gmkit/issues/26) | 补齐 ZUC 非整字节标准向量 | G04 | Backlog | 以对应 Issue 的验收评论为准 |

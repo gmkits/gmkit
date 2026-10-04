@@ -53,7 +53,8 @@ assert.equal(allowedMessages.length, 0);
 - [x] 核对 Maven compile/test 依赖树；测试 BC/JUnit 不进入 SM9 生产依赖。Java 依赖未修改不声称完成 Maven 漏洞数据库扫描。
 - [x] 新审计逐项记录剩余告警、版本、路径、用途与所属 Issue；见 [审计与测试证据](../evidence/g02/README.md)。
 - [x] 最后一个 sucrase 补丁后重新执行 `npm run docs:verify`：多语言示例真实通过，393 页面 / 15451 链接通过。
-- [ ] 独立审查无 P0/P1/P2 后提交中文证据 commit、PR `Refs #23`；远端适用检查必须绑定最终 SHA。
+- [x] 独立审查最终无遗留 P0/P1/P2，提交中文证据并创建 [草稿 PR #36](https://github.com/gmkits/gmkit/pull/36)，正文 `Refs #23`。
+- [ ] 远端适用检查绑定最终 SHA 成功；结果写入 #23 与 PR #36 评论。
 - [ ] G01 生产部署未恢复前不关闭 G01，不将旧部署错误算为成功；G02 合并/关闭另行核对适用检查，不自动跳到 G03。
 
 ## 官方参考
