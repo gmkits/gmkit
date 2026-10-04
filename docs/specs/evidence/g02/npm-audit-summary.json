@@ -1,0 +1,989 @@
+{
+  "date": "2026-10-04",
+  "registry": "https://registry.npmjs.org",
+  "baseline": "c812e244be01c3d3d41c46bb46f8a2e239e46049",
+  "commands": [
+    "npm audit --json --registry=https://registry.npmjs.org",
+    "npm audit -w packages/ts --json --registry=https://registry.npmjs.org"
+  ],
+  "reports": {
+    "workspaceBefore": {
+      "counts": {
+        "info": 0,
+        "low": 0,
+        "moderate": 7,
+        "high": 19,
+        "critical": 0,
+        "total": 26
+      },
+      "entries": [
+        {
+          "name": "@typescript-eslint/eslint-plugin",
+          "severity": "high",
+          "nodes": [
+            {
+              "path": "node_modules/@typescript-eslint/eslint-plugin",
+              "version": "7.18.0"
+            }
+          ],
+          "advisories": [],
+          "viaPackages": [
+            "@typescript-eslint/parser",
+            "@typescript-eslint/type-utils",
+            "@typescript-eslint/utils"
+          ]
+        },
+        {
+          "name": "@typescript-eslint/parser",
+          "severity": "high",
+          "nodes": [
+            {
+              "path": "node_modules/@typescript-eslint/parser",
+              "version": "7.18.0"
+            }
+          ],
+          "advisories": [],
+          "viaPackages": [
+            "@typescript-eslint/typescript-estree"
+          ]
+        },
+        {
+          "name": "@typescript-eslint/type-utils",
+          "severity": "high",
+          "nodes": [
+            {
+              "path": "node_modules/@typescript-eslint/type-utils",
+              "version": "7.18.0"
+            }
+          ],
+          "advisories": [],
+          "viaPackages": [
+            "@typescript-eslint/typescript-estree",
+            "@typescript-eslint/utils"
+          ]
+        },
+        {
+          "name": "@typescript-eslint/typescript-estree",
+          "severity": "high",
+          "nodes": [
+            {
+              "path": "node_modules/@typescript-eslint/typescript-estree",
+              "version": "7.18.0"
+            }
+          ],
+          "advisories": [],
+          "viaPackages": [
+            "globby"
+          ]
+        },
+        {
+          "name": "@typescript-eslint/utils",
+          "severity": "high",
+          "nodes": [
+            {
+              "path": "node_modules/@typescript-eslint/utils",
+              "version": "7.18.0"
+            }
+          ],
+          "advisories": [],
+          "viaPackages": [
+            "@typescript-eslint/typescript-estree"
+          ]
+        },
+        {
+          "name": "@vitest/coverage-v8",
+          "severity": "moderate",
+          "nodes": [
+            {
+              "path": "packages/ts/node_modules/@vitest/coverage-v8",
+              "version": "3.2.7"
+            }
+          ],
+          "advisories": [],
+          "viaPackages": [
+            "vitest"
+          ]
+        },
+        {
+          "name": "@vitest/mocker",
+          "severity": "moderate",
+          "nodes": [
+            {
+              "path": "apps/gmkit-studio/node_modules/vitest/node_modules/@vitest/mocker",
+              "version": "3.2.7"
+            },
+            {
+              "path": "packages/ts/node_modules/vitest/node_modules/@vitest/mocker",
+              "version": "3.2.7"
+            }
+          ],
+          "advisories": [
+            "https://github.com/advisories/GHSA-82fw-gwwq-j7x9"
+          ],
+          "viaPackages": []
+        },
+        {
+          "name": "baseline-browser-mapping",
+          "severity": "moderate",
+          "nodes": [
+            {
+              "path": "node_modules/baseline-browser-mapping",
+              "version": "2.10.37"
+            }
+          ],
+          "advisories": [
+            "https://github.com/advisories/GHSA-w5vr-8v7q-w6rv"
+          ],
+          "viaPackages": []
+        },
+        {
+          "name": "brace-expansion",
+          "severity": "high",
+          "nodes": [
+            {
+              "path": "node_modules/@eslint/eslintrc/node_modules/brace-expansion",
+              "version": "1.1.15"
+            },
+            {
+              "path": "node_modules/@humanwhocodes/config-array/node_modules/brace-expansion",
+              "version": "1.1.15"
+            },
+            {
+              "path": "node_modules/@microsoft/api-extractor/node_modules/brace-expansion",
+              "version": "5.0.7"
+            },
+            {
+              "path": "node_modules/brace-expansion",
+              "version": "2.1.2"
+            },
+            {
+              "path": "node_modules/eslint/node_modules/brace-expansion",
+              "version": "1.1.15"
+            },
+            {
+              "path": "node_modules/linkinator/node_modules/brace-expansion",
+              "version": "5.0.7"
+            },
+            {
+              "path": "node_modules/rimraf/node_modules/brace-expansion",
+              "version": "1.1.15"
+            },
+            {
+              "path": "node_modules/typedoc/node_modules/brace-expansion",
+              "version": "5.0.7"
+            },
+            {
+              "path": "node_modules/yamljs/node_modules/brace-expansion",
+              "version": "1.1.15"
+            },
+            {
+              "path": "packages/ts/node_modules/brace-expansion",
+              "version": "5.0.7"
+            }
+          ],
+          "advisories": [
+            "https://github.com/advisories/GHSA-3jxr-9vmj-r5cp",
+            "https://github.com/advisories/GHSA-mh99-v99m-4gvg",
+            "https://github.com/advisories/GHSA-rgw5-rvv9-x895",
+            "https://github.com/advisories/GHSA-q2hr-2g5m-vwhr",
+            "https://github.com/advisories/GHSA-qhr7-859c-m2p7",
+            "https://github.com/advisories/GHSA-6j4f-fj2g-mc7p"
+          ],
+          "viaPackages": []
+        },
+        {
+          "name": "braces",
+          "severity": "high",
+          "nodes": [
+            {
+              "path": "node_modules/braces",
+              "version": "3.0.3"
+            }
+          ],
+          "advisories": [
+            "https://github.com/advisories/GHSA-vfj7-8cjw-p6xm"
+          ],
+          "viaPackages": []
+        },
+        {
+          "name": "browserslist",
+          "severity": "high",
+          "nodes": [
+            {
+              "path": "node_modules/browserslist",
+              "version": "4.28.2"
+            }
+          ],
+          "advisories": [
+            "https://github.com/advisories/GHSA-c83g-rgw3-j3cx",
+            "https://github.com/advisories/GHSA-73wf-gq98-2v4g"
+          ],
+          "viaPackages": []
+        },
+        {
+          "name": "dompurify",
+          "severity": "moderate",
+          "nodes": [
+            {
+              "path": "node_modules/dompurify",
+              "version": "3.4.11"
+            }
+          ],
+          "advisories": [
+            "https://github.com/advisories/GHSA-55q2-fjhq-7xh7",
+            "https://github.com/advisories/GHSA-c2j3-45gr-mqc4"
+          ],
+          "viaPackages": []
+        },
+        {
+          "name": "fast-glob",
+          "severity": "high",
+          "nodes": [
+            {
+              "path": "node_modules/fast-glob",
+              "version": "3.3.3"
+            }
+          ],
+          "advisories": [],
+          "viaPackages": [
+            "micromatch"
+          ]
+        },
+        {
+          "name": "fast-uri",
+          "severity": "high",
+          "nodes": [
+            {
+              "path": "node_modules/fast-uri",
+              "version": "3.1.4"
+            }
+          ],
+          "advisories": [
+            "https://github.com/advisories/GHSA-7p8r-x3mc-p8w7",
+            "https://github.com/advisories/GHSA-5jgf-p345-68v8",
+            "https://github.com/advisories/GHSA-f65p-4m7j-42xc",
+            "https://github.com/advisories/GHSA-fph4-wmhf-6fwf",
+            "https://github.com/advisories/GHSA-jqff-g426-hqxp",
+            "https://github.com/advisories/GHSA-qw65-cvwx-89v3",
+            "https://github.com/advisories/GHSA-hrr3-gc8f-f4qj"
+          ],
+          "viaPackages": []
+        },
+        {
+          "name": "globby",
+          "severity": "high",
+          "nodes": [
+            {
+              "path": "node_modules/globby",
+              "version": "11.1.0"
+            }
+          ],
+          "advisories": [],
+          "viaPackages": [
+            "fast-glob"
+          ]
+        },
+        {
+          "name": "immutable",
+          "severity": "high",
+          "nodes": [
+            {
+              "path": "node_modules/immutable",
+              "version": "5.1.6"
+            }
+          ],
+          "advisories": [
+            "https://github.com/advisories/GHSA-xvcm-6775-5m9r",
+            "https://github.com/advisories/GHSA-v56q-mh7h-f735"
+          ],
+          "viaPackages": []
+        },
+        {
+          "name": "js-yaml",
+          "severity": "high",
+          "nodes": [
+            {
+              "path": "node_modules/gray-matter/node_modules/js-yaml",
+              "version": "3.15.0"
+            },
+            {
+              "path": "node_modules/js-yaml",
+              "version": "4.2.0"
+            }
+          ],
+          "advisories": [
+            "https://github.com/advisories/GHSA-52cp-r559-cp3m",
+            "https://github.com/advisories/GHSA-5p4m-2wfm-xmqj",
+            "https://github.com/advisories/GHSA-2883-xcg3-v3hh"
+          ],
+          "viaPackages": []
+        },
+        {
+          "name": "markdown-it",
+          "severity": "moderate",
+          "nodes": [
+            {
+              "path": "node_modules/markdown-it",
+              "version": "14.3.0"
+            }
+          ],
+          "advisories": [
+            "https://github.com/advisories/GHSA-253c-mchw-3w2r"
+          ],
+          "viaPackages": []
+        },
+        {
+          "name": "mermaid",
+          "severity": "moderate",
+          "nodes": [
+            {
+              "path": "node_modules/mermaid",
+              "version": "11.15.0"
+            }
+          ],
+          "advisories": [
+            "https://github.com/advisories/GHSA-c4c3-pg64-4m4v",
+            "https://github.com/advisories/GHSA-6x64-9x62-f2gx",
+            "https://github.com/advisories/GHSA-3rrr-jr9j-h3q3",
+            "https://github.com/advisories/GHSA-2v8p-3f2j-5mp7",
+            "https://github.com/advisories/GHSA-rhh3-jpg6-66xh"
+          ],
+          "viaPackages": []
+        },
+        {
+          "name": "micromatch",
+          "severity": "high",
+          "nodes": [
+            {
+              "path": "node_modules/micromatch",
+              "version": "4.0.8"
+            }
+          ],
+          "advisories": [],
+          "viaPackages": [
+            "braces"
+          ]
+        },
+        {
+          "name": "nanoid",
+          "severity": "high",
+          "nodes": [
+            {
+              "path": "node_modules/@vuepress/plugin-shiki/node_modules/nanoid",
+              "version": "5.1.11"
+            },
+            {
+              "path": "node_modules/nanoid",
+              "version": "3.3.12"
+            }
+          ],
+          "advisories": [
+            "https://github.com/advisories/GHSA-28wg-ghj8-5hjv",
+            "https://github.com/advisories/GHSA-2v37-7h3g-55p8"
+          ],
+          "viaPackages": []
+        },
+        {
+          "name": "node-forge",
+          "severity": "high",
+          "nodes": [
+            {
+              "path": "node_modules/node-forge",
+              "version": "1.4.0"
+            }
+          ],
+          "advisories": [
+            "https://github.com/advisories/GHSA-86w9-cpqp-85rv"
+          ],
+          "viaPackages": []
+        },
+        {
+          "name": "postcss",
+          "severity": "high",
+          "nodes": [
+            {
+              "path": "node_modules/postcss",
+              "version": "8.5.15"
+            }
+          ],
+          "advisories": [
+            "https://github.com/advisories/GHSA-fxqj-rqcc-2cmp",
+            "https://github.com/advisories/GHSA-r28c-9q8g-f849"
+          ],
+          "viaPackages": []
+        },
+        {
+          "name": "smol-toml",
+          "severity": "high",
+          "nodes": [
+            {
+              "path": "node_modules/smol-toml",
+              "version": "1.6.1"
+            }
+          ],
+          "advisories": [
+            "https://github.com/advisories/GHSA-7w5x-hrqm-74c2"
+          ],
+          "viaPackages": []
+        },
+        {
+          "name": "undici",
+          "severity": "high",
+          "nodes": [
+            {
+              "path": "node_modules/undici",
+              "version": "7.28.0"
+            }
+          ],
+          "advisories": [
+            "https://github.com/advisories/GHSA-8xcm-r25x-g524",
+            "https://github.com/advisories/GHSA-4cwx-7wf7-3272",
+            "https://github.com/advisories/GHSA-m8rv-5g2x-5cg5",
+            "https://github.com/advisories/GHSA-jr45-8vmc-qm54",
+            "https://github.com/advisories/GHSA-v3r7-h72x-cjcm",
+            "https://github.com/advisories/GHSA-3wwx-pv8p-q78v",
+            "https://github.com/advisories/GHSA-pmjh-fq2x-6v4x",
+            "https://github.com/advisories/GHSA-r53p-7pc4-xj5r",
+            "https://github.com/advisories/GHSA-rfgv-xxqx-mfg5",
+            "https://github.com/advisories/GHSA-3xpg-4rpp-hhhm",
+            "https://github.com/advisories/GHSA-2jfj-6hjv-fm6j",
+            "https://github.com/advisories/GHSA-2gqq-gqf2-x968",
+            "https://github.com/advisories/GHSA-w293-vg96-wgc3",
+            "https://github.com/advisories/GHSA-8436-99hf-9mmv",
+            "https://github.com/advisories/GHSA-rx4f-c7p8-82vq"
+          ],
+          "viaPackages": []
+        },
+        {
+          "name": "vitest",
+          "severity": "moderate",
+          "nodes": [
+            {
+              "path": "apps/gmkit-studio/node_modules/vitest",
+              "version": "3.2.7"
+            },
+            {
+              "path": "packages/ts/node_modules/vitest",
+              "version": "3.2.7"
+            }
+          ],
+          "advisories": [
+            "https://github.com/advisories/GHSA-82fw-gwwq-j7x9"
+          ],
+          "viaPackages": [
+            "@vitest/mocker"
+          ]
+        }
+      ]
+    },
+    "coreBefore": {
+      "counts": {
+        "info": 0,
+        "low": 0,
+        "moderate": 3,
+        "high": 16,
+        "critical": 0,
+        "total": 19
+      },
+      "entries": [
+        {
+          "name": "@typescript-eslint/eslint-plugin",
+          "severity": "high",
+          "nodes": [
+            {
+              "path": "node_modules/@typescript-eslint/eslint-plugin",
+              "version": "7.18.0"
+            }
+          ],
+          "advisories": [],
+          "viaPackages": [
+            "@typescript-eslint/parser",
+            "@typescript-eslint/type-utils",
+            "@typescript-eslint/utils"
+          ]
+        },
+        {
+          "name": "@typescript-eslint/parser",
+          "severity": "high",
+          "nodes": [
+            {
+              "path": "node_modules/@typescript-eslint/parser",
+              "version": "7.18.0"
+            }
+          ],
+          "advisories": [],
+          "viaPackages": [
+            "@typescript-eslint/typescript-estree"
+          ]
+        },
+        {
+          "name": "@typescript-eslint/type-utils",
+          "severity": "high",
+          "nodes": [
+            {
+              "path": "node_modules/@typescript-eslint/type-utils",
+              "version": "7.18.0"
+            }
+          ],
+          "advisories": [],
+          "viaPackages": [
+            "@typescript-eslint/typescript-estree",
+            "@typescript-eslint/utils"
+          ]
+        },
+        {
+          "name": "@typescript-eslint/typescript-estree",
+          "severity": "high",
+          "nodes": [
+            {
+              "path": "node_modules/@typescript-eslint/typescript-estree",
+              "version": "7.18.0"
+            }
+          ],
+          "advisories": [],
+          "viaPackages": [
+            "globby"
+          ]
+        },
+        {
+          "name": "@typescript-eslint/utils",
+          "severity": "high",
+          "nodes": [
+            {
+              "path": "node_modules/@typescript-eslint/utils",
+              "version": "7.18.0"
+            }
+          ],
+          "advisories": [],
+          "viaPackages": [
+            "@typescript-eslint/typescript-estree"
+          ]
+        },
+        {
+          "name": "@vitest/coverage-v8",
+          "severity": "moderate",
+          "nodes": [
+            {
+              "path": "packages/ts/node_modules/@vitest/coverage-v8",
+              "version": "3.2.7"
+            }
+          ],
+          "advisories": [],
+          "viaPackages": [
+            "vitest"
+          ]
+        },
+        {
+          "name": "@vitest/mocker",
+          "severity": "moderate",
+          "nodes": [
+            {
+              "path": "packages/ts/node_modules/vitest/node_modules/@vitest/mocker",
+              "version": "3.2.7"
+            }
+          ],
+          "advisories": [
+            "https://github.com/advisories/GHSA-82fw-gwwq-j7x9"
+          ],
+          "viaPackages": []
+        },
+        {
+          "name": "brace-expansion",
+          "severity": "high",
+          "nodes": [
+            {
+              "path": "node_modules/@eslint/eslintrc/node_modules/brace-expansion",
+              "version": "1.1.15"
+            },
+            {
+              "path": "node_modules/@humanwhocodes/config-array/node_modules/brace-expansion",
+              "version": "1.1.15"
+            },
+            {
+              "path": "node_modules/@microsoft/api-extractor/node_modules/brace-expansion",
+              "version": "5.0.7"
+            },
+            {
+              "path": "node_modules/brace-expansion",
+              "version": "2.1.2"
+            },
+            {
+              "path": "node_modules/eslint/node_modules/brace-expansion",
+              "version": "1.1.15"
+            },
+            {
+              "path": "node_modules/rimraf/node_modules/brace-expansion",
+              "version": "1.1.15"
+            },
+            {
+              "path": "packages/ts/node_modules/brace-expansion",
+              "version": "5.0.7"
+            }
+          ],
+          "advisories": [
+            "https://github.com/advisories/GHSA-3jxr-9vmj-r5cp",
+            "https://github.com/advisories/GHSA-mh99-v99m-4gvg",
+            "https://github.com/advisories/GHSA-rgw5-rvv9-x895",
+            "https://github.com/advisories/GHSA-q2hr-2g5m-vwhr",
+            "https://github.com/advisories/GHSA-qhr7-859c-m2p7",
+            "https://github.com/advisories/GHSA-6j4f-fj2g-mc7p"
+          ],
+          "viaPackages": []
+        },
+        {
+          "name": "braces",
+          "severity": "high",
+          "nodes": [
+            {
+              "path": "node_modules/braces",
+              "version": "3.0.3"
+            }
+          ],
+          "advisories": [
+            "https://github.com/advisories/GHSA-vfj7-8cjw-p6xm"
+          ],
+          "viaPackages": []
+        },
+        {
+          "name": "fast-glob",
+          "severity": "high",
+          "nodes": [
+            {
+              "path": "node_modules/fast-glob",
+              "version": "3.3.3"
+            }
+          ],
+          "advisories": [],
+          "viaPackages": [
+            "micromatch"
+          ]
+        },
+        {
+          "name": "fast-uri",
+          "severity": "high",
+          "nodes": [
+            {
+              "path": "node_modules/fast-uri",
+              "version": "3.1.4"
+            }
+          ],
+          "advisories": [
+            "https://github.com/advisories/GHSA-7p8r-x3mc-p8w7",
+            "https://github.com/advisories/GHSA-5jgf-p345-68v8",
+            "https://github.com/advisories/GHSA-f65p-4m7j-42xc",
+            "https://github.com/advisories/GHSA-fph4-wmhf-6fwf",
+            "https://github.com/advisories/GHSA-jqff-g426-hqxp",
+            "https://github.com/advisories/GHSA-qw65-cvwx-89v3",
+            "https://github.com/advisories/GHSA-hrr3-gc8f-f4qj"
+          ],
+          "viaPackages": []
+        },
+        {
+          "name": "globby",
+          "severity": "high",
+          "nodes": [
+            {
+              "path": "node_modules/globby",
+              "version": "11.1.0"
+            }
+          ],
+          "advisories": [],
+          "viaPackages": [
+            "fast-glob"
+          ]
+        },
+        {
+          "name": "immutable",
+          "severity": "high",
+          "nodes": [
+            {
+              "path": "node_modules/immutable",
+              "version": "5.1.6"
+            }
+          ],
+          "advisories": [
+            "https://github.com/advisories/GHSA-xvcm-6775-5m9r",
+            "https://github.com/advisories/GHSA-v56q-mh7h-f735"
+          ],
+          "viaPackages": []
+        },
+        {
+          "name": "js-yaml",
+          "severity": "high",
+          "nodes": [
+            {
+              "path": "node_modules/js-yaml",
+              "version": "4.2.0"
+            }
+          ],
+          "advisories": [
+            "https://github.com/advisories/GHSA-52cp-r559-cp3m",
+            "https://github.com/advisories/GHSA-5p4m-2wfm-xmqj",
+            "https://github.com/advisories/GHSA-2883-xcg3-v3hh"
+          ],
+          "viaPackages": []
+        },
+        {
+          "name": "micromatch",
+          "severity": "high",
+          "nodes": [
+            {
+              "path": "node_modules/micromatch",
+              "version": "4.0.8"
+            }
+          ],
+          "advisories": [],
+          "viaPackages": [
+            "braces"
+          ]
+        },
+        {
+          "name": "nanoid",
+          "severity": "high",
+          "nodes": [
+            {
+              "path": "node_modules/nanoid",
+              "version": "3.3.12"
+            }
+          ],
+          "advisories": [
+            "https://github.com/advisories/GHSA-28wg-ghj8-5hjv",
+            "https://github.com/advisories/GHSA-2v37-7h3g-55p8"
+          ],
+          "viaPackages": []
+        },
+        {
+          "name": "postcss",
+          "severity": "high",
+          "nodes": [
+            {
+              "path": "node_modules/postcss",
+              "version": "8.5.15"
+            }
+          ],
+          "advisories": [
+            "https://github.com/advisories/GHSA-fxqj-rqcc-2cmp",
+            "https://github.com/advisories/GHSA-r28c-9q8g-f849"
+          ],
+          "viaPackages": []
+        },
+        {
+          "name": "undici",
+          "severity": "high",
+          "nodes": [
+            {
+              "path": "node_modules/undici",
+              "version": "7.28.0"
+            }
+          ],
+          "advisories": [
+            "https://github.com/advisories/GHSA-8xcm-r25x-g524",
+            "https://github.com/advisories/GHSA-4cwx-7wf7-3272",
+            "https://github.com/advisories/GHSA-m8rv-5g2x-5cg5",
+            "https://github.com/advisories/GHSA-jr45-8vmc-qm54",
+            "https://github.com/advisories/GHSA-v3r7-h72x-cjcm",
+            "https://github.com/advisories/GHSA-3wwx-pv8p-q78v",
+            "https://github.com/advisories/GHSA-pmjh-fq2x-6v4x",
+            "https://github.com/advisories/GHSA-r53p-7pc4-xj5r",
+            "https://github.com/advisories/GHSA-rfgv-xxqx-mfg5",
+            "https://github.com/advisories/GHSA-3xpg-4rpp-hhhm",
+            "https://github.com/advisories/GHSA-2jfj-6hjv-fm6j",
+            "https://github.com/advisories/GHSA-2gqq-gqf2-x968",
+            "https://github.com/advisories/GHSA-w293-vg96-wgc3",
+            "https://github.com/advisories/GHSA-8436-99hf-9mmv",
+            "https://github.com/advisories/GHSA-rx4f-c7p8-82vq"
+          ],
+          "viaPackages": []
+        },
+        {
+          "name": "vitest",
+          "severity": "moderate",
+          "nodes": [
+            {
+              "path": "packages/ts/node_modules/vitest",
+              "version": "3.2.7"
+            }
+          ],
+          "advisories": [
+            "https://github.com/advisories/GHSA-82fw-gwwq-j7x9"
+          ],
+          "viaPackages": [
+            "@vitest/mocker"
+          ]
+        }
+      ]
+    },
+    "workspaceAfter": {
+      "counts": {
+        "info": 0,
+        "low": 0,
+        "moderate": 6,
+        "high": 4,
+        "critical": 0,
+        "total": 10
+      },
+      "entries": [
+        {
+          "name": "@vitest/mocker",
+          "severity": "moderate",
+          "nodes": [
+            {
+              "path": "apps/gmkit-studio/node_modules/vitest/node_modules/@vitest/mocker",
+              "version": "3.2.7"
+            }
+          ],
+          "advisories": [
+            "https://github.com/advisories/GHSA-82fw-gwwq-j7x9"
+          ],
+          "viaPackages": []
+        },
+        {
+          "name": "baseline-browser-mapping",
+          "severity": "moderate",
+          "nodes": [
+            {
+              "path": "node_modules/baseline-browser-mapping",
+              "version": "2.10.37"
+            }
+          ],
+          "advisories": [
+            "https://github.com/advisories/GHSA-w5vr-8v7q-w6rv"
+          ],
+          "viaPackages": []
+        },
+        {
+          "name": "browserslist",
+          "severity": "high",
+          "nodes": [
+            {
+              "path": "node_modules/browserslist",
+              "version": "4.28.2"
+            }
+          ],
+          "advisories": [
+            "https://github.com/advisories/GHSA-c83g-rgw3-j3cx",
+            "https://github.com/advisories/GHSA-73wf-gq98-2v4g"
+          ],
+          "viaPackages": []
+        },
+        {
+          "name": "dompurify",
+          "severity": "moderate",
+          "nodes": [
+            {
+              "path": "node_modules/dompurify",
+              "version": "3.4.11"
+            }
+          ],
+          "advisories": [
+            "https://github.com/advisories/GHSA-55q2-fjhq-7xh7",
+            "https://github.com/advisories/GHSA-c2j3-45gr-mqc4"
+          ],
+          "viaPackages": []
+        },
+        {
+          "name": "js-yaml",
+          "severity": "high",
+          "nodes": [
+            {
+              "path": "node_modules/gray-matter/node_modules/js-yaml",
+              "version": "3.15.0"
+            }
+          ],
+          "advisories": [
+            "https://github.com/advisories/GHSA-5p4m-2wfm-xmqj",
+            "https://github.com/advisories/GHSA-2883-xcg3-v3hh"
+          ],
+          "viaPackages": []
+        },
+        {
+          "name": "markdown-it",
+          "severity": "moderate",
+          "nodes": [
+            {
+              "path": "node_modules/markdown-it",
+              "version": "14.3.0"
+            }
+          ],
+          "advisories": [
+            "https://github.com/advisories/GHSA-253c-mchw-3w2r"
+          ],
+          "viaPackages": []
+        },
+        {
+          "name": "mermaid",
+          "severity": "moderate",
+          "nodes": [
+            {
+              "path": "node_modules/mermaid",
+              "version": "11.15.0"
+            }
+          ],
+          "advisories": [
+            "https://github.com/advisories/GHSA-c4c3-pg64-4m4v",
+            "https://github.com/advisories/GHSA-6x64-9x62-f2gx",
+            "https://github.com/advisories/GHSA-3rrr-jr9j-h3q3",
+            "https://github.com/advisories/GHSA-2v8p-3f2j-5mp7",
+            "https://github.com/advisories/GHSA-rhh3-jpg6-66xh"
+          ],
+          "viaPackages": []
+        },
+        {
+          "name": "node-forge",
+          "severity": "high",
+          "nodes": [
+            {
+              "path": "node_modules/node-forge",
+              "version": "1.4.0"
+            }
+          ],
+          "advisories": [
+            "https://github.com/advisories/GHSA-86w9-cpqp-85rv"
+          ],
+          "viaPackages": []
+        },
+        {
+          "name": "smol-toml",
+          "severity": "high",
+          "nodes": [
+            {
+              "path": "node_modules/smol-toml",
+              "version": "1.6.1"
+            }
+          ],
+          "advisories": [
+            "https://github.com/advisories/GHSA-7w5x-hrqm-74c2"
+          ],
+          "viaPackages": []
+        },
+        {
+          "name": "vitest",
+          "severity": "moderate",
+          "nodes": [
+            {
+              "path": "apps/gmkit-studio/node_modules/vitest",
+              "version": "3.2.7"
+            }
+          ],
+          "advisories": [
+            "https://github.com/advisories/GHSA-82fw-gwwq-j7x9"
+          ],
+          "viaPackages": [
+            "@vitest/mocker"
+          ]
+        }
+      ]
+    },
+    "coreAfter": {
+      "counts": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 0,
+        "critical": 0,
+        "total": 0
+      },
+      "entries": []
+    }
+  }
+}
