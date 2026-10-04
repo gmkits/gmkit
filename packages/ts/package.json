@@ -35,9 +35,10 @@
     "type-check": "tsc --noEmit",
     "audit:pack": "node scripts/audit-pack-size.mjs",
     "test:package": "node scripts/test-package-consumer.mjs",
+    "test:package-negative": "node --test scripts/test-package-consumer-negative.mjs",
     "audit:docs:assets": "node scripts/audit-doc-assets.mjs",
     "audit:slim": "npm run audit:docs:assets && npm run build && npm run audit:pack",
-    "verify": "npm run type-check && npm run test && npm run build && npm run audit:pack && npm run test:package",
+    "verify": "npm run type-check && npm run test && npm run build && npm run audit:pack && npm run test:package-negative && npm run test:package",
     "studio:dev": "npm run dev -w apps/gmkit-studio",
     "prepublishOnly": "npm run verify",
     "docs:dev": "npm run dev -w docs/site",
@@ -88,12 +89,12 @@
     "@types/node": "^20.0.0",
     "@typescript-eslint/eslint-plugin": "8.71.0",
     "@typescript-eslint/parser": "8.71.0",
-    "@vitest/coverage-v8": "^3.2.7",
+    "@vitest/coverage-v8": "4.1.11",
     "ajv": "8.20.0",
     "eslint": "10.12.0",
     "globals": "^16.0.0",
     "tsup": "^8.5.1",
     "typescript": "^5.0.0",
-    "vitest": "^3.2.7"
+    "vitest": "4.1.11"
   }
 }

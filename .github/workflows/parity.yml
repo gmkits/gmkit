@@ -49,7 +49,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node: [20.x, 22.x]
+        node: [22.x, 24.x]
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -59,7 +59,7 @@ jobs:
           cache-dependency-path: package-lock.json
       - run: npm ci
       - name: Work around npm optional dependency bug (rollup native binary)
-        run: npm install --no-save @rollup/rollup-linux-x64-gnu
+        run: npm install --no-save --package-lock=false @rollup/rollup-linux-x64-gnu@$(node -p "require('./node_modules/rollup/package.json').version")
       - name: TypeScript interop compliance
         working-directory: packages/ts
         run: npx vitest run test/interop-compliance.test.ts

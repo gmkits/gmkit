@@ -37,7 +37,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node: [18.x, 20.x, 22.x, 24.x]
+        # 工具链最低 Node 22.15；发布库的 Node 18/20 兼容由独立制品消费验证。
+        node: [22.x, 24.x]
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -49,9 +50,50 @@ jobs:
       - name: Repair Rollup optional native package
         run: npm install --no-save --package-lock=false @rollup/rollup-linux-x64-gnu@$(node -p "require('./node_modules/rollup/package.json').version")
       - run: npm run type-check -w packages/ts
+      - run: npm run lint -w packages/ts
       - run: npm test -w packages/ts
+      - if: matrix.node == '22.x'
+        run: npm run test:coverage -w packages/ts
       - run: npm run build -w packages/ts
+      - run: npm run audit:pack -w packages/ts
+      - run: npm run test:package-negative -w packages/ts
       - run: npm run test:package -w packages/ts
+      - name: Pack consumer artifact
+        if: matrix.node == '22.x'
+        run: |
+          mkdir -p artifacts/package
+          npm pack -w packages/ts --pack-destination artifacts/package
+      - uses: actions/upload-artifact@v7
+        if: matrix.node == '22.x'
+        with:
+          name: gmkitx-consumer-package
+          path: artifacts/package/*.tgz
+          if-no-files-found: error
+
+  ts-consumer:
+    name: Package consumer / Node ${{ matrix.node }}
+    needs: ts
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [18.x, 20.x, 22.x, 24.x]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ matrix.node }}
+      - uses: actions/download-artifact@v8
+        with:
+          name: gmkitx-consumer-package
+          path: artifacts/package
+      - name: Consume the verified tarball without workspace dependencies
+        shell: bash
+        run: |
+          shopt -s nullglob
+          tarballs=("$GITHUB_WORKSPACE"/artifacts/package/*.tgz)
+          test "${#tarballs[@]}" -eq 1
+          npm run test:package -w packages/ts -- --tarball "${tarballs[0]}"
 
   java:
     name: Java / JDK ${{ matrix.java }}
