@@ -44,7 +44,8 @@
     "docs:build": "npm run build -w docs/site",
     "docs:clean": "npm run clean -w docs/site",
     "test:coverage": "vitest run --coverage",
-    "lint": "eslint src --ext .ts",
+    "test:lint-config": "node --test scripts/test-lint-config.mjs",
+    "lint": "npm run test:lint-config && eslint src --ext .ts",
     "lint:fix": "eslint src --ext .ts --fix"
   },
   "keywords": [
@@ -81,14 +82,16 @@
     "node": ">=18.0.0"
   },
   "devDependencies": {
+    "@eslint/js": "10.0.1",
     "@noble/curves": "^2.2.0",
     "@noble/hashes": "^2.2.0",
     "@types/node": "^20.0.0",
-    "@typescript-eslint/eslint-plugin": "^7.18.0",
-    "@typescript-eslint/parser": "^7.18.0",
+    "@typescript-eslint/eslint-plugin": "8.71.0",
+    "@typescript-eslint/parser": "8.71.0",
     "@vitest/coverage-v8": "^3.2.7",
     "ajv": "8.20.0",
-    "eslint": "^8.57.1",
+    "eslint": "10.12.0",
+    "globals": "^16.0.0",
     "tsup": "^8.5.1",
     "typescript": "^5.0.0",
     "vitest": "^3.2.7"
