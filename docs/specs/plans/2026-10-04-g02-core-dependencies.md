@@ -11,6 +11,7 @@
 
 - 分支 `codex/issue-23-core-dependencies`，包含先前 G01 状态记录提交 `14733fe`，算法基线为 main `c812e24`。
 - 2026-10-04 用户明确同意先推进 G02 代码与测试，G01 继续开放等待国内源站 SSH 恢复。这不是生产部署通过或 G01 关闭。
+- 2026-10-24 用户批准修订：G01 已确认的外部部署故障不再阻断 G02 代码验收；本次复验、准确 SHA 的合并确认以及 main 相关测试/构建仍不可省略。G01 部署在 G11 前必须恢复。
 - 官方 registry 基线：整个 workspace 26 项（19 high / 7 moderate）；`-w packages/ts` 为 19 项（16 high / 3 moderate）。npm 计数包含传递影响链，不等于独立漏洞数量。
 - `@noble/curves`、`@noble/hashes` 虽声明为 devDependencies，但会打进 JS 制品，按发布实现对待；不以 `--omit=dev` 的结果声称算法零风险。
 - `vitest@3.2.7` 命中 GHSA-82fw-gwwq-j7x9，4.1.11 为已确认修复版本。测试工具提升不改变库的 Node >=18 engines。
@@ -54,8 +55,10 @@ assert.equal(allowedMessages.length, 0);
 - [x] 新审计逐项记录剩余告警、版本、路径、用途与所属 Issue；见 [审计与测试证据](../evidence/g02/README.md)。
 - [x] 最后一个 sucrase 补丁后重新执行 `npm run docs:verify`：多语言示例真实通过，393 页面 / 15451 链接通过。
 - [x] 独立审查最终无遗留 P0/P1/P2，提交中文证据并创建 [草稿 PR #36](https://github.com/gmkits/gmkit/pull/36)，正文 `Refs #23`。
-- [ ] 远端适用检查绑定最终 SHA 成功；结果写入 #23 与 PR #36 评论。
-- [ ] G01 生产部署未恢复前不关闭 G01，不将旧部署错误算为成功；G02 合并/关闭另行核对适用检查，不自动跳到 G03。
+- [x] 2026-10-04 的 `24e9198` 通过 PR/push CI、PR/push Parity、PR Docs，记录于 [验收评论](https://github.com/gmkits/gmkit/issues/23#issuecomment-5979527375)；这仅是历史证据。
+- [ ] 按 [恢复推进计划](2026-10-24-governance-resume.md) 更新审计和本地验证，在本次最终 SHA 上重新执行适用远端门禁并完成审查。
+- [ ] 准确 SHA 的合并经确认后，检查 main 的核心 CI/Parity/文档构建。已确认的 G01 外部 SSH 故障单独记录；新的构建、算法或部署脚本回归仍阻断当前项，不把跳过算通过。
+- [ ] 关闭 G02 前记录合并 SHA、相关 run 与独立审查证据；G02 完成合并后验证并关闭后进入 G03。G01 独立保持开放直到生产验收，且必须在 G11 前通过。
 
 ## 官方参考
 
