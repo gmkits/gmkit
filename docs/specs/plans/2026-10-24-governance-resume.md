@@ -13,6 +13,7 @@
 - `docs/specs/plans/2026-10-04-g02-core-dependencies.md`：区分历史完成项与本次恢复验证。
 - 本文件：本轮可执行步骤与状态；不加入站点导航。
 - `docs/specs/evidence/g02/2026-10-24-revalidation.md`：本轮命令、审计及审查结果，不覆盖旧证据。
+- `docs/specs/evidence/g02/2026-10-25-revalidation.md`：共享 Vite 补丁获准后的最终本地复验；机器记录为同目录 `audit-2026-10-25.json`。
 - GitHub #21/#22/#23/#24/#25/#27/#28/#29/#32/#35 与 PR #36：更新现有正文，保留问题证据与失败历史，不重建同名 Issue。
 
 ## 步骤 1：核对状态并修订计划
@@ -46,10 +47,10 @@ mvn -f packages/java/pom.xml -B -ntp -Pcoverage -pl gmkit verify
 npm run docs:verify
 ```
 
-- [ ] 核对所有命令退出码。npm audit 发现告警是非零状态，必须解析完整 JSON 并分类，不能将网络失败或空响应作零告警。
-- [ ] 核心可达新增告警先评估并处理；文档/Studio 告警同步到对应项。G02 不声称已完成 G11 的 Maven/native 全量公告复核。
-- [ ] JDK 8 执行 `mvn -f packages/java/pom.xml -B -ntp -pl gmkit,gmkit-sm9 verify`；native skipped 如实记录，不能算 SM9 运行证明。
-- [ ] 审查分支相对 main 的变更：包内容、兼容别名、默认值、lint 级别、CI 工具链/消费分离及 SM2 修复。发现问题先补失败回归再窄范围修复。
+- [x] 核对所有命令退出码。核心 audit 为 0；全 workspace 18 个告警节点，退出 1，完整 JSON 已保存。功能、文档、coverage、pack 验证均通过。
+- [x] 核心可达新增告警已处理；用户批准 Studio 共享 Vite 7.3.7 补丁，类型/构建及 11 项测试通过；其它文档/Studio 告警保留 #24/#33。G02 不声称已完成 G11 的 Maven/native 全量公告复核。
+- [x] JDK 8 执行 `mvn -f packages/java/pom.xml -B -ntp -pl gmkit,gmkit-sm9 verify`；58 项 SM9 中 32 项 native skipped 如实记录，不能算 SM9 运行证明。
+- [x] 单独复核分支相对 main 的包内容、兼容别名、默认值、lint 级别、CI 工具链/消费分离及 SM2 修复。本轮真实依赖路径测试先红后绿，未发现新增 P0/P1/P2；不冒充第三方批准。
 
 ## 步骤 4：提交、远端复验与合并检查点
 

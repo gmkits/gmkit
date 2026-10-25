@@ -6,7 +6,7 @@
 **GitHub 总 Issue：** [#21](https://github.com/gmkits/gmkit/issues/21)。GitHub 是状态的主要依据，本表记录顺序、依赖和最近一次同步状态。
 **范围：** 本文件属于仓库内部执行记录，不加入 VuePress 导航或发布站点。
 
-**当前执行状态（2026-10-24）：** 已 fetch，`origin/main` 仍为 `c812e244be01c3d3d41c46bb46f8a2e239e46049`。G01 代码已合并，CN SSH 部署仍未验收；G02 PR #36 的 `24e9198` 于 10 月 4 日完成代码/测试阶段验收，但尚未合并。用户批准本次顺序与验收修订，执行步骤见 [恢复推进计划](2026-10-24-governance-resume.md)。本次重新验证后才决定 G02 是否可合并，不把历史审计数字当作当前结论。
+**当前执行状态（2026-10-25）：** 已 fetch，`origin/main` 仍为 `c812e244be01c3d3d41c46bb46f8a2e239e46049`。G01 代码已合并，CN SSH 部署仍未验收；G02 PR #36 尚未合并。用户批准 Studio 共享 Vite 7.3.7 最小补丁，代码提交 `f7aa88b` 本地完整复验通过，见 [新证据](../evidence/g02/2026-10-25-revalidation.md)。最终 head 远端检查、准确 SHA 合并确认和 main 验证仍待完成，不提前关闭 #23 或开始 G03。执行步骤见 [恢复推进计划](2026-10-24-governance-resume.md)。
 
 ## 执行与关闭规则
 
@@ -24,7 +24,7 @@
 | 顺序 | GitHub Issue | 目标 | 前置 | 最近状态 | PR / 验证 |
 |:--|:--|:--|:--|:--|:--|
 | G01 | [#22](https://github.com/gmkits/gmkit/issues/22) | 补齐现有治理分支的远端验收并合并 | 现有治理分支 | Blocked：合并后部署 | [PR #34 已合并](https://github.com/gmkits/gmkit/pull/34)；[main Docs attempt 2](https://github.com/gmkits/gmkit/actions/runs/37138805642/attempts/2) 源站连接失败 |
-| G02 | [#23](https://github.com/gmkits/gmkit/issues/23) | 治理算法包及测试工具链依赖告警 | G01 代码已合并；不依赖其生产部署 | 重新验证 | [PR #36](https://github.com/gmkits/gmkit/pull/36)、[实施计划](2026-10-04-g02-core-dependencies.md)；[10 月 4 日验收](https://github.com/gmkits/gmkit/issues/23#issuecomment-5979527375)已通过，本次结果以 Issue 最新证据为准 |
+| G02 | [#23](https://github.com/gmkits/gmkit/issues/23) | 治理算法包及测试工具链依赖告警 | G01 代码已合并；不依赖其生产部署 | 本地通过，待远端/合并 | [PR #36](https://github.com/gmkits/gmkit/pull/36)、[实施计划](2026-10-04-g02-core-dependencies.md)、[10 月 25 日证据](../evidence/g02/2026-10-25-revalidation.md)；远端结果以 Issue 最新证据为准 |
 | G03 | [#24](https://github.com/gmkits/gmkit/issues/24) | 治理文档工具链依赖与构建警告 | G02 | Backlog | 以对应 Issue 的验收评论为准 |
 | G03 后 | [#35](https://github.com/gmkits/gmkit/issues/35) | 固定 SM9 Linux 构建基线并明确 ABI 支持范围 | G03 | 待执行，发布前置 | 保留原 Issue 编号，不另建重复项；五平台测试不替代最低 Linux ABI 消费验证 |
 | G04 | [#25](https://github.com/gmkits/gmkit/issues/25) | 补齐 SM4 共享互操作向量 | #35 | Backlog | 以对应 Issue 的验收评论为准 |
@@ -78,7 +78,7 @@
 
 - [x] 保存带日期和版本的审计及依赖路径；区分核心生产、测试/构建、文档、Studio。
 - [x] 优先兼容补丁升级；必要的 Vitest 主版本迁移单独中文提交，保留 Node 消费兼容矩阵。
-- [x] 不运行 audit fix --force；只更新核心与共享依赖族，不改 Studio/文档直接依赖声明。
+- [x] 不运行 audit fix --force；只更新核心与共享依赖族。用户于 2026-10-25 批准唯一 Studio 直接依赖例外：Vite 7.3.6 → 7.3.7，不修改工具功能。
 - [x] 核对 npm tarball 和 Maven 依赖范围，确保测试库未变成生产依赖。
 
 **历史证据（2026-10-04）：** [G02 审计和测试记录](../evidence/g02/README.md)。当时核心 workspace 官方审计 19 → 0，整个 workspace 26 → 10；剩余告警逐项登记到 #24/#33。`24e9198` 的五个适用远端 run 已通过，记录在 #23；本次恢复需更新审计与运行证据，尚未合并或关闭。
@@ -253,7 +253,7 @@ SM9 的五平台 native 和聚合 JAR 消费测试由专用 Action 验证。G01�
 - 不删除公开算法 API 或 deprecated 别名；空 `userId` 仍使用默认值；RNG 默认 `warn`，`strict` 可选。
 - TypeScript 不实现或模拟 SM9；Java 保留 JNI/GmSSL。
 - 保留 Go/Python/Rust/Hutool 集成页面，准确说明第三方实现边界。
-- Studio 只登记依赖告警 Backlog，不在本轮实施。
+- Studio 功能和专属依赖治理留 Backlog；仅按用户确认将核心测试共享的 Vite 升级到 7.3.7，并验证 Studio 类型、构建和既有测试。
 - 不创建版本 tag，不发布 npm/Maven 制品。最终验收只形成可发布结论。
 
 ## 执行记录
@@ -262,3 +262,4 @@ SM9 的五平台 native 和聚合 JAR 消费测试由专用 Action 验证。G01�
 - 2026-10-04：创建总 Issue #21、G01 #22 和 G02 #23；后续创建遇到 GitHub EOF，先查询去重后重试。
 - 2026-10-04：使用进程级 HTTP/1.1 重试并查询去重，已建立 G01-G11 #22-#32 和 Studio Backlog #33；仅 G01 进行中。
 - 2026-10-24：用户批准六项计划审查建议。同步代码/部署分离、历史证据失效规则、#35 优先级、旧消费者兼容、Java/native 公告审计和有界差分测试；G02 重新验证，未开始 G03 实现，不发布制品。
+- 2026-10-25：共享 Vite 补丁获准并完成本地复验。核心 audit 0，全 workspace 18，明确文档/Studio 剩余风险；G02 待最终远端门禁及合并确认，G01 仍开放。
