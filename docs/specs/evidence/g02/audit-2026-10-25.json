@@ -1,0 +1,322 @@
+{
+  "date": "2026-10-25",
+  "registry": "https://registry.npmjs.org",
+  "codeCommit": "f7aa88b6d7054eaa721d8069a5693754fb347fee",
+  "lockfileSha256": "e5dea87980ce65dec7bc2a3fbfc26bf4d5ee58ec7ab45966911fbef306c2a37c",
+  "node": "v24.1.0",
+  "npm": "11.3.0",
+  "core": {
+    "command": "npm audit -w packages/ts --registry=https://registry.npmjs.org --json",
+    "exitCode": 0,
+    "auditReportVersion": 2,
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    }
+  },
+  "workspace": {
+    "command": "npm audit --registry=https://registry.npmjs.org --json",
+    "exitCode": 1,
+    "auditReportVersion": 2,
+    "vulnerabilities": {
+      "info": 0,
+      "low": 4,
+      "moderate": 3,
+      "high": 8,
+      "critical": 3,
+      "total": 18
+    },
+    "remaining": [
+      {
+        "name": "@mdit/plugin-katex-slim",
+        "severity": "low",
+        "nodes": [
+          {
+            "path": "node_modules/@mdit/plugin-katex-slim",
+            "version": "0.26.2"
+          }
+        ],
+        "advisories": [],
+        "via": [
+          "katex"
+        ]
+      },
+      {
+        "name": "@vitest/mocker",
+        "severity": "moderate",
+        "nodes": [
+          {
+            "path": "apps/gmkit-studio/node_modules/vitest/node_modules/@vitest/mocker",
+            "version": "3.2.7"
+          }
+        ],
+        "advisories": [
+          "https://github.com/advisories/GHSA-82fw-gwwq-j7x9",
+          "https://github.com/advisories/GHSA-qxg6-89mg-rqv8"
+        ],
+        "via": []
+      },
+      {
+        "name": "@vue/server-renderer",
+        "severity": "high",
+        "nodes": [
+          {
+            "path": "node_modules/@vue/server-renderer",
+            "version": "3.5.38"
+          }
+        ],
+        "advisories": [
+          "https://github.com/advisories/GHSA-g2v6-rqmx-r4w6"
+        ],
+        "via": [
+          "vue"
+        ]
+      },
+      {
+        "name": "@vuepress/plugin-markdown-math",
+        "severity": "low",
+        "nodes": [
+          {
+            "path": "node_modules/@vuepress/plugin-markdown-math",
+            "version": "2.0.0-rc.130"
+          }
+        ],
+        "advisories": [],
+        "via": [
+          "@mdit/plugin-katex-slim",
+          "katex"
+        ]
+      },
+      {
+        "name": "baseline-browser-mapping",
+        "severity": "moderate",
+        "nodes": [
+          {
+            "path": "node_modules/baseline-browser-mapping",
+            "version": "2.10.37"
+          }
+        ],
+        "advisories": [
+          "https://github.com/advisories/GHSA-w5vr-8v7q-w6rv"
+        ],
+        "via": []
+      },
+      {
+        "name": "browserslist",
+        "severity": "high",
+        "nodes": [
+          {
+            "path": "node_modules/browserslist",
+            "version": "4.28.2"
+          }
+        ],
+        "advisories": [
+          "https://github.com/advisories/GHSA-c83g-rgw3-j3cx",
+          "https://github.com/advisories/GHSA-73wf-gq98-2v4g"
+        ],
+        "via": []
+      },
+      {
+        "name": "dompurify",
+        "severity": "critical",
+        "nodes": [
+          {
+            "path": "node_modules/dompurify",
+            "version": "3.4.11"
+          }
+        ],
+        "advisories": [
+          "https://github.com/advisories/GHSA-55q2-fjhq-7xh7",
+          "https://github.com/advisories/GHSA-c2j3-45gr-mqc4",
+          "https://github.com/advisories/GHSA-6688-9rhm-gjv2",
+          "https://github.com/advisories/GHSA-cg2g-xh64-v4q7",
+          "https://github.com/advisories/GHSA-mrv2-3pqr-j5jr",
+          "https://github.com/advisories/GHSA-c6gr-qvv4-5v3f"
+        ],
+        "via": []
+      },
+      {
+        "name": "js-yaml",
+        "severity": "high",
+        "nodes": [
+          {
+            "path": "node_modules/gray-matter/node_modules/js-yaml",
+            "version": "3.15.0"
+          }
+        ],
+        "advisories": [
+          "https://github.com/advisories/GHSA-5p4m-2wfm-xmqj",
+          "https://github.com/advisories/GHSA-2883-xcg3-v3hh"
+        ],
+        "via": []
+      },
+      {
+        "name": "katex",
+        "severity": "low",
+        "nodes": [
+          {
+            "path": "node_modules/katex",
+            "version": "0.16.47"
+          }
+        ],
+        "advisories": [
+          "https://github.com/advisories/GHSA-238p-pmpm-9mq7"
+        ],
+        "via": []
+      },
+      {
+        "name": "markdown-it",
+        "severity": "high",
+        "nodes": [
+          {
+            "path": "node_modules/markdown-it",
+            "version": "14.3.0"
+          }
+        ],
+        "advisories": [
+          "https://github.com/advisories/GHSA-r7fv-28h4-cvq7",
+          "https://github.com/advisories/GHSA-vfgh-jcmw-g37q",
+          "https://github.com/advisories/GHSA-gfr2-rv44-r23c",
+          "https://github.com/advisories/GHSA-253c-mchw-3w2r"
+        ],
+        "via": []
+      },
+      {
+        "name": "mermaid",
+        "severity": "moderate",
+        "nodes": [
+          {
+            "path": "node_modules/mermaid",
+            "version": "11.15.0"
+          }
+        ],
+        "advisories": [
+          "https://github.com/advisories/GHSA-c4c3-pg64-4m4v",
+          "https://github.com/advisories/GHSA-6x64-9x62-f2gx",
+          "https://github.com/advisories/GHSA-3rrr-jr9j-h3q3",
+          "https://github.com/advisories/GHSA-2v8p-3f2j-5mp7",
+          "https://github.com/advisories/GHSA-rhh3-jpg6-66xh"
+        ],
+        "via": [
+          "katex"
+        ]
+      },
+      {
+        "name": "node-forge",
+        "severity": "high",
+        "nodes": [
+          {
+            "path": "node_modules/node-forge",
+            "version": "1.4.0"
+          }
+        ],
+        "advisories": [
+          "https://github.com/advisories/GHSA-86w9-cpqp-85rv"
+        ],
+        "via": []
+      },
+      {
+        "name": "smol-toml",
+        "severity": "high",
+        "nodes": [
+          {
+            "path": "node_modules/smol-toml",
+            "version": "1.6.1"
+          }
+        ],
+        "advisories": [
+          "https://github.com/advisories/GHSA-7w5x-hrqm-74c2",
+          "https://github.com/advisories/GHSA-r4xh-jqrq-34v2"
+        ],
+        "via": []
+      },
+      {
+        "name": "tinypool",
+        "severity": "critical",
+        "nodes": [
+          {
+            "path": "apps/gmkit-studio/node_modules/tinypool",
+            "version": "1.1.1"
+          }
+        ],
+        "advisories": [
+          "https://github.com/advisories/GHSA-5gmw-xhrv-c9v3",
+          "https://github.com/advisories/GHSA-85c8-ppgw-ccpr"
+        ],
+        "via": []
+      },
+      {
+        "name": "vite",
+        "severity": "high",
+        "nodes": [
+          {
+            "path": "node_modules/@vuepress/bundler-vite/node_modules/vite",
+            "version": "8.0.16"
+          }
+        ],
+        "advisories": [
+          "https://github.com/advisories/GHSA-698v-4r3x-3vcv",
+          "https://github.com/advisories/GHSA-r825-w8mm-5pxw",
+          "https://github.com/advisories/GHSA-587h-7wmj-h5pm",
+          "https://github.com/advisories/GHSA-9jrq-w75r-8gcw",
+          "https://github.com/advisories/GHSA-rq7h-c2jc-7f22"
+        ],
+        "via": []
+      },
+      {
+        "name": "vitest",
+        "severity": "critical",
+        "nodes": [
+          {
+            "path": "apps/gmkit-studio/node_modules/vitest",
+            "version": "3.2.7"
+          }
+        ],
+        "advisories": [
+          "https://github.com/advisories/GHSA-82fw-gwwq-j7x9"
+        ],
+        "via": [
+          "@vitest/mocker",
+          "tinypool"
+        ]
+      },
+      {
+        "name": "vue",
+        "severity": "high",
+        "nodes": [
+          {
+            "path": "node_modules/vue",
+            "version": "3.5.38"
+          }
+        ],
+        "advisories": [],
+        "via": [
+          "@vue/server-renderer"
+        ]
+      },
+      {
+        "name": "vuepress-theme-hope",
+        "severity": "low",
+        "nodes": [
+          {
+            "path": "node_modules/vuepress-theme-hope",
+            "version": "2.0.0-rc.107"
+          }
+        ],
+        "advisories": [],
+        "via": [
+          "@vuepress/plugin-markdown-math"
+        ]
+      }
+    ]
+  },
+  "limitations": [
+    "Counts are aggregated affected dependency nodes, not distinct vulnerabilities.",
+    "No claim of whole-workspace safety or Maven/native advisory review.",
+    "Remaining docs and Studio findings stay open in issues 24 and 33."
+  ]
+}

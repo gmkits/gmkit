@@ -1,39 +1,49 @@
 # GMKit 后续 Issue 推进总表
 
-**目标：** 按 G01 → G11 顺序完成算法、文档和发布前证据治理，每次只推进一个 Issue。
-**基线：** `codex/global-algorithm-doc-governance`，初始 HEAD `2895ff5`；2026-10-04 已 fetch，现有 16 个治理提交尚未合并。
+**目标：** 每次只推进一个代码 Issue；生产部署独立验收，不再阻塞无部署依赖的代码治理，但仍是最终发布前置条件。
+**历史基线：** `codex/global-algorithm-doc-governance`，初始 HEAD `2895ff5`；该治理分支已由 PR #34 合并。
 **关联设计：** 用户批准的 GMKit 后续 Issue 推进计划；[既有验收记录](../../site/maintenance/release-audit.md)。
 **GitHub 总 Issue：** [#21](https://github.com/gmkits/gmkit/issues/21)。GitHub 是状态的主要依据，本表记录顺序、依赖和最近一次同步状态。
 **范围：** 本文件属于仓库内部执行记录，不加入 VuePress 导航或发布站点。
+
+**当前执行状态（2026-10-25）：** 已 fetch，`origin/main` 仍为 `c812e244be01c3d3d41c46bb46f8a2e239e46049`。G01 代码已合并，CN SSH 部署仍未验收；G02 PR #36 尚未合并。用户批准 Studio 共享 Vite 7.3.7 最小补丁，代码提交 `f7aa88b` 本地完整复验通过，见 [新证据](../evidence/g02/2026-10-25-revalidation.md)。最终 head 远端检查、准确 SHA 合并确认和 main 验证仍待完成，不提前关闭 #23 或开始 G03。执行步骤见 [恢复推进计划](2026-10-24-governance-resume.md)。
 
 ## 执行与关闭规则
 
 1. 每个 Issue 正文包含问题与证据、目标、不包含的工作、实现清单、测试命令、验收条件、依赖和回退方式。
 2. 状态为 Backlog → In Progress → 验证/审查 → 合并后验证 → Closed；凭据、网络或权限阻塞如实标记 Blocked，不将跳过算作通过。
 3. G01 保留现有分支和全部中文提交；后续从最新 main 建立 `codex/issue-<编号>-<主题>` 分支。每项单独 PR、中文 commit。
-4. 修复先补失败测试；独立审查无未解决 P0/P1/P2，且当前 PR SHA 的所有适用检查成功后，普通合并并保留提交。不得使用管理员绕过或修改保护规则。
-5. PR 使用 `Refs #编号`，不使用合并即关闭的关键字；相关 main CI/部署成功后，附 run URL、合并 SHA、验证命令与限制，再手动关闭 Issue。
-6. GitHub Auto-merge 当前未启用；由执行者检查完整证据后发起合并。没有 required checks 不代表通过。更新总表的文档提交不能替代代码提交的验证证据。
-7. 直接阻碍当前验收的问题在当前项内解决；无关问题登记 Backlog。不提前启动下一项，不增加定时任务。
+4. 修复先补失败测试；独立审查无未解决 P0/P1/P2，且当前 PR SHA 的所有适用检查成功后，展示 PR、准确 SHA 与合并方式，请求本次合并确认。提交变化使旧确认失效；不得使用管理员绕过或修改保护规则。
+5. PR 使用 `Refs #编号`，不使用合并即关闭的关键字。代码 Issue 在合并后相关 main 测试/构建成功后可关闭；CN SSH、EdgeOne 与域名验证归 G01，必须在 G11 之前通过。只允许已定位的同一外部部署故障不阻断代码 Issue；新的代码、构建或部署脚本回归仍阻断当前项。
+6. GitHub Auto-merge 当前未启用；合并工具若不支持仓库现有策略则记录阻塞，不能擅自启用设置或绕过。没有 required checks 不代表通过。更新总表的文档提交不能替代代码提交的验证证据。
+7. 直接阻碍当前验收的问题在当前项内解决；无关问题登记 Backlog。不提前启动下一代码项，不增加定时任务。2026-10-24 用户批准 G02 → G03 → SM9 ABI #35 → G04-G10 → G11；G01 单独保持部署阻塞状态，不伪造成功。
 8. 回退使用普通 revert PR，经相应门禁后合并；不 force-push main、不删除 tag、不覆盖已发布制品。
 
 ## 队列
 
 | 顺序 | GitHub Issue | 目标 | 前置 | 最近状态 | PR / 验证 |
 |:--|:--|:--|:--|:--|:--|
-| G01 | [#22](https://github.com/gmkits/gmkit/issues/22) | 补齐现有治理分支的远端验收并合并 | 现有治理分支 | 验证/审查 | [PR #34](https://github.com/gmkits/gmkit/pull/34)，文档 CI 压缩耗时问题修复后须按新 SHA 重验 |
-| G02 | [#23](https://github.com/gmkits/gmkit/issues/23) | 治理算法包及测试工具链依赖告警 | G01 | Backlog | 以对应 Issue 的验收评论为准 |
+| G01 | [#22](https://github.com/gmkits/gmkit/issues/22) | 补齐现有治理分支的远端验收并合并 | 现有治理分支 | Blocked：合并后部署 | [PR #34 已合并](https://github.com/gmkits/gmkit/pull/34)；[main Docs attempt 2](https://github.com/gmkits/gmkit/actions/runs/37138805642/attempts/2) 源站连接失败 |
+| G02 | [#23](https://github.com/gmkits/gmkit/issues/23) | 治理算法包及测试工具链依赖告警 | G01 代码已合并；不依赖其生产部署 | 本地通过，待远端/合并 | [PR #36](https://github.com/gmkits/gmkit/pull/36)、[实施计划](2026-10-04-g02-core-dependencies.md)、[10 月 25 日证据](../evidence/g02/2026-10-25-revalidation.md)；远端结果以 Issue 最新证据为准 |
 | G03 | [#24](https://github.com/gmkits/gmkit/issues/24) | 治理文档工具链依赖与构建警告 | G02 | Backlog | 以对应 Issue 的验收评论为准 |
-| G04 | [#25](https://github.com/gmkits/gmkit/issues/25) | 补齐 SM4 共享互操作向量 | G03 | Backlog | 以对应 Issue 的验收评论为准 |
+| G03 后 | [#35](https://github.com/gmkits/gmkit/issues/35) | 固定 SM9 Linux 构建基线并明确 ABI 支持范围 | G03 | 待执行，发布前置 | 保留原 Issue 编号，不另建重复项；五平台测试不替代最低 Linux ABI 消费验证 |
+| G04 | [#25](https://github.com/gmkits/gmkit/issues/25) | 补齐 SM4 共享互操作向量 | #35 | Backlog | 以对应 Issue 的验收评论为准 |
 | G05 | [#26](https://github.com/gmkits/gmkit/issues/26) | 补齐 ZUC 非整字节标准向量 | G04 | Backlog | 以对应 Issue 的验收评论为准 |
 | G06 | [#27](https://github.com/gmkits/gmkit/issues/27) | 增加算法畸形输入与差分回归 | G05 | Backlog | 以对应 Issue 的验收评论为准 |
 | G07 | [#28](https://github.com/gmkits/gmkit/issues/28) | 将 TypeScript API 覆盖检查改为编译器符号分析 | G06 | Backlog | 以对应 Issue 的验收评论为准 |
 | G08 | [#29](https://github.com/gmkits/gmkit/issues/29) | 将 Java API 覆盖检查改为 Doclet 成员分析 | G07 | Backlog | 以对应 Issue 的验收评论为准 |
 | G09 | [#30](https://github.com/gmkits/gmkit/issues/30) | 将文档布局验收接入浏览器 CI | G08 | Backlog | 以对应 Issue 的验收评论为准 |
 | G10 | [#31](https://github.com/gmkits/gmkit/issues/31) | 为历史 API 快照增加来源与摘要验证 | G09 | Backlog | 以对应 Issue 的验收评论为准 |
-| G11 | [#32](https://github.com/gmkits/gmkit/issues/32) | 完成生产文档与最终发布前复验 | G10 | Backlog | 以对应 Issue 的验收评论为准 |
+| G11 | [#32](https://github.com/gmkits/gmkit/issues/32) | 完成生产文档与最终发布前复验 | G10、G01 部署、#35 ABI | Backlog | 同时包含 Java/native 依赖公告复核，不以 npm 审计替代 |
 | BACKLOG | [#33](https://github.com/gmkits/gmkit/issues/33) | Studio 依赖告警专项 | 另行确认范围 | Backlog | 以对应 Issue 的验收评论为准 |
-| BACKLOG | [#35](https://github.com/gmkits/gmkit/issues/35) | 固定 SM9 Linux 构建基线并明确 ABI 支持范围 | 另行确认范围 | Backlog | ubuntu-latest 迁移提示，不作为已确认的算法缺陷 |
+
+## 证据与复验规则
+
+- 每次记录 source/head SHA、base SHA、lockfile SHA-256、命令与退出码、工具版本、runner 镜像、run/attempt URL、审查结论和未执行项。仓库保存摘要，GitHub 评论记录最终 SHA，避免为记录自身提交反复制造新 SHA。
+- 合并前检查必须属于当前 head；base 或影响结果的工具链/runner 改变后重跑相关矩阵。超过 7 天的结果在恢复执行时重验，不把 10 月 4 日的审计计数写成 10 月 24 日事实。源码未变不代表外部数据库和构建环境未变。
+- 部署只消费对应 SHA 且校验过摘要的构建 artifact；artifact 过期/缺失时重新完整构建，不能仅重跑下载/部署 job 或用别的 run 制品顶替。PR Docs 不部署是预期边界，不能作为生产部署通过。
+- 普通临时制品保持有界保存；最终验收 run 的测试报告、manifest 和摘要计划保留 90 天（受仓库上限约束），大型 native/site 制品至少 30 天。提高 retention 不等于恢复已过期制品；未落实前必须按缺失制品重建。
+- 代码门禁按变更范围执行：核心 CI/Parity、完整 docs:verify；涉及 JNI/loader/native 构建或依赖时追加五平台及聚合 JAR。G11 对最终候选统一重跑全部门禁，不以普通 Java skipped 替代 native。
 
 ## 验收范围
 
@@ -43,26 +53,35 @@
 
 - [x] 核对干净工作区和 main 基线，登记现有提交及 Issue 总表。
 - [x] 推送现有治理分支并建立 Refs 本 Issue 的 PR；核心 CI、parity、Docs 和 SM9 Native 记录 run/SHA。
-- [ ] 对同一 head SHA 手动执行 publish-java.yml，publish=false，验证五平台构建、单一聚合 JAR、五平台消费。
-- [ ] 修复直接阻碍验收的问题，重跑受影响检查，不通过跳过测试或关闭门禁制造成功。
-- [ ] 独立审查无未解决 P0/P1/P2 后按 head SHA 普通合并；等 main 的适用工作流及文档部署成功后关闭。
+- [x] 对同一 head SHA 手动执行 publish-java.yml，publish=false，验证五平台构建、单一聚合 JAR、五平台消费。
+- [x] 修复直接阻碍合并前验收的代码问题，重跑检查，不通过跳过测试或关闭门禁制造成功；合并后部署阻塞继续跟进。
+- [x] 独立审查无未解决 P0/P1/P2，PR #34 已合并；main 算法测试与文档构建通过。
+- [ ] CN 部署、CDN commit 与 www HTTPS 跳转全部验证后关闭，不能用代码阶段完成代替。
 
 **关闭条件：** 所有适用工作流成功且绑定最终 head SHA；五平台 native 行为测试不得 skipped；聚合 JAR 恰含五平台十个动态库并能消费；main 相关工作流成功；附 PR、合并 SHA 和 run URL。不以普通 Maven skipped 测试替代 native。
 
-**不包含：** 不提前实施 G02-G11，不改变算法 API；publish=false 不上传 Central。
+**不包含：** 不改变算法 API；publish=false 不上传 Central。G01 的外部部署阻塞不再作为其它代码项的隐式依赖。
 
 **中间证据（非最终合并依据）：** `1c34646e26f1bc90d3490ac3a15c6548c0b7dab6` 的 [五平台 SM9](https://github.com/gmkits/gmkit/actions/runs/37136369767) 和 [publish=false 聚合消费](https://github.com/gmkits/gmkit/actions/runs/37136370654) 成功；[Docs](https://github.com/gmkits/gmkit/actions/runs/37136369793) 多语言示例成功，但打包时最高级别压缩触发 PLUGIN_TIMINGS 警告并失败。压缩移至最终站点生成后，保持所有 bundler warning 失败，错误传播及压缩回读由单测验证。最终 SHA 与合并后证据继续记录在 #22，不复用旧 SHA 作为最终通过证明。
 
 **后续诊断：** `08d3492` 的 [Docs](https://github.com/gmkits/gmkit/actions/runs/37137410120) 在移除压缩 hook 后，仅 3.5 秒 Vue/CSS 编译仍触发同一耗时占比提示。因此将 Rolldown 自身 `PLUGIN_TIMINGS` 明确归为可见性能报告，完整交给默认日志；其它和未知 warning 继续失败，禁止按消息文本宽泛过滤。该提交的五平台 native 测试通过，但 [聚合验证](https://github.com/gmkits/gmkit/actions/runs/37137416341) Windows 构建测试出现加密 PEM 导入错误，必须定位修复，不能重跑后忽略。G01 仍未合并，后续 Issue 未启动。
 
+**合并前最终证据：** 候选 `a85b0ebb135ea1ea4e713c526b8290dac1cdd2a2` 的 [CI](https://github.com/gmkits/gmkit/actions/runs/37138442778)、[Parity](https://github.com/gmkits/gmkit/actions/runs/37138442717)、[Docs](https://github.com/gmkits/gmkit/actions/runs/37138442892)、[SM9 Native](https://github.com/gmkits/gmkit/actions/runs/37138442758) 和 [publish=false 聚合 JAR 消费](https://github.com/gmkits/gmkit/actions/runs/37138457431) 全部成功。五平台各 81 项 native 测试、0 跳过，其中 15 项为新增固定标量 PEM 回归。短 INTEGER 的失败先在旧 runtime 复现，再修复 JNI；加密主密钥解析失败误报成功也已拒绝。固定样本属于项目回归，不是国标证明。审查无未解决 P0/P1/P2 后普通合并，未使用管理员绕过。
+
+**合并后证据与阻塞：** `c812e24` 的 [CI](https://github.com/gmkits/gmkit/actions/runs/37138805613)、[Parity](https://github.com/gmkits/gmkit/actions/runs/37138805589)、[SM9 Native](https://github.com/gmkits/gmkit/actions/runs/37138805629) 成功。Docs 的 Verify and build 成功，但 CN 部署在 SSH 公钥扫描阶段约 15 秒后退出，单独重试失败 job 后仍失败。secrets 非空，日志没有指纹不匹配或 SSH 登录拒绝信息；失败发生于 rsync、EdgeOne 刷新及域名验证之前。当前尚不能判断是主机地址、22 端口、SSH 服务还是安全组/网络限制，需要服务器侧确认。不得把旧站点在线或旧 SHA 结果当作本次部署成功。
+
+**恢复条件：** 确认 `docs-production` 使用的 CN 主机地址及 SSH 端口和 Actions 连通性；若地址/端口/指纹确有变化，以可信服务器控制台信息更新配置，不关闭主机身份校验。随后重跑 main Docs，验证 CDN `deployment.json` 为本次 commit 和 www HTTPS 跳转，再关闭 #22、更新本表；#23 已按用户后续许可先推进代码和测试。没有创建版本 tag 或发布 npm/Central。
+
 ### G02 治理算法包及测试工具链依赖告警
 
 按依赖族处理核心包和测试工具链告警，保留运行时兼容。
 
-- [ ] 保存带日期和版本的审计及依赖路径；区分核心生产、测试/构建、文档、Studio。
-- [ ] 优先兼容补丁升级；必要的 Vitest 主版本迁移单独中文提交，保留 Node 消费兼容矩阵。
-- [ ] 不运行 audit fix --force；不在此项升级 Studio/文档专属依赖。
-- [ ] 核对 npm tarball 和 Maven 依赖范围，确保测试库未变成生产依赖。
+- [x] 保存带日期和版本的审计及依赖路径；区分核心生产、测试/构建、文档、Studio。
+- [x] 优先兼容补丁升级；必要的 Vitest 主版本迁移单独中文提交，保留 Node 消费兼容矩阵。
+- [x] 不运行 audit fix --force；只更新核心与共享依赖族。用户于 2026-10-25 批准唯一 Studio 直接依赖例外：Vite 7.3.6 → 7.3.7，不修改工具功能。
+- [x] 核对 npm tarball 和 Maven 依赖范围，确保测试库未变成生产依赖。
+
+**历史证据（2026-10-04）：** [G02 审计和测试记录](../evidence/g02/README.md)。当时核心 workspace 官方审计 19 → 0，整个 workspace 26 → 10；剩余告警逐项登记到 #24/#33。`24e9198` 的五个适用远端 run 已通过，记录在 #23；本次恢复需更新审计与运行证据，尚未合并或关闭。
 
 **关闭条件：** 核心相关可修复告警处理完成；剩余告警逐项记录版本、影响面和不修复原因，阻塞性告警未解决不得关闭；Java 8 基线、类型、测试、pack 和消费矩阵通过。
 
@@ -79,6 +98,17 @@
 **关闭条件：** 完整 docs:verify 在 CI 成功，API 生成、中文覆盖、示例、链接和站点构建通过；新增或剩余告警逐项可解释，无未知构建警告。
 
 **不包含：** 不迁移 VuePress 框架，不改 Studio，不删除第三方集成页面。
+
+### G03 后：SM9 Linux ABI 与 native 来源（#35）
+
+- [ ] 清点两个 Linux runtime 的 `readelf --version-info`、`readelf -d`、编译器及镜像版本，记录实际 GLIBC 需求；先确定并写明最低支持发行版/glibc，不能从 runner 名称推断。
+- [ ] 固定构建镜像或 runner 基线；同一个聚合 JAR 在最低基线和现代环境运行 JNI 加载、签名/验签、IBE、PEM 与资源释放。保留五平台原有门禁，不宣称未验证的 Alpine/musl 支持。
+- [ ] 记录 GmSSL 固定 commit、源码哈希、关联公告及修复 commit 的包含关系；同时记录动态依赖，未知适用性单独列出，不以“版本未变”免审。
+- [ ] 更新 native 来源 manifest、发布制品审计与中文支持矩阵，增加超出已声明 ABI 下限的失败检查；保存最低基线运行证据。
+
+**关闭条件：** 镜像/工具链可追溯，符号版本不高于声明下限，最低环境真实消费与五平台聚合测试通过，native 公告风险有结论。无可信环境或公告源时记录阻塞，不声称全 Linux 支持。
+
+**不包含：** 不修改已发布 JAR、不覆盖 0.10.1、不重写 SM9 算法。
 
 ### G04 补齐 SM4 共享互操作向量
 
@@ -109,9 +139,11 @@
 
 增加可复现、有界的负向测试和独立实现差分。
 
-- [ ] 用现有 Vitest/JUnit 执行共享固定种子样本；PR 每类 200 例，手动深测每类 2000 例。
+- [ ] 建立样本类别表：DER 编码、SM2 点/密文布局、SM4 padding、AEAD tag/nonce/AAD、流式分块/状态；每类显式列出有效/无效输入和预期结果，固定边界不计入随机样本数量。
+- [ ] 用现有 Vitest/JUnit 执行共享固定种子样本；PR 每类 200 例，手动深测每类 2000 例。生成输入上限 1 MiB，单例 5 秒、每类 5 分钟、深测 job 30 分钟；超时必须失败并保留 seed，不计作拒绝输入成功。
 - [ ] 覆盖 ASN.1 DER 长度/整数编码、SM2 密文布局、公钥、SM4 padding/AEAD tag/nonce、流式分块和 finished/reset 状态。
 - [ ] 确定性输出对比独立实现；随机签名/密文验证跨端可验签/解密，不要求随机字节相同。
+- [ ] 对照表写清规范节号、实现版本/commit、适用协议及底层依赖。同一底层库的两个封装不能当作两份独立证据；对合法输入宽容程度不同的实现，按已声明协议分类，不强求异常文案一致。
 - [ ] 失败输出 seed 和输入，缩减为固定回归；修复前确认失败，不引入概率性安全断言。
 
 **关闭条件：** 每类 PR/深测样本量可核查，重复 seed 可复现；非法输入真实拒绝且状态边界一致；新增缺陷保留回归，无 flaky 统计阈值。
@@ -126,6 +158,7 @@
 - [ ] 通过新增成员数据接入 manifest，保留现有字段和统计接口，同步消费者与快照生成。
 - [ ] 保留 deprecated 运行时导出与文档；修正文档目录职责和入口描述。
 - [ ] 补同名不同成员、重导出、deprecated 别名、缺失重载负例，确保门禁真的失败。
+- [ ] 另设兼容消费夹具：从官方 registry 的 `gmkitx@0.10.1` 建立旧调用代码基线，用候选 tarball 检查类型和 ESM/CJS 实际运行。覆盖兼容别名、参数默认值、输出编码和空 userId；无 CSPRNG 的 warn/strict、自定义 RNG 在隔离进程验证，不以接口名称存在代替行为兼容。
 
 **关闭条件：** 符号清单与生成文档/手册一一匹配；删除一个重载说明或遗漏一个别名有失败测试；原有 manifest 消费者与公开 exports 不变。
 
@@ -139,6 +172,7 @@
 - [ ] 检查参数、返回值、异常及说明继承，保留 Checkstyle/doclint。
 - [ ] 新增缺少公开重载说明的负例；覆盖继承成员、同名类、泛型/数组参数。
 - [ ] 保留 manifest 现有字段，增量接入成员清单；文档工具链使用 JDK 21，库仍支持 Java 8。
+- [ ] 将兼容验证与注释覆盖分开：客户端先针对 Central `0.10.1` 编译，再不重新编译客户端而替换候选 JAR 运行；同时做候选源码编译验证。固定构造器/重载、密文布局、空 userId、异常及 close/reset 行为。原有缺陷修复单独列明，不将错误行为固化为兼容要求。
 
 **关闭条件：** 清单可区分每个公共重载，缺文档负例失败；Javadoc 及中文手册映射通过；Java 8 编译/运行基线不受影响。
 
@@ -177,6 +211,9 @@
 - [ ] 核对总表及所有前置 Issue/PR/测试证据，确认工作区和 main。
 - [ ] 验证 CN 源站、EdgeOne 刷新、gmkit.cn deployment.json commit、www HTTPS 规范跳转及历史快照保留。
 - [ ] 最终 SHA 重跑核心、完整文档、多语言、Java 基线和 SM9 五平台构建/聚合 JAR 消费；publish=false。
+- [ ] 核对 G07/G08 旧消费者与 #35 最低 ABI 证据，并用隔离安装目录消费候选 npm tarball/Maven JAR，禁止从工作树源码或本机已有 native 得出通过。
+- [ ] 生成 npm、Maven compile/runtime 与 native 依赖清单；BC 按精确 Maven 坐标查公告，GmSSL 按 commit 与补丁包含关系复核。记录数据库/官方公告 URL、检索时间、适用性、修复/缓解和剩余风险；请求失败或未知结论不得写零漏洞。可达的高风险未解决项阻止可发布结论。
+- [ ] 为最终验收报告落实 90 天、可部署制品至少 30 天的 retention；校验下载后 SHA-256，重新运行部署不得依赖已过期 artifact。
 - [ ] 写清发布前结论与剩余风险，所有相关 main 工作流成功后关闭本项与总 Issue。
 
 **关闭条件：** 最终 SHA 的所有适用测试成功；生产 commit 匹配、历史快照和 www 正确；没有未解释的告警或跳过冒充成功；无版本 tag、npm/Central 上传。
@@ -216,7 +253,7 @@ SM9 的五平台 native 和聚合 JAR 消费测试由专用 Action 验证。G01�
 - 不删除公开算法 API 或 deprecated 别名；空 `userId` 仍使用默认值；RNG 默认 `warn`，`strict` 可选。
 - TypeScript 不实现或模拟 SM9；Java 保留 JNI/GmSSL。
 - 保留 Go/Python/Rust/Hutool 集成页面，准确说明第三方实现边界。
-- Studio 只登记依赖告警 Backlog，不在本轮实施。
+- Studio 功能和专属依赖治理留 Backlog；仅按用户确认将核心测试共享的 Vite 升级到 7.3.7，并验证 Studio 类型、构建和既有测试。
 - 不创建版本 tag，不发布 npm/Maven 制品。最终验收只形成可发布结论。
 
 ## 执行记录
@@ -224,3 +261,5 @@ SM9 的五平台 native 和聚合 JAR 消费测试由专用 Action 验证。G01�
 - 2026-10-04：仓库干净，GitHub 授权有效；已查询现有 Issue/PR，没有重复的开放治理条目。
 - 2026-10-04：创建总 Issue #21、G01 #22 和 G02 #23；后续创建遇到 GitHub EOF，先查询去重后重试。
 - 2026-10-04：使用进程级 HTTP/1.1 重试并查询去重，已建立 G01-G11 #22-#32 和 Studio Backlog #33；仅 G01 进行中。
+- 2026-10-24：用户批准六项计划审查建议。同步代码/部署分离、历史证据失效规则、#35 优先级、旧消费者兼容、Java/native 公告审计和有界差分测试；G02 重新验证，未开始 G03 实现，不发布制品。
+- 2026-10-25：共享 Vite 补丁获准并完成本地复验。核心 audit 0，全 workspace 18，明确文档/Studio 剩余风险；G02 待最终远端门禁及合并确认，G01 仍开放。
